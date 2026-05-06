@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#C0392B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="긴급지원반">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>긴급지원반 임무 체크리스트</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --red:#C0392B;--red-dark:#922B21;
+  --orange:#E67E22;--purple:#7D3C98;
+  --green:#1E8449;--blue:#1A5276;
+  --gray:#566573;--gray-light:#F2F3F4;
+  --text:#1a1a1a;--text-muted:#6c757d;
+  --border:rgba(0,0,0,0.1);
+  --shadow:0 2px 12px rgba(0,0,0,0.12);
+}
+html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#F0F2F5;color:var(--text);font-size:14px}
+
+/* ── HEADER ── */
+.app-header{background:var(--red);color:white;padding:16px 16px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.25)}
+.logo-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:4px 9px;font-size:11px;font-weight:700;white-space:nowrap;text-align:center;line-height:1.5}
+.header-title h1{font-size:15px;font-weight:700;letter-spacing:-0.3px}
+.header-title p{font-size:11px;opacity:0.75;margin-top:1px}
+
+/* ── SCREENS ── */
+.screen{display:none;animation:fadeIn 0.3s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── ROLE SELECT ── */
+.select-screen{padding:20px 16px}
+.select-title{text-align:center;margin-bottom:20px}
+.select-title h2{font-size:18px;font-weight:700}
+.select-title p{font-size:12px;color:var(--text-muted);margin-top:5px}
+.role-cards{display:flex;flex-direction:column;gap:12px}
+.role-card{background:white;border-radius:16px;padding:18px 20px;border:2px solid transparent;box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;gap:16px;transition:all 0.2s}
+.role-card:active{transform:scale(0.98)}
+.role-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.role-card.cmd .role-icon{background:#FADBD8}
+.role-card.res .role-icon{background:#FDEBD0}
+.role-card.com .role-icon{background:#F5EEF8}
+.role-info h3{font-size:16px;font-weight:700;margin-bottom:3px}
+.role-info p{font-size:12px;color:var(--text-muted);line-height:1.5}
+.role-card.cmd{border-color:rgba(192,57,43,0.2)}.role-card.cmd h3{color:var(--red)}
+.role-card.res{border-color:rgba(230,126,34,0.2)}.role-card.res h3{color:var(--orange)}
+.role-card.com{border-color:rgba(125,60,152,0.2)}.role-card.com h3{color:var(--purple)}
+/* ── SELECT HERO ── */
+.select-screen{padding:0 0 32px}
+.select-hero{background:linear-gradient(150deg,#C0392B 0%,#922B21 55%,#7B241C 100%);padding:24px 20px;display:flex;align-items:center;gap:16px;color:white;min-height:100px}
+.select-hero-icon{font-size:40px;flex-shrink:0;line-height:1;width:64px;height:64px;background:rgba(255,255,255,0.18);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.select-badge{font-size:10px;font-weight:700;opacity:0.8;letter-spacing:0.5px;margin-bottom:4px;text-transform:uppercase}
+.select-hero-text h2{font-size:22px;font-weight:800;line-height:1.3;letter-spacing:-0.5px;margin:0}
+.select-hero-text p{font-size:12px;opacity:0.75;margin-top:6px}
+.select-divider{display:flex;align-items:center;gap:10px;padding:18px 20px 10px;color:var(--text-muted);font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase}
+.select-divider::before,.select-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.role-cards{padding:0 16px;display:flex;flex-direction:column;gap:10px}
+.role-card{background:white;border-radius:14px;padding:16px 18px;border:1.5px solid transparent;box-shadow:0 1px 6px rgba(0,0,0,0.08);cursor:pointer;display:flex;align-items:center;gap:14px;transition:all 0.18s}
+.role-card:active{transform:scale(0.98);box-shadow:none}
+.role-arrow{font-size:20px;color:#CCC;flex-shrink:0;font-weight:300;margin-left:auto}
+.role-card.cmd:active .role-arrow,.role-card.cmd:hover .role-arrow{color:var(--red)}
+.role-card.res:active .role-arrow,.role-card.res:hover .role-arrow{color:var(--orange)}
+.role-card.com:active .role-arrow,.role-card.com:hover .role-arrow{color:var(--purple)}
+.select-footer{text-align:center;font-size:11px;color:var(--text-muted);margin-top:16px;padding:0 16px}
+/* ── 출동단계 카드 ── */
+.depart-card{margin:0 16px;background:white;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(192,57,43,0.12)}
+.depart-header{background:#C0392B;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.depart-header span{font-size:13px;font-weight:700;color:white}
+.depart-items{display:flex;flex-direction:column}
+.depart-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:0.5px solid #F0F0F0;cursor:pointer;user-select:none;transition:background 0.12s}
+.depart-item:last-child{border-bottom:none}
+.depart-item:active{background:#FEF5F4}
+.depart-item.checked{background:#F4FDF8}
+.depart-item .d-circle{width:22px;height:22px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:white;transition:all 0.2s}
+.depart-item.checked .d-circle{background:var(--green);border-color:var(--green)}
+.d-tick{width:8px;height:5px;border-left:2px solid white;border-bottom:2px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
+.depart-item.checked .d-tick{opacity:1}
+.depart-item .d-text{flex:1;font-size:13px;color:var(--text)}
+.depart-item.checked .d-text{color:#AAA;text-decoration:line-through;text-decoration-color:#CCC}
+.depart-item.disabled{opacity:0.35;pointer-events:none}
+.depart-sub-wrap{margin:0 16px}
+#depart-role-area.disabled .role-card{opacity:0.35;pointer-events:none}
+.depart-role-card{border-color:rgba(26,82,118,0.2) !important}
+.depart-role-card h3{color:#1A5276 !important}
+/* ── 현장 출동 전 종료 ── */
+.early-end-card{margin:0 16px;background:white;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(86,101,115,0.2)}
+.early-end-item{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;user-select:none;transition:background 0.12s}
+.early-end-item:active{background:#F5F6F8}
+.early-end-item.checked{background:#F4FDF8}
+.early-end-item .ee-circle{width:24px;height:24px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:white;transition:all 0.2s}
+.early-end-item.checked .ee-circle{background:var(--gray);border-color:var(--gray)}
+.ee-tick{width:9px;height:6px;border-left:2px solid white;border-bottom:2px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
+.early-end-item.checked .ee-tick{opacity:1}
+.ee-text{flex:1}
+.ee-label{font-size:13px;font-weight:600;color:var(--text)}
+.ee-desc{font-size:11px;color:var(--text-muted);margin-top:2px}
+.early-end-item.checked .ee-label{color:#AAA;text-decoration:line-through}
+.ee-time-out{font-size:13px;font-weight:700;color:var(--gray);min-width:42px;text-align:right}
+.early-end-item.disabled{opacity:0.35;pointer-events:none}
+#early-end-item.disabled{opacity:0.35;pointer-events:none;cursor:not-allowed}
+/* ── 첫화면 임무완료 버튼 ── */
+.select-action-bar{padding:12px 16px 20px;background:transparent}
+.select-action-status{font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:8px}
+.select-action-status.ready{color:var(--green);font-weight:700}
+.select-btn-complete{width:100%;padding:13px;font-size:15px;font-weight:700;border:none;border-radius:12px;cursor:not-allowed;background:#CCC;color:white;font-family:inherit;transition:all 0.3s;letter-spacing:-0.3px}
+.select-btn-complete.active{background:var(--red);cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,0.3)}
+.select-btn-complete.active:active{transform:scale(0.98)}
+/* 요원카드 비활성화 */
+.role-cards.disabled .role-card{opacity:0.35;pointer-events:none}
+#role-select-cards.disabled .role-card{opacity:0.35;pointer-events:none}
+/* ── MEMBER CARD ── */
+.member-card{margin:0 16px;background:white;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(192,57,43,0.12)}
+.member-row{display:flex;align-items:center;border-bottom:0.5px solid #F0F0F0}
+.member-row:last-child{border-bottom:none}
+.member-label{font-size:12px;font-weight:700;color:white;background:#C0392B;padding:12px 14px;min-width:52px;text-align:center;flex-shrink:0}
+.member-input{flex:1;border:none;outline:none;font-size:14px;padding:12px 14px;font-family:inherit;color:var(--text);background:white}
+.member-input::placeholder{color:#BBB}
+.member-select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23999' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;color:var(--text)}
+.member-select option{color:var(--text)}
+/* ── MOBILIZE CARD ── */
+.mobilize-card{margin:0 16px;background:white;border-radius:14px;padding:14px 16px;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(192,57,43,0.12)}
+.mob-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px}
+.mob-icon{font-size:16px}
+.mob-col-header{display:flex;justify-content:space-between;padding:0 4px 6px;border-bottom:1px solid #F0F0F0;margin-bottom:8px}
+.mob-col-left{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase}
+.mob-col-right{font-size:10px;font-weight:700;color:#C0392B;letter-spacing:0.5px}
+.mob-items{display:flex;flex-direction:column;gap:10px}
+.mob-item{display:flex;align-items:center;gap:10px;transition:opacity 0.2s}
+.mob-item.disabled{opacity:0.35;pointer-events:none}
+.mob-chk-wrap{width:28px;height:28px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mob-chk{width:24px;height:24px;border-radius:50%;border:2px solid #CCC;background:white;display:flex;align-items:center;justify-content:center;transition:all 0.2s;position:relative}
+.mob-chk.checked{background:#C0392B;border-color:#C0392B}
+.mob-chk.checked::after{content:'';width:9px;height:6px;border-left:2px solid white;border-bottom:2px solid white;transform:rotate(-45deg) translateY(-1px);display:block}
+.mob-text{display:flex;align-items:center;gap:8px;flex:1}
+.mob-label{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.essential-label{background:#FADBD8;color:#922B21}
+.general-label{background:#FDEBD0;color:#A04000}
+.mob-desc{font-size:12px;color:var(--text-muted)}
+.mob-time-out{font-size:13px;font-weight:700;color:#C0392B;min-width:42px;text-align:right;letter-spacing:0.5px}
+.mob-footer{text-align:right;margin-top:12px;border-top:1px solid #F0F0F0;padding-top:10px}
+.mob-reset-btn{font-size:11px;font-weight:600;color:var(--text-muted);background:#F0F2F5;border:none;border-radius:8px;padding:5px 12px;cursor:pointer;font-family:inherit}
+.mob-reset-btn:active{background:#DDD}
+
+/* ── CHECKLIST ── */
+.list-screen{padding-bottom:20px}
+.list-header{padding:14px 16px;background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.back-btn{background:var(--gray-light);border:none;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s}
+.back-btn:active{background:#DDD}
+.role-header-info h2{font-size:16px;font-weight:700}
+.role-header-info p{font-size:11px;color:var(--text-muted);margin-top:1px}
+
+/* progress */
+.progress-wrap{background:white;padding:12px 16px;border-bottom:1px solid var(--border)}
+.prog-nums{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.prog-nums span{font-size:12px;color:var(--text-muted)}
+.prog-nums strong{font-size:14px;font-weight:700;color:var(--red)}
+.prog-bar-bg{background:#EAECEE;border-radius:999px;height:7px;overflow:hidden}
+.prog-bar-fill{height:100%;border-radius:999px;transition:width 0.4s cubic-bezier(0.4,0,0.2,1);width:0}
+
+/* phase sections */
+.phase-section{margin:12px 12px 0}
+.phase-section:last-child{margin-bottom:8px}
+.phase-section:not(:first-child){margin-top:10px}
+.phase-label{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px 12px 0 0;font-size:13px;font-weight:700;color:white}
+.phase-items{background:white;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid var(--border);border-top:none}
+
+/* ★ 단계별 색상 — ph-gray 포함 모두 명시 */
+.ph-red  .phase-label{background:#C0392B}
+.ph-blue .phase-label{background:#2471A3}
+.ph-green .phase-label{background:#1E8449}
+.ph-gray .phase-label{background:#566573}
+
+/* 부모 체크 아이템 */
+.chk-item{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background 0.12s;user-select:none}
+.chk-item:last-child{border-bottom:none}
+.chk-item:active{background:#F0FBF5}
+.chk-item.checked{background:#F4FDF8}
+.chk-circle{width:24px;height:24px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;background:white}
+.chk-item.checked .chk-circle{background:var(--green);border-color:var(--green)}
+.tick{width:9px;height:6px;border-left:2px solid white;border-bottom:2px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
+.chk-item.checked .tick{opacity:1}
+.chk-text{flex:1}
+.chk-sub{font-size:11px;color:var(--text-muted);margin-bottom:2px}
+.chk-main{font-size:13px;font-weight:500;line-height:1.5;color:var(--text)}
+.chk-item.checked .chk-main{color:#AAA;text-decoration:line-through;text-decoration-color:#CCC}
+
+/* 세부 아이템 */
+.sub-item{display:flex;align-items:flex-start;gap:10px;padding:9px 14px 9px 40px;border-bottom:0.5px solid #F0F0F0;cursor:pointer;user-select:none;transition:background 0.12s}
+.sub-item:last-child{border-bottom:none}
+.sub-item:active{background:#F0FBF5}
+.sub-item.checked{background:#F4FDF8}
+.sub-circle{width:20px;height:20px;border-radius:50%;border:2px solid #DDD;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:white;transition:all 0.2s}
+.sub-item.checked .sub-circle{background:var(--green);border-color:var(--green)}
+.sub-tick{width:7px;height:5px;border-left:1.5px solid white;border-bottom:1.5px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
+.sub-item.checked .sub-tick{opacity:1}
+.sub-text{font-size:12px;color:var(--text);line-height:1.5}
+.sub-item.checked .sub-text{color:#AAA;text-decoration:line-through;text-decoration-color:#CCC}
+
+/* keyword badge */
+.kw{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;margin-right:4px;vertical-align:middle}
+.kw-red{background:#FADBD8;color:var(--red-dark)}
+.kw-blue{background:#D6EAF8;color:var(--blue)}
+.kw-green{background:#D5F5E3;color:var(--green)}
+.kw-gray{background:#EAECEE;color:#555}
+.kw-orange{background:#FDEBD0;color:#A04000}
+.kw-purple{background:#F5EEF8;color:var(--purple)}
+
+/* ── ACTION BAR ── */
+.action-bar{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--border);padding:7px 12px 10px;box-shadow:0 -3px 14px rgba(0,0,0,0.09)}
+.action-status{font-size:10px;color:var(--text-muted);text-align:center;margin-bottom:5px}
+.action-status.all-done{color:var(--green);font-weight:700}
+.action-btns{display:flex;gap:8px}
+.btn-complete{flex:1;padding:10px;font-size:14px;font-weight:700;border:none;border-radius:10px;cursor:not-allowed;background:#CCC;color:white;font-family:inherit;transition:all 0.3s;letter-spacing:-0.3px}
+.btn-complete.active{background:var(--red);cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,0.3)}
+.btn-complete.active:active{transform:scale(0.98)}
+.btn-review{padding:10px 11px;font-size:11px;font-weight:600;border:1.5px solid #CCC;border-radius:10px;cursor:not-allowed;background:white;color:#CCC;font-family:inherit;transition:all 0.3s;white-space:nowrap;line-height:1.5;text-align:center}
+.btn-review.active{border-color:var(--red);color:var(--red);cursor:pointer}
+.btn-review.active:active{transform:scale(0.98)}
+
+/* ── REVIEW ── */
+.review-screen{padding:16px 16px 32px}
+.review-header{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.review-card{background:white;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.review-card h3{font-size:14px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.review-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:12px;line-height:1.5}
+.rv-dot{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px;font-weight:700}
+.rv-done{background:var(--green);color:white}
+.rv-miss{background:#EAECEE;color:#999}
+.rv-text-done{color:var(--text)}
+.rv-text-miss{color:#AAA;text-decoration:line-through}
+.summary-box{background:white;border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:var(--shadow);text-align:center}
+.time-big{font-size:28px;font-weight:700;color:var(--red);letter-spacing:-1px}
+.time-sub{font-size:12px;color:var(--text-muted);margin-top:4px}
+.rv-score{font-size:14px;font-weight:600;margin-top:12px;padding:8px;background:#F8F9FA;border-radius:8px}
+.print-btn{width:100%;padding:14px;font-size:14px;font-weight:700;border:none;border-radius:12px;cursor:pointer;background:var(--red);color:white;font-family:inherit;margin-top:4px}
+.capture-btn{width:100%;padding:13px;font-size:14px;font-weight:700;border:1.5px solid var(--red);border-radius:12px;cursor:pointer;background:white;color:var(--red);font-family:inherit;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}
+.capture-btn:active{background:#FEF5F4}
+.capture-loading{text-align:center;font-size:12px;color:var(--text-muted);margin-top:8px;min-height:20px}
+.send-status{text-align:center;font-size:12px;font-weight:600;padding:8px 12px;border-radius:10px;margin-bottom:10px;min-height:36px;display:flex;align-items:center;justify-content:center}
+.send-status.sending{background:#EBF5FB;color:#1A5276}
+.send-status.ok{background:#D5F5E3;color:#1E8449}
+.send-status.fail{background:#FADBD8;color:#922B21}
+/* ── REVIEW TIME INPUTS ── */
+.rv-time-inputs{margin-top:14px;display:flex;flex-direction:column;gap:8px;text-align:left}
+.rv-time-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#F8F9FA;border-radius:10px;padding:10px 12px}
+.rv-time-label{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap}
+.rv-time-val{font-size:14px;font-weight:700;color:#C0392B;letter-spacing:0.5px}
+/* 종료 세부항목 배지 */
+.sub-end-time{font-size:11px;font-weight:700;color:#C0392B;white-space:nowrap;text-align:right;margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.end-label{font-size:9px;font-weight:700;color:#E74C3C;letter-spacing:0.3px;opacity:0.8}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+// ── 결과화면 캡처
+function captureScreen(){
+  var loading = document.getElementById('capture-loading');
+  if(loading) loading.textContent = '📸 저장 중...';
+
+  var reviewEl = document.getElementById('screen-review');
+  var headerEl = document.querySelector('.app-header');
+
+  // 버튼 숨김
+  var btns = reviewEl.querySelectorAll('.capture-btn, .print-btn, .capture-loading');
+  btns.forEach(function(b){ b.style.display='none'; });
+
+  // 헤더 임시 표시
+  var headerOrigDisplay = headerEl ? headerEl.style.display : '';
+  if(headerEl) headerEl.style.display = 'flex';
+
+  // ── 캡처할 요소 목록 (헤더 + 결과화면)
+  var targets = headerEl ? [headerEl, reviewEl] : [reviewEl];
+
+  // ── 각 요소의 모든 하위 요소에 계산된 색상 인라인 강제 적용
+  var savedData = [];
+  targets.forEach(function(root){
+    var els = [root].concat(Array.from(root.querySelectorAll('*')));
+    els.forEach(function(el){
+      var prev = el.getAttribute('style') || '';
+      var cs = window.getComputedStyle(el);
+      var forced =
+        'color:' + cs.getPropertyValue('color') + ' !important;' +
+        'background-color:' + cs.getPropertyValue('background-color') + ' !important;' +
+        'border-top-color:' + cs.getPropertyValue('border-top-color') + ' !important;' +
+        'border-bottom-color:' + cs.getPropertyValue('border-bottom-color') + ' !important;' +
+        'border-left-color:' + cs.getPropertyValue('border-left-color') + ' !important;' +
+        'border-right-color:' + cs.getPropertyValue('border-right-color') + ' !important;' +
+        'opacity:' + cs.getPropertyValue('opacity') + ' !important;';
+      savedData.push({el:el, prev:prev});
+      el.setAttribute('style', (prev ? prev+';' : '') + forced);
+    });
+  });
+
+  // 헤더 position 고정 해제
+  var headerPosOrig = headerEl ? headerEl.style.position : '';
+  if(headerEl) headerEl.style.position = 'static';
+
+  // 헤더 + 결과화면을 감싸는 wrapper
+  var wrapper = document.createElement('div');
+  wrapper.style.cssText = 'background:#F0F2F5;width:' + document.documentElement.clientWidth + 'px;';
+  var insertRef = headerEl || reviewEl;
+  document.body.insertBefore(wrapper, insertRef);
+  if(headerEl) wrapper.appendChild(headerEl);
+  wrapper.appendChild(reviewEl);
+
+  var dpr = window.devicePixelRatio || 1;
+
+  setTimeout(function(){
+    html2canvas(wrapper, {
+      scale: dpr * 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#F0F2F5',
+      scrollY: 0,
+      width: wrapper.offsetWidth,
+      height: wrapper.scrollHeight
+    }).then(function(canvas){
+      // 복원
+      if(headerEl){
+        document.body.insertBefore(headerEl, wrapper);
+        headerEl.style.position = headerPosOrig;
+        headerEl.style.display = headerOrigDisplay;
+      }
+      document.body.insertBefore(reviewEl, wrapper);
+      document.body.removeChild(wrapper);
+      savedData.forEach(function(d){
+        if(d.prev) d.el.setAttribute('style', d.prev);
+        else d.el.removeAttribute('style');
+      });
+      btns.forEach(function(b){ b.style.display=''; });
+
+      // PNG 저장
+      var now = new Date();
+      var fname = '긴급지원반_임무완료_' +
+        now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate()) + '_' +
+        pad(now.getHours()) + pad(now.getMinutes()) + '.png';
+      var link = document.createElement('a');
+      link.download = fname;
+      link.href = canvas.toDataURL('image/png', 1.0);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      if(loading) loading.textContent = '✅ 저장 완료!';
+      setTimeout(function(){ if(loading) loading.textContent=''; }, 2000);
+    }).catch(function(){
+      try{
+        if(headerEl){
+          document.body.insertBefore(headerEl, wrapper);
+          headerEl.style.position = headerPosOrig;
+          headerEl.style.display = headerOrigDisplay;
+        }
+        document.body.insertBefore(reviewEl, wrapper);
+        document.body.removeChild(wrapper);
+      }catch(e){}
+      savedData.forEach(function(d){
+        if(d.prev) d.el.setAttribute('style', d.prev);
+        else d.el.removeAttribute('style');
+      });
+      btns.forEach(function(b){ b.style.display=''; });
+      if(loading) loading.textContent = '❌ 캡처 실패. 다시 시도해주세요.';
+    });
+  }, 200);
+}
+</script>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="logo-badge">경기도소방<br>구리소방서</div>
+  <div class="header-title">
+    <h1>🚒 긴급지원반 임무 체크리스트</h1>
+    <p>출동 전 전 항목을 확인하세요</p>
+  </div>
+</div>
+
+<!-- ① 요원 선택 -->
+<div class="screen active" id="screen-select">
+  <div class="select-screen">
+    <div class="select-hero">
+      <div class="select-hero-icon">🚒</div>
+      <div class="select-hero-text">
+        <div class="select-badge">경기도소방 구리소방서</div>
+        <h2>긴급지원반<br>임무 체크리스트</h2>
+        
+      </div>
+    </div>
+    <div class="select-divider">
+      <span>출동 대원 정보</span>
+    </div>
+    <div class="member-card">
+      <div class="member-row">
+        <label class="member-label">소속</label>
+        <select class="member-input member-select" id="member-unit">
+          <option value="">소속 선택</option>
+          <option value="청문인권담당관">청문인권담당관</option>
+          <option value="소방행정과">소방행정과</option>
+          <option value="화재예방과">화재예방과</option>
+          <option value="재난대응과">재난대응과</option>
+        </select>
+      </div>
+      <div class="member-row">
+        <label class="member-label">계급</label>
+        <select class="member-input member-select" id="member-rank">
+          <option value="">계급 선택</option>
+          <option value="소방령">소방령</option>
+          <option value="소방경">소방경</option>
+          <option value="소방위">소방위</option>
+          <option value="소방장">소방장</option>
+          <option value="소방교">소방교</option>
+          <option value="소방사">소방사</option>
+        </select>
+      </div>
+      <div class="member-row">
+        <label class="member-label">성명</label>
+        <input class="member-input" type="text" id="member-name" placeholder="성명 입력">
+      </div>
+    </div>
+    <div class="select-divider">
+      <span>비상소집 확인</span>
+    </div>
+    <div class="mobilize-card">
+      <div class="mob-title">
+        <span class="mob-icon">🔔</span>
+        <span>비상소집 확인</span>
+      </div>
+      <div class="mob-col-header">
+        <span class="mob-col-left">구분</span>
+        <span class="mob-col-right">응소시간</span>
+      </div>
+      <div class="mob-items">
+        <div class="mob-item" id="mob-item-essential">
+          <div class="mob-chk-wrap" onclick="toggleMobilize('essential')">
+            <div class="mob-chk" id="mob-chk-essential"></div>
+          </div>
+          <div class="mob-text">
+            <span class="mob-label essential-label">필수요원</span>
+            <span class="mob-desc">1시간 이내</span>
+          </div>
+          <div class="mob-time-out" id="mob-time-essential">--:--</div>
+        </div>
+        <div class="mob-item" id="mob-item-general">
+          <div class="mob-chk-wrap" onclick="toggleMobilize('general')">
+            <div class="mob-chk" id="mob-chk-general"></div>
+          </div>
+          <div class="mob-text">
+            <span class="mob-label general-label">일반요원</span>
+            <span class="mob-desc">2시간 이내</span>
+          </div>
+          <div class="mob-time-out" id="mob-time-general">--:--</div>
+        </div>
+      </div>
+      <div class="mob-footer">
+        <button class="mob-reset-btn" onclick="resetMobilize()">↺ 초기화</button>
+      </div>
+    </div>
+    <div class="select-divider">
+      <span>현장 출동 전 종료</span>
+    </div>
+    <div class="early-end-card">
+      <div class="early-end-item" id="early-end-item" onclick="toggleEarlyEnd()">
+        <div class="ee-circle"><div class="ee-tick"></div></div>
+        <div class="ee-text">
+          <div class="ee-label">현장 출동 전 종료</div>
+          <div class="ee-desc">체크 시 요원 선택 비활성화 · 임무완료 버튼 활성화</div>
+        </div>
+        <div class="ee-time-out" id="ee-time-out">--:--</div>
+      </div>
+    </div>
+    <div class="select-divider">
+      <span>출동단계</span>
+    </div>
+    <div class="role-cards" id="depart-role-area">
+      <div class="role-card depart-role-card" onclick="toggleDepartCard()">
+        <div class="role-icon" style="background:#EBF5FB">🚒</div>
+        <div class="role-info">
+          <h3 style="color:#1A5276">출동단계</h3>
+          <p>지원 장비 준비 확인 (12개 항목)</p>
+        </div>
+        <div class="role-arrow" id="depart-arrow">›</div>
+      </div>
+    </div>
+    <!-- 출동단계 하위 항목 (펼침) -->
+    <div class="depart-sub-wrap" id="depart-sub-wrap" style="display:none">
+      <div class="depart-card" id="depart-card">
+        <div class="phase-label" style="background:#2471A3;border-radius:0">
+          <span>📍 출동단계</span>
+        </div>
+        <div class="phase-items">
+          <div class="chk-item" id="depart-parent" onclick="toggleDepartParent()">
+            <div class="chk-circle" id="depart-parent-circle"><div class="tick" id="depart-parent-tick"></div></div>
+            <div class="chk-text">
+              <div class="chk-sub"><span class="kw kw-blue">지원준비</span></div>
+              <div class="chk-main">지원 장비 준비</div>
+            </div>
+          </div>
+          <div class="depart-items" id="depart-items"></div>
+        </div>
+      </div>
+    </div>
+    <div class="select-divider">
+      <span>요원 선택</span>
+    </div>
+    <div class="role-cards" id="role-select-cards">
+      <div class="role-card cmd" onclick="selectRole('cmd')">
+        <div class="role-icon">🎖️</div>
+        <div class="role-info">
+          <h3>현장지휘요원</h3>
+          <p>현장 지휘 총괄 · 명령사항 기록 및 전달<br>상황판 설치 · 대응활동 계획수립</p>
+        </div>
+        <div class="role-arrow">›</div>
+      </div>
+      <div class="role-card res" onclick="selectRole('res')">
+        <div class="role-icon">🏕️</div>
+        <div class="role-info">
+          <h3>자원지원요원</h3>
+          <p>자원대기소 운영 · 소방력 파악 및 배치<br>소방용수 확보 · 필요장비 지원</p>
+        </div>
+        <div class="role-arrow">›</div>
+      </div>
+      <div class="role-card com" onclick="selectRole('com')">
+        <div class="role-icon">📡</div>
+        <div class="role-info">
+          <h3>통신지원요원</h3>
+          <p>통신체계 확보 · 비상동원 발령<br>유관기관 연락 · 상황전파</p>
+        </div>
+        <div class="role-arrow">›</div>
+      </div>
+    </div>
+    <div class="select-footer">각 요원별 임무를 빠짐없이 확인하세요</div>
+    <div class="select-action-bar">
+      <div class="select-action-status" id="select-action-status">소속·계급·성명 입력 후 활동 종료 또는 출동 전 종료 시 활성화</div>
+      <button class="select-btn-complete" id="select-btn-complete" disabled onclick="completeFromSelect()">임무 완료</button>
+    </div>
+  </div>
+</div>
+
+<!-- ② 체크리스트 -->
+<div class="screen" id="screen-list">
+  <div class="list-header">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="role-header-info">
+      <h2 id="role-title"></h2>
+      <p id="role-subtitle"></p>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="prog-nums">
+      <span>전체 진행률</span>
+      <strong id="prog-label">0 / 0 완료</strong>
+    </div>
+    <div class="prog-bar-bg">
+      <div class="prog-bar-fill" id="prog-fill"></div>
+    </div>
+  </div>
+  <div id="checklist-body"></div>
+  <div class="action-bar">
+    <div class="action-status" id="action-status">항목을 모두 체크하면 버튼이 활성화됩니다</div>
+    <div class="action-btns">
+      <button class="btn-complete" id="btn-complete" disabled onclick="completeTask()">임무 완료</button>
+      <button class="btn-review" id="btn-review" disabled onclick="showReview()">완료된<br>임무 확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 임무 확인 -->
+<div class="screen" id="screen-review">
+  <div class="review-screen">
+    <div class="review-header">
+      <button class="back-btn" onclick="showList()">←</button>
+      <h2 style="font-size:16px;font-weight:700">완료된 임무 확인</h2>
+    </div>
+    <div class="summary-box">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:2px" id="rv-role-name"></div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px" id="rv-member-info"></div>
+      <div class="time-big" id="rv-time">--:--:--</div>
+      <div class="time-sub" id="rv-date"></div>
+      <div class="rv-score" id="rv-score"></div>
+      <div class="rv-time-inputs">
+        <div class="rv-time-row">
+          <span class="rv-time-label">🔔 필수요원 소집</span>
+          <span class="rv-time-val" id="rv-time-essential">--:--</span>
+        </div>
+        <div class="rv-time-row">
+          <span class="rv-time-label">🔔 일반요원 소집</span>
+          <span class="rv-time-val" id="rv-time-general">--:--</span>
+        </div>
+        <div class="rv-time-row">
+          <span class="rv-time-label" id="rv-end-label">🏁 활동 종료 시각</span>
+          <span class="rv-time-val" id="rv-active-duration">--</span>
+        </div>
+        <div class="rv-time-row">
+          <span class="rv-time-label">⏱️ 총 활동 시간</span>
+          <span class="rv-time-val" id="rv-elapsed">--</span>
+        </div>
+      </div>
+    </div>
+    <div id="send-status" class="send-status"></div>
+    <div id="review-body"></div>
+    <button class="capture-btn" onclick="captureScreen()">📸 결과화면 캡처 저장</button>
+    <div class="capture-loading" id="capture-loading"></div>
+    <button class="print-btn" onclick="goSelectFromReview()">↩ 처음으로 돌아가기</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// ★ Google Sheets 웹훅 URL (배포 후 여기에 입력)
+// ══════════════════════════════════════════
+var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwUs76tJHC8srq1T6I61n1qU-VmXMKX9g7LmIPkwwioxms581t_sfo_O0l4ZjasA4KC/exec';
+
+// ══════════════════════════════════════════
+// 공통 지원준비 세부항목 (3개 요원 동일)
+// ══════════════════════════════════════════
+var SUP = [
+  '천막','테이블','의자','소모품박스',
+  '조끼','헬멧','상황판','이젤',
+  '긴급지원반 백팩','PS-LTE 가방',
+  '식수(이온음료 포함)','기타'
+];
+
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+var ROLES = {
+
+  /* ─── 현장지휘요원 ─── */
+  cmd:{
+    name:'현장지휘요원',
+    subtitle:'현장 총괄 지휘 및 명령사항 관리',
+    barColor:'#C0392B',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue',  main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악','기타'] },
+        { kw:'자원확인', kc:'kw-green', main:'자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 파악','대응단계 확인','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-green', items:[
+        { kw:'주요임무',   kc:'kw-green',  main:'현장지휘대장 보좌',
+          subs:['명령사항 기록','명령사항 전달 완료'] },
+        { kw:'현장지휘소', kc:'kw-orange', main:'현장지휘소 설치',
+          subs:['상황판 설치','현장지휘소 설치'] },
+        { kw:'상황보고',   kc:'kw-purple', main:'상황 보고 실시',
+          subs:['일반현황 보고','시간대별 조치사항 보고','작전도 작성','사진·영상 기록 확보'] },
+        { kw:'대응활동',   kc:'kw-red',    main:'대응활동 계획 수립 및 실행',
+          subs:['대응활동 계획수립','부책 작성','P119 활용','상황판단 회의 준비','통제단 인계 준비','보고자료 작성','언론브리핑 준비'] }
+      ]},
+      { phase:'종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 자원지원요원 ─── */
+  res:{
+    name:'자원지원요원',
+    subtitle:'자원 관리 및 소방력 운영 지원',
+    barColor:'#E67E22',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue',  main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악'] },
+        { kw:'자원확인', kc:'kw-green', main:'자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 파악','대응단계 확인','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-green', items:[
+        { kw:'자원대기소', kc:'kw-green', main:'자원대기소 운영',
+          subs:['자원대기소 운영 완료','교대조 편성','휴식조 편성'] },
+        { kw:'소방력', kc:'kw-orange', main:'소방력 파악 및 배치',
+          subs:['출동 소방력 파악(출동차량·인원)'] },
+        { kw:'소방력', kc:'kw-orange', main:'방면별 소방력 배치현황 확인',
+          subs:['1방면','2방면','3방면','4방면'] },
+        { kw:'소방용수', kc:'kw-blue', main:'소방용수 확보',
+          subs:['인근 소방용수 파악','부족 용수 확보','급수체계 형성(중계급수·순환급수)','탱크차 부서(중계/순환급수)'] },
+        { kw:'필요장비', kc:'kw-purple', main:'필요 장비 지원',
+          subs:['공기용기','기타물품(소방호스 등)','식품·식수 확인','유류·폼 확인'] },
+        { kw:'자원집결지', kc:'kw-red', main:'자원집결지 운영',
+          subs:['추가소방력 자원집결지 배치','자원집결지 연락관 소통','자원집결지 도착 자원 파악'] },
+        { kw:'회복지원', kc:'kw-gray', main:'회복 지원',
+          subs:['회복차량 배치','식사·간식 제공'] }
+      ]},
+      { phase:'종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 통신지원요원 ─── */
+  com:{
+    name:'통신지원요원',
+    subtitle:'통신체계 확보 및 비상동원 지원',
+    barColor:'#7D3C98',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue',  main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악'] },
+        { kw:'자원확인', kc:'kw-green', main:'자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 파악','대응단계 확인','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-green', items:[
+        { kw:'통신체계', kc:'kw-purple', main:'통신체계 확보',
+          subs:['예비채널 확보','무전망 분리(지휘/작전/지원)','작전망 확인(통신망 단일화)','무전채널 공지(지원기관)'] },
+        { kw:'비상동원', kc:'kw-red', main:'비상동원',
+          subs:['비상연락망 확보','비상소집 발령'] },
+        { kw:'유관기관', kc:'kw-orange', main:'유관기관 연락',
+          subs:['시청(오염통제·중장비)','경찰','보건소','군','한국전력공사','도시가스','헬기'] },
+        { kw:'상황전파', kc:'kw-green', main:'상황 전파',
+          subs:['P119 활용 상황전파','상황실 연락체계 구축'] }
+      ]},
+      { phase:'종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  }
+};
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+// 초기 첫 화면: 앱 헤더 숨김
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelector('.app-header').style.display = 'none';
+});
+
+// ── 비상소집 상태
+var mobilizeTime = { essential: null, general: null };
+
+function toggleMobilize(type){
+  var other = (type === 'essential') ? 'general' : 'essential';
+  var chk = document.getElementById('mob-chk-' + type);
+  var out = document.getElementById('mob-time-' + type);
+  var otherItem = document.getElementById('mob-item-' + other);
+
+  if(mobilizeTime[type]){
+    // 해제 → 상대방 다시 활성화
+    mobilizeTime[type] = null;
+    chk.classList.remove('checked');
+    out.textContent = '--:--';
+    if(otherItem) otherItem.classList.remove('disabled');
+  } else {
+    // 체크 → 현재 시각 기록, 상대방 비활성화
+    var now = new Date();
+    var t = pad(now.getHours()) + ':' + pad(now.getMinutes());
+    mobilizeTime[type] = t;
+    chk.classList.add('checked');
+    out.textContent = t;
+    if(otherItem) otherItem.classList.add('disabled');
+  }
+}
+
+function resetMobilize(){
+  ['essential','general'].forEach(function(type){
+    mobilizeTime[type] = null;
+    var chk = document.getElementById('mob-chk-' + type);
+    var out = document.getElementById('mob-time-' + type);
+    var item = document.getElementById('mob-item-' + type);
+    if(chk) chk.classList.remove('checked');
+    if(out) out.textContent = '--:--';
+    if(item) item.classList.remove('disabled');
+  });
+  activityEndTime = null;
+}
+
+var currentRole = null;
+var checkedIds  = new Set();
+var totalCount  = 0;
+var completedTime = null;
+var completedDate = null;
+var parentToSubs  = {};
+var activityEndTime = null;
+var withdrawalSids  = [];
+var departChecked = new Set();   // 첫화면 출동단계 체크
+var earlyEndTime  = null;        // 현장 출동 전 종료 시각
+
+// 출동단계 항목 (공통)
+var SUP_ITEMS = [
+  '천막','테이블','의자','소모품박스',
+  '조끼','헬멧','상황판','이젤',
+  '긴급지원반 백팩','PS-LTE 가방',
+  '식수(이온음료 포함)','기타'
+];
+
+// 출동단계 체크박스 생성
+function buildDepartItems(){
+  var wrap = document.getElementById('depart-items');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  SUP_ITEMS.forEach(function(item, i){
+    var div = document.createElement('div');
+    div.className = 'depart-item' + (departChecked.has(i) ? ' checked' : '');
+    div.setAttribute('data-di', i);
+    div.innerHTML = '<div class="d-circle"><div class="d-tick"></div></div>' +
+      '<div class="d-text">' + item + '</div>';
+    div.onclick = function(){ toggleDepart(i); };
+    wrap.appendChild(div);
+  });
+}
+
+function updateDepartParent(){
+  var parentEl = document.getElementById('depart-parent');
+  var parentCircle = document.getElementById('depart-parent-circle');
+  var parentTick = document.getElementById('depart-parent-tick');
+  var allChecked = (departChecked.size === SUP_ITEMS.length && SUP_ITEMS.length > 0);
+  if(parentEl) allChecked ? parentEl.classList.add('checked') : parentEl.classList.remove('checked');
+  if(parentCircle) parentCircle.style.cssText = allChecked ? 'background:var(--green);border-color:var(--green)' : '';
+  if(parentTick) parentTick.style.opacity = allChecked ? '1' : '0';
+}
+
+function toggleDepart(idx){
+  if(departChecked.has(idx)){
+    departChecked.delete(idx);
+  } else {
+    departChecked.add(idx);
+  }
+  var el = document.querySelector('[data-di="' + idx + '"]');
+  if(el) el.classList.toggle('checked', departChecked.has(idx));
+  // 부모 자동 체크/해제
+  var parentEl = document.getElementById('depart-parent');
+  var parentCircle = document.getElementById('depart-parent-circle');
+  var parentTick = document.getElementById('depart-parent-tick');
+  var allChecked = (departChecked.size === SUP_ITEMS.length);
+  if(parentEl) allChecked ? parentEl.classList.add('checked') : parentEl.classList.remove('checked');
+  if(parentCircle) parentCircle.style.cssText = allChecked ? 'background:var(--green);border-color:var(--green)' : '';
+  if(parentTick) parentTick.style.opacity = allChecked ? '1' : '0';
+  updateSelectBtn();
+  saveState();
+}
+
+function toggleDepartParent(){
+  var allChecked = (departChecked.size === SUP_ITEMS.length);
+  var parentEl = document.getElementById('depart-parent');
+  var parentCircle = document.getElementById('depart-parent-circle');
+  var parentTick = document.getElementById('depart-parent-tick');
+  if(allChecked){
+    departChecked.clear();
+    if(parentEl) parentEl.classList.remove('checked');
+    if(parentCircle) parentCircle.style.cssText = '';
+    if(parentTick) parentTick.style.opacity = '0';
+    document.querySelectorAll('[data-di]').forEach(function(el){ el.classList.remove('checked'); });
+  } else {
+    SUP_ITEMS.forEach(function(_, i){ departChecked.add(i); });
+    if(parentEl) parentEl.classList.add('checked');
+    if(parentCircle) parentCircle.style.cssText = 'background:var(--green);border-color:var(--green)';
+    if(parentTick) parentTick.style.opacity = '1';
+    document.querySelectorAll('[data-di]').forEach(function(el){ el.classList.add('checked'); });
+  }
+  updateSelectBtn();
+}
+
+var departCardOpen = false;
+function toggleDepartCard(){
+  departCardOpen = !departCardOpen;
+  var wrap = document.getElementById('depart-sub-wrap');
+  var arrow = document.getElementById('depart-arrow');
+  if(wrap) wrap.style.display = departCardOpen ? 'block' : 'none';
+  if(arrow) arrow.textContent = departCardOpen ? '∨' : '›';
+  if(departCardOpen){ buildDepartItems(); setTimeout(updateDepartParent, 0); }
+}
+
+// 현장 출동 전 종료
+function toggleEarlyEnd(){
+  var item = document.getElementById('early-end-item');
+  var timeOut = document.getElementById('ee-time-out');
+  var roleSelectCards = document.getElementById('role-select-cards');
+  var departArea = document.getElementById('depart-role-area');
+  var departSubWrap = document.getElementById('depart-sub-wrap');
+
+  // 요원 체크리스트에 항목이 체크된 경우 현장 출동 전 종료 불가
+  if(!earlyEndTime && checkedIds.size > 0){ return; }
+
+  if(earlyEndTime){
+    // 해제 → 출동단계·요원선택 활성화
+    earlyEndTime = null;
+    activityEndTime = null;
+    item.classList.remove('checked');
+    timeOut.textContent = '--:--';
+    if(roleSelectCards) roleSelectCards.classList.remove('disabled');
+    if(departArea) departArea.classList.remove('disabled');
+    if(departSubWrap){ departSubWrap.style.pointerEvents=''; departSubWrap.style.opacity=''; }
+    enableActivityEnd();
+  } else {
+    // 체크 - 활동 종료 시간이 이미 있으면 불가
+    if(activityEndTime && !earlyEndTime){ return; }
+    var now = new Date();
+    earlyEndTime = pad(now.getHours()) + ':' + pad(now.getMinutes());
+    activityEndTime = earlyEndTime;
+    item.classList.add('checked');
+    timeOut.textContent = earlyEndTime;
+
+    // 요원 체크 항목 전체 해제
+    if(checkedIds.size > 0){
+      checkedIds.clear();
+      document.querySelectorAll('.chk-item.checked, .sub-item.checked').forEach(function(el){
+        el.classList.remove('checked');
+      });
+      // 활동 종료 배지 초기화
+      document.querySelectorAll('.sub-end-time').forEach(function(el){
+        el.innerHTML = '';
+      });
+      activityEndTime = earlyEndTime; // 체크 초기화 후 다시 설정
+    }
+
+    // 출동단계 비활성화
+    if(departArea) departArea.classList.add('disabled');
+    if(departSubWrap){ departSubWrap.style.pointerEvents='none'; departSubWrap.style.opacity='0.35'; }
+    // 요원선택 비활성화
+    if(roleSelectCards) roleSelectCards.classList.add('disabled');
+    disableActivityEnd();
+  }
+  updateSelectBtn();
+  saveState();
+}
+
+function disableActivityEnd(){
+  // 체크리스트 화면의 지원반 철수 완료 비활성화
+  withdrawalSids.forEach(function(sid){
+    var el = document.querySelector('[data-id="' + sid + '"]');
+    if(el && !checkedIds.has(sid)) el.style.opacity = '0.3';
+    if(el) el.style.pointerEvents = 'none';
+  });
+}
+
+function enableActivityEnd(){
+  withdrawalSids.forEach(function(sid){
+    var el = document.querySelector('[data-id="' + sid + '"]');
+    if(el){ el.style.opacity = ''; el.style.pointerEvents = ''; }
+  });
+}
+
+// 첫화면 임무완료 버튼 활성화 조건 체크
+function updateSelectBtn(){
+  var btn = document.getElementById('select-btn-complete');
+  var status = document.getElementById('select-action-status');
+  if(!btn) return;
+
+  var unit  = (document.getElementById('member-unit')||{}).value || '';
+  var rank  = (document.getElementById('member-rank') ? document.getElementById('member-rank').value : '') || '';
+  var mname = (document.getElementById('member-name')||{}).value || '';
+  var infoOk = unit.trim() && rank && mname.trim();
+  var endOk  = earlyEndTime || activityEndTime;
+
+  // 요원 체크리스트에 하나라도 체크되어 있으면 첫화면 임무완료 비활성화
+  var roleChecked = checkedIds.size > 0;
+
+  // 요원 체크 있으면 현장 출동 전 종료 비활성화
+  var eeItem = document.getElementById('early-end-item');
+  if(eeItem){
+    if(roleChecked && !earlyEndTime){
+      eeItem.classList.add('disabled');
+    } else {
+      eeItem.classList.remove('disabled');
+    }
+  }
+
+  if(infoOk && endOk && !roleChecked){
+    btn.disabled = false;
+    btn.classList.add('active');
+    status.textContent = '✅ 임무 완료 버튼이 활성화되었습니다';
+    status.classList.add('ready');
+  } else {
+    btn.disabled = true;
+    btn.classList.remove('active');
+    if(roleChecked){
+      status.textContent = '요원 체크리스트가 진행 중입니다. 해당 요원에서 임무완료를 눌러주세요';
+      status.classList.remove('ready');
+    } else if(!infoOk){
+      status.textContent = '소속·계급·성명을 입력하세요';
+      status.classList.remove('ready');
+    } else {
+      status.textContent = '활동 종료 또는 현장 출동 전 종료를 체크하세요';
+      status.classList.remove('ready');
+    }
+  }
+}
+
+function completeFromSelect(){
+  currentRole = null;  // 요원 미선택 명시
+  recordTime();
+  clearSavedState();
+  showReview();
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('screen-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+  // 첫 화면(select)에서는 앱 헤더 숨김 (자체 히어로 헤더가 있음)
+  document.querySelector('.app-header').style.display = (id === 'select') ? 'none' : 'flex';
+  if(id === 'select'){
+    buildDepartItems();
+    restoreSelectScreen();
+    // 소속/계급/성명 입력 시 버튼 상태 갱신
+    ['member-unit','member-rank','member-name'].forEach(function(fid){
+      var el = document.getElementById(fid);
+      if(el){ el.oninput = function(){ updateSelectBtn(); saveState(); }; el.onchange = function(){ updateSelectBtn(); saveState(); }; }
+    });
+    updateSelectBtn();
+  }
+}
+function goBack(){ saveState(); showScreen('select'); restoreSelectScreen(); }
+function showList(){
+  // 현장 출동 전 종료 결과화면(요원 미선택)에서는 첫 화면으로
+  if(earlyEndTime && !currentRole){
+    restoreSelectScreen();
+    showScreen('select');
+  } else {
+    showScreen('list');
+  }
+}
+function goSelectFromReview(){ clearSavedState(); departChecked.clear(); reset(); showScreen('select'); }
+function resetForRole(){
+  // 체크리스트 상태만 초기화 (대원정보·비상소집·출동단계 유지)
+  checkedIds.clear();
+  completedTime = null;
+  completedDate = null;
+  parentToSubs = {};
+  activityEndTime = null;
+  withdrawalSids = [];
+}
+
+function reset(){ checkedIds.clear(); completedTime = null; parentToSubs = {}; activityEndTime = null; withdrawalSids = []; earlyEndTime = null; departCardOpen=false; var dw=document.getElementById('depart-sub-wrap'); if(dw){ dw.style.display='none'; dw.style.pointerEvents=''; dw.style.opacity=''; } var da2=document.getElementById('depart-role-area'); if(da2) da2.classList.remove('disabled'); var da=document.getElementById('depart-arrow'); if(da) da.textContent='›';
+  // 출동단계 부모 체크 초기화
+  var dp=document.getElementById('depart-parent'); if(dp) dp.classList.remove('checked');
+  var dpc=document.getElementById('depart-parent-circle'); if(dpc) dpc.style.cssText='';
+  var dpt=document.getElementById('depart-parent-tick'); if(dpt) dpt.style.opacity='0'; var rc=document.getElementById('role-select-cards'); if(rc) rc.classList.remove('disabled'); var ee=document.getElementById('early-end-item'); if(ee) ee.classList.remove('checked'); var eet=document.getElementById('ee-time-out'); if(eet) eet.textContent='--:--';
+  // 비상소집 초기화
+  mobilizeTime = { essential: null, general: null };
+  ['essential','general'].forEach(function(type){
+    var chk = document.getElementById('mob-chk-' + type);
+    var out = document.getElementById('mob-time-' + type);
+    var item = document.getElementById('mob-item-' + type);
+    if(chk) chk.classList.remove('checked');
+    if(out) out.textContent = '--:--';
+    if(item) item.classList.remove('disabled');
+  });
+  // 대원정보 초기화
+  var unitEl = document.getElementById('member-unit');
+  if(unitEl) unitEl.value = '';
+  var rankEl = document.getElementById('member-rank');
+  if(rankEl) rankEl.value = '';
+  var nameEl = document.getElementById('member-name');
+  if(nameEl) nameEl.value = '';
+  // 임무완료 버튼 비활성화
+  var sbtn = document.getElementById('select-btn-complete');
+  if(sbtn){ sbtn.disabled=true; sbtn.classList.remove('active'); }
+  var sst = document.getElementById('select-action-status');
+  if(sst){ sst.textContent='소속·계급·성명 입력 후 활동 종료 또는 출동 전 종료 시 활성화'; sst.classList.remove('ready'); }
+  // rv-score 복구
+  var rvScore = document.getElementById('rv-score');
+  if(rvScore) rvScore.style.display = '';
+}
+
+// ══════════════════════════════════════════
+// SELECT ROLE
+// ══════════════════════════════════════════
+function selectRole(role){
+  var prevRole = currentRole;
+  currentRole = role;
+  // 다른 요원으로 변경 시에만 체크 초기화
+  if(prevRole !== role){
+    checkedIds.clear();
+    completedTime = null;
+    completedDate = null;
+    parentToSubs = {};
+    activityEndTime = null;
+    withdrawalSids = [];
+  }
+  var rd = ROLES[role];
+  document.getElementById('role-title').textContent    = rd.name;
+  document.getElementById('role-subtitle').textContent = rd.subtitle;
+  document.getElementById('prog-fill').style.background = rd.barColor;
+  buildChecklist(rd);
+  showScreen('list');
+  restoreChecklist();
+}
+
+// ══════════════════════════════════════════
+// BUILD CHECKLIST
+// ══════════════════════════════════════════
+function buildChecklist(rd){
+  var body = document.getElementById('checklist-body');
+  body.innerHTML = '';
+  totalCount = 0;
+  parentToSubs = {};
+  var ic = 0;
+
+  rd.phases.forEach(function(ph){
+    var sec = document.createElement('div');
+    sec.className = 'phase-section ' + ph.ph;
+
+    var lbl = document.createElement('div');
+    lbl.className = 'phase-label';
+    lbl.innerHTML = '<span>📍 ' + ph.phase + '</span>';
+    sec.appendChild(lbl);
+
+    var wrap = document.createElement('div');
+    wrap.className = 'phase-items';
+
+    ph.items.forEach(function(item){
+      var pid = 'chk-' + ic;
+      ic++;
+      totalCount++;
+      var subIds = [];
+      var isWithdrawalParent = (item.main === '지원반 철수 완료');
+      if(isWithdrawalParent){ withdrawalSids.push(pid); }
+
+      /* 부모 행 */
+      var div = document.createElement('div');
+      div.className = 'chk-item';
+      div.setAttribute('data-id', pid);
+      if(isWithdrawalParent){
+        div.innerHTML =
+          '<div class="chk-circle"><div class="tick"></div></div>' +
+          '<div class="chk-text">' +
+            '<div class="chk-sub"><span class="kw ' + item.kc + '">' + item.kw + '</span></div>' +
+            '<div class="chk-main">' + item.main + '</div>' +
+          '</div>' +
+          '<div class="sub-end-time" id="sub-end-' + pid + '"></div>';
+      } else {
+        div.innerHTML =
+          '<div class="chk-circle"><div class="tick"></div></div>' +
+          '<div class="chk-text">' +
+            '<div class="chk-sub"><span class="kw ' + item.kc + '">' + item.kw + '</span></div>' +
+            '<div class="chk-main">' + item.main + '</div>' +
+          '</div>';
+      }
+      (function(p, isW){ div.onclick = function(){ toggleParent(p, isW); }; })(pid, isWithdrawalParent);
+      wrap.appendChild(div);
+
+      /* 세부 행 */
+      item.subs.forEach(function(sub){
+        var sid = 'chk-' + ic;
+        ic++;
+        totalCount++;
+        subIds.push(sid);
+
+        var isWithdrawal = false;
+        if(isWithdrawal){ withdrawalSids.push(sid); }
+
+        var sd = document.createElement('div');
+        sd.className = 'sub-item';
+        sd.setAttribute('data-id', sid);
+        if(isWithdrawal){
+          sd.innerHTML =
+            '<div class="sub-circle"><div class="sub-tick"></div></div>' +
+            '<div class="sub-text">' + sub + '</div>' +
+            '<div class="sub-end-time" id="sub-end-' + sid + '"></div>';
+        } else {
+          sd.innerHTML =
+            '<div class="sub-circle"><div class="sub-tick"></div></div>' +
+            '<div class="sub-text">' + sub + '</div>';
+        }
+        (function(s, p, isW){
+          sd.onclick = function(e){ e.stopPropagation(); toggleSub(s, p, isW); };
+        })(sid, pid, isWithdrawal);
+        wrap.appendChild(sd);
+      });
+
+      parentToSubs[pid] = subIds;
+    });
+
+    sec.appendChild(wrap);
+    body.appendChild(sec);
+  });
+
+  // 하단 고정 버튼 바에 마지막 항목이 가려지지 않도록 스페이서
+  var spacer = document.createElement('div');
+  spacer.style.height = '150px';
+  body.appendChild(spacer);
+
+  updateProgress();
+}
+
+// ══════════════════════════════════════════
+// TOGGLE — 부모 클릭 시 하위 전체 자동 체크/해제
+// ══════════════════════════════════════════
+function toggleParent(pid, isWithdrawalParent){
+  var el   = document.querySelector('[data-id="' + pid + '"]');
+  if(!el) return;
+  var subs = parentToSubs[pid] || [];
+
+  if(checkedIds.has(pid)){
+    /* 해제 */
+    checkedIds.delete(pid);
+    el.classList.remove('checked');
+    subs.forEach(function(sid){
+      checkedIds.delete(sid);
+      var se = document.querySelector('[data-id="' + sid + '"]');
+      if(se) se.classList.remove('checked');
+    });
+    if(isWithdrawalParent){
+      activityEndTime = null;
+      var b0 = document.getElementById('sub-end-' + pid);
+      if(b0) b0.innerHTML = '';
+    }
+  } else {
+    /* 체크 */
+    checkedIds.add(pid);
+    el.classList.add('checked');
+    subs.forEach(function(sid){
+      checkedIds.add(sid);
+      var se = document.querySelector('[data-id="' + sid + '"]');
+      if(se) se.classList.add('checked');
+    });
+    if(isWithdrawalParent){
+      var now4 = new Date();
+      activityEndTime = pad(now4.getHours()) + ':' + pad(now4.getMinutes());
+      var b4 = document.getElementById('sub-end-' + pid);
+      if(b4) b4.innerHTML = '<span class="end-label">활동 종료</span>' + activityEndTime;
+    }
+  }
+  updateProgress();
+  saveState();
+}
+
+/* 세부항목 개별 클릭 */
+function toggleSub(sid, pid, isWithdrawal){
+  var el = document.querySelector('[data-id="' + sid + '"]');
+  if(!el) return;
+  var badge = document.getElementById('sub-end-' + sid);
+
+  if(checkedIds.has(sid)){
+    /* 해제 → 부모도 해제 */
+    checkedIds.delete(sid);
+    el.classList.remove('checked');
+    checkedIds.delete(pid);
+    var pe = document.querySelector('[data-id="' + pid + '"]');
+    if(pe) pe.classList.remove('checked');
+    // 종료항목 해제 시 activityEndTime 초기화
+    if(isWithdrawal){ activityEndTime = null; if(badge) badge.textContent = ''; }
+  } else {
+    /* 체크 → 모든 세부 완료면 부모 자동 체크 */
+    checkedIds.add(sid);
+    el.classList.add('checked');
+    // 종료항목 체크 시 활동 종료 시간 기록
+    if(isWithdrawal){
+      var now = new Date();
+      activityEndTime = pad(now.getHours()) + ':' + pad(now.getMinutes());
+      if(badge) badge.innerHTML = '<span class="end-label">활동 종료</span>' + activityEndTime;
+    }
+    var subs = parentToSubs[pid] || [];
+    if(subs.every(function(s){ return checkedIds.has(s); })){
+      checkedIds.add(pid);
+      var pe2 = document.querySelector('[data-id="' + pid + '"]');
+      if(pe2) pe2.classList.add('checked');
+    }
+  }
+  updateProgress();
+  saveState();
+}
+
+// ══════════════════════════════════════════
+// PROGRESS
+// ══════════════════════════════════════════
+function updateProgress(){
+  var n   = checkedIds.size;
+  var pct = totalCount > 0 ? Math.round((n / totalCount) * 100) : 0;
+  document.getElementById('prog-label').textContent = n + ' / ' + totalCount + ' 완료';
+  document.getElementById('prog-fill').style.width  = pct + '%';
+
+  var bc = document.getElementById('btn-complete');
+  var br = document.getElementById('btn-review');
+  var st = document.getElementById('action-status');
+
+  // 활동 종료 OR 현장출동전종료 중 하나라도 있으면 활성화 (전체 완료 불필요)
+  var endOk = !!(activityEndTime || earlyEndTime);
+  var allDone = (n === totalCount && totalCount > 0);
+
+  if(endOk || allDone){
+    bc.disabled = false; bc.classList.add('active');
+    br.disabled = false; br.classList.add('active');
+    if(allDone){
+      st.textContent = '✅ 전체 완료! 임무완료 버튼을 눌러주세요';
+    } else {
+      st.textContent = '✅ 종료 시각이 기록되었습니다. 임무완료를 눌러주세요';
+    }
+    st.classList.add('all-done');
+    bc.textContent = '🎖️ 임무 완료';
+  } else {
+    bc.disabled = true;  bc.classList.remove('active');
+    br.disabled = true;  br.classList.remove('active');
+    st.textContent = '항목을 모두 체크하면 버튼이 활성화됩니다 (' + n + '/' + totalCount + ')';
+    st.classList.remove('all-done');
+    bc.textContent = '임무 완료';
+  }
+}
+
+// ══════════════════════════════════════════
+// COMPLETE & TIME
+// ══════════════════════════════════════════
+function completeTask(){
+  recordTime();
+  clearSavedState();
+  showReview();
+}
+
+function recordTime(){
+  if(completedTime) return;
+  var now = new Date();
+  completedTime = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  completedDate = now.getFullYear() + '년 ' + (now.getMonth()+1) + '월 ' + now.getDate() + '일 (' +
+    ['일','월','화','수','목','금','토'][now.getDay()] + '요일)';
+}
+function pad(n){ return String(n).padStart(2,'0'); }
+
+// ══════════════════════════════════════════
+// REVIEW SCREEN
+// ══════════════════════════════════════════
+function showReview(){
+  if(!completedTime) recordTime();
+
+  var unit  = (document.getElementById('member-unit')||{}).value || '';
+  var rank  = (document.getElementById('member-rank')||{}).value || '';
+  var mname = (document.getElementById('member-name')||{}).value || '';
+  var memberStr = [unit, rank, mname].filter(Boolean).join(' · ');
+
+  // ── 현장 출동 전 종료: 간소화 화면
+  // 현장 출동 전 종료 경로 (요원 미선택)
+  if(earlyEndTime && (!currentRole || currentRole === 'none')){
+    // ── 결과화면 1: 제목 '임무 완료 보고서'
+    document.getElementById('rv-role-name').textContent = '임무 완료 보고서';
+    // 활동 종료 시각 라벨 변경
+    var endLabel = document.getElementById('rv-end-label');
+    if(endLabel) endLabel.textContent = '🏁 활동 종료 시각(현장 출동 전 종료)';
+    document.getElementById('rv-member-info').textContent = memberStr || '대원 정보 미입력';
+    document.getElementById('rv-time').textContent  = completedTime;
+    document.getElementById('rv-date').textContent  = completedDate;
+    document.getElementById('rv-score').style.display = 'none';
+
+    document.getElementById('rv-time-essential').textContent = mobilizeTime.essential || '미기록';
+    document.getElementById('rv-time-general').textContent   = mobilizeTime.general   || '미기록';
+    document.getElementById('rv-active-duration').textContent = earlyEndTime;
+
+    // 총 활동 시간 계산
+    var sonjipTime0 = mobilizeTime.essential || mobilizeTime.general;
+    if(sonjipTime0 && earlyEndTime){
+      var bH0=parseInt(sonjipTime0.split(':')[0]), bM0=parseInt(sonjipTime0.split(':')[1]);
+      var eH0=parseInt(earlyEndTime.split(':')[0]), eM0=parseInt(earlyEndTime.split(':')[1]);
+      var diff0=(eH0*60+eM0)-(bH0*60+bM0); if(diff0<0) diff0+=1440;
+      document.getElementById('rv-elapsed').textContent = Math.floor(diff0/60)+'시간 '+diff0%60+'분';
+    } else {
+      document.getElementById('rv-elapsed').textContent = '정보 부족';
+    }
+
+    // ── 2번째 박스: 출동단계 + 현장 출동 전 종료만 출력
+    var body0 = document.getElementById('review-body');
+    body0.innerHTML = '';
+
+    // 출동단계 카드
+    var dCard = document.createElement('div');
+    dCard.className = 'review-card';
+    var dH3 = document.createElement('h3');
+    dH3.textContent = '📍 출동단계';
+    dCard.appendChild(dH3);
+    var allDeptDone = (departChecked.size === SUP_ITEMS.length);
+    var dRow = document.createElement('div');
+    dRow.className = 'review-item';
+    dRow.innerHTML = '<div class="rv-dot '+(allDeptDone?'rv-done':'rv-miss')+'">'+(allDeptDone?'✓':'–')+'</div>'+
+      '<div class="'+(allDeptDone?'rv-text-done':'rv-text-miss')+'" style="font-weight:500">[지원준비] 지원 장비 준비</div>';
+    dCard.appendChild(dRow);
+    SUP_ITEMS.forEach(function(item, idx){
+      var done = departChecked.has(idx);
+      var sr = document.createElement('div');
+      sr.className = 'review-item';
+      sr.style.paddingLeft = '24px';
+      sr.innerHTML = '<div class="rv-dot '+(done?'rv-done':'rv-miss')+'" style="width:14px;height:14px;font-size:8px">'+(done?'✓':'–')+'</div>'+
+        '<div class="'+(done?'rv-text-done':'rv-text-miss')+'">'+item+'</div>';
+      dCard.appendChild(sr);
+    });
+    body0.appendChild(dCard);
+
+
+
+    showScreen('review');
+    sendToSheet();
+    return;
+  }
+
+  // ── 일반 요원 선택 완료 화면
+  document.getElementById('rv-score').style.display = '';
+  // 활동 종료 시각 라벨 원래대로 복원
+  var endLabel2 = document.getElementById('rv-end-label');
+  if(endLabel2) endLabel2.textContent = '🏁 활동 종료 시각';
+  var rd = ROLES[currentRole] || {name:'', phases:[]};
+  document.getElementById('rv-role-name').textContent = rd.name + ' 임무 완료 보고서';
+  document.getElementById('rv-member-info').textContent = memberStr || '대원 정보 미입력';
+  document.getElementById('rv-time').textContent      = completedTime;
+  document.getElementById('rv-date').textContent      = completedDate;
+  document.getElementById('rv-score').textContent     = '체크 완료: ' + checkedIds.size + ' / ' + totalCount + ' 항목';
+
+  document.getElementById('rv-time-essential').textContent = mobilizeTime.essential || '미기록';
+  document.getElementById('rv-time-general').textContent   = mobilizeTime.general   || '미기록';
+
+  var endT = activityEndTime || earlyEndTime || null;
+  document.getElementById('rv-active-duration').textContent = endT || '미기록';
+
+  var sonjipTime = mobilizeTime.essential || mobilizeTime.general;
+  var finalEndTime = activityEndTime || earlyEndTime;
+  if(sonjipTime && finalEndTime){
+    var bH2=parseInt(sonjipTime.split(':')[0]), bM2=parseInt(sonjipTime.split(':')[1]);
+    var eH2=parseInt(finalEndTime.split(':')[0]), eM2=parseInt(finalEndTime.split(':')[1]);
+    var diff2=(eH2*60+eM2)-(bH2*60+bM2); if(diff2<0) diff2+=1440;
+    document.getElementById('rv-elapsed').textContent = Math.floor(diff2/60)+'시간 '+diff2%60+'분';
+  } else {
+    document.getElementById('rv-elapsed').textContent = '정보 부족';
+  }
+
+  var body = document.getElementById('review-body');
+  body.innerHTML = '';
+  var ic = 0;
+
+  // ── 출동단계 카드 (첫화면 체크 현황)
+  var departCard = document.createElement('div');
+  departCard.className = 'review-card';
+  var departH3 = document.createElement('h3');
+  departH3.textContent = '📍 출동단계';
+  departCard.appendChild(departH3);
+
+  // 지원준비 부모 행
+  var allDeptChecked = (departChecked.size === SUP_ITEMS.length);
+  var dRow = document.createElement('div');
+  dRow.className = 'review-item';
+  dRow.innerHTML =
+    '<div class="rv-dot '+(allDeptChecked?'rv-done':'rv-miss')+'">'+(allDeptChecked?'✓':'–')+'</div>'+
+    '<div class="'+(allDeptChecked?'rv-text-done':'rv-text-miss')+'" style="font-weight:500">[지원준비] 지원 장비 준비</div>';
+  departCard.appendChild(dRow);
+
+  // 세부 항목 12개
+  SUP_ITEMS.forEach(function(item, idx){
+    var done = departChecked.has(idx);
+    var sr = document.createElement('div');
+    sr.className = 'review-item';
+    sr.style.paddingLeft = '24px';
+    sr.innerHTML =
+      '<div class="rv-dot '+(done?'rv-done':'rv-miss')+'" style="width:14px;height:14px;font-size:8px">'+(done?'✓':'–')+'</div>'+
+      '<div class="'+(done?'rv-text-done':'rv-text-miss')+'">'+item+'</div>';
+    departCard.appendChild(sr);
+  });
+  body.appendChild(departCard);
+
+  rd.phases.forEach(function(ph){
+    var card = document.createElement('div');
+    card.className = 'review-card';
+    var h3 = document.createElement('h3');
+    h3.textContent = '📍 ' + ph.phase;
+    card.appendChild(h3);
+
+    ph.items.forEach(function(item){
+      var pid  = 'chk-' + ic; ic++;
+      var done = checkedIds.has(pid);
+      var row  = document.createElement('div');
+      row.className = 'review-item';
+      row.innerHTML =
+        '<div class="rv-dot '+(done?'rv-done':'rv-miss')+'">'+(done?'✓':'–')+'</div>'+
+        '<div class="'+(done?'rv-text-done':'rv-text-miss')+'" style="font-weight:500">['+item.kw+'] '+item.main+'</div>';
+      card.appendChild(row);
+
+      item.subs.forEach(function(sub){
+        var sid  = 'chk-' + ic; ic++;
+        var sdone = checkedIds.has(sid);
+        var sr   = document.createElement('div');
+        sr.className = 'review-item';
+        sr.style.paddingLeft = '24px';
+        sr.innerHTML =
+          '<div class="rv-dot '+(sdone?'rv-done':'rv-miss')+'" style="width:14px;height:14px;font-size:8px">'+(sdone?'✓':'–')+'</div>'+
+          '<div class="'+(sdone?'rv-text-done':'rv-text-miss')+'">'+sub+'</div>';
+        card.appendChild(sr);
+      });
+    });
+
+    body.appendChild(card);
+  });
+
+  showScreen('review');
+  // Google Sheets 전송
+  sendToSheet();
+}
+
+// ══════════════════════════════════════════
+// GOOGLE SHEETS 전송
+// ══════════════════════════════════════════
+function sendToSheet(){
+  if(!WEBHOOK_URL || WEBHOOK_URL === 'YOUR_WEBHOOK_URL_HERE') return;
+  // 현장 출동 전 종료(요원 미선택)인 경우 전송 시도하지 않음
+  if(!currentRole || currentRole === 'none' || earlyEndTime) return;
+
+  var rd = (currentRole && ROLES[currentRole]) ? ROLES[currentRole] : {name:'출동 전 종료'};
+  var sonjipTime = mobilizeTime.essential || mobilizeTime.general;
+  var elapsedText = '미기록';
+  if(sonjipTime && activityEndTime){
+    var bH = parseInt(sonjipTime.split(':')[0]), bM = parseInt(sonjipTime.split(':')[1]);
+    var eH = parseInt(activityEndTime.split(':')[0]), eM = parseInt(activityEndTime.split(':')[1]);
+    var diff = (eH*60+eM) - (bH*60+bM);
+    if(diff < 0) diff += 1440;
+    elapsedText = Math.floor(diff/60) + '시간 ' + (diff%60) + '분';
+  }
+
+  var now = new Date();
+  var datetime = now.getFullYear() + '-' +
+    pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' +
+    pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+
+  var payload = {
+    datetime:      datetime,
+    roleName:      rd.name,
+    unit:          (document.getElementById('member-unit')||{}).value || '',
+    rank:          (document.getElementById('member-rank')||{}).value || '',
+    memberName:    (document.getElementById('member-name')||{}).value || '',
+    essentialTime: mobilizeTime.essential || null,
+    generalTime:   mobilizeTime.general   || null,
+    endTime:       activityEndTime || earlyEndTime || null,
+    earlyEnd:      earlyEndTime ? '현장출동전종료' : null,
+    elapsed:       elapsedText,
+    checked:       checkedIds.size,
+    total:         totalCount,
+    rate:          Math.round((checkedIds.size / totalCount) * 100)
+  };
+
+  // 전송 상태 표시
+  var statusEl = document.getElementById('send-status');
+  if(statusEl) { statusEl.textContent = '📤 기록 전송 중...'; statusEl.className = 'send-status sending'; }
+
+  fetch(WEBHOOK_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).then(function(){
+    if(statusEl){ statusEl.textContent = '✅ 기록이 저장되었습니다'; statusEl.className = 'send-status ok'; }
+  }).catch(function(){
+    if(statusEl){ statusEl.textContent = ''; statusEl.className = 'send-status'; }
+  });
+}
+
+// ── 결과화면 캡처
+function captureScreen(){
+  var loading = document.getElementById('capture-loading');
+  if(loading) loading.textContent = '📸 저장 중...';
+
+  var reviewEl = document.getElementById('screen-review');
+  var headerEl = document.querySelector('.app-header');
+
+  // 버튼 숨김
+  var btns = reviewEl.querySelectorAll('.capture-btn, .print-btn, .capture-loading');
+  btns.forEach(function(b){ b.style.display='none'; });
+
+  // 헤더 임시 표시
+  var headerOrigDisplay = headerEl ? headerEl.style.display : '';
+  if(headerEl) headerEl.style.display = 'flex';
+
+  // ── 캡처할 요소 목록 (헤더 + 결과화면)
+  var targets = headerEl ? [headerEl, reviewEl] : [reviewEl];
+
+  // ── 각 요소의 모든 하위 요소에 계산된 색상 인라인 강제 적용
+  var savedData = [];
+  targets.forEach(function(root){
+    var els = [root].concat(Array.from(root.querySelectorAll('*')));
+    els.forEach(function(el){
+      var prev = el.getAttribute('style') || '';
+      var cs = window.getComputedStyle(el);
+      var forced =
+        'color:' + cs.getPropertyValue('color') + ' !important;' +
+        'background-color:' + cs.getPropertyValue('background-color') + ' !important;' +
+        'border-top-color:' + cs.getPropertyValue('border-top-color') + ' !important;' +
+        'border-bottom-color:' + cs.getPropertyValue('border-bottom-color') + ' !important;' +
+        'border-left-color:' + cs.getPropertyValue('border-left-color') + ' !important;' +
+        'border-right-color:' + cs.getPropertyValue('border-right-color') + ' !important;' +
+        'opacity:' + cs.getPropertyValue('opacity') + ' !important;';
+      savedData.push({el:el, prev:prev});
+      el.setAttribute('style', (prev ? prev+';' : '') + forced);
+    });
+  });
+
+  // 헤더 position 고정 해제
+  var headerPosOrig = headerEl ? headerEl.style.position : '';
+  if(headerEl) headerEl.style.position = 'static';
+
+  // 헤더 + 결과화면을 감싸는 wrapper
+  var wrapper = document.createElement('div');
+  wrapper.style.cssText = 'background:#F0F2F5;width:' + document.documentElement.clientWidth + 'px;';
+  var insertRef = headerEl || reviewEl;
+  document.body.insertBefore(wrapper, insertRef);
+  if(headerEl) wrapper.appendChild(headerEl);
+  wrapper.appendChild(reviewEl);
+
+  var dpr = window.devicePixelRatio || 1;
+
+  setTimeout(function(){
+    html2canvas(wrapper, {
+      scale: dpr * 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#F0F2F5',
+      scrollY: 0,
+      width: wrapper.offsetWidth,
+      height: wrapper.scrollHeight
+    }).then(function(canvas){
+      // 복원
+      if(headerEl){
+        document.body.insertBefore(headerEl, wrapper);
+        headerEl.style.position = headerPosOrig;
+        headerEl.style.display = headerOrigDisplay;
+      }
+      document.body.insertBefore(reviewEl, wrapper);
+      document.body.removeChild(wrapper);
+      savedData.forEach(function(d){
+        if(d.prev) d.el.setAttribute('style', d.prev);
+        else d.el.removeAttribute('style');
+      });
+      btns.forEach(function(b){ b.style.display=''; });
+
+      // PNG 저장
+      var now = new Date();
+      var fname = '긴급지원반_임무완료_' +
+        now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate()) + '_' +
+        pad(now.getHours()) + pad(now.getMinutes()) + '.png';
+      var link = document.createElement('a');
+      link.download = fname;
+      link.href = canvas.toDataURL('image/png', 1.0);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      if(loading) loading.textContent = '✅ 저장 완료!';
+      setTimeout(function(){ if(loading) loading.textContent=''; }, 2000);
+    }).catch(function(){
+      try{
+        if(headerEl){
+          document.body.insertBefore(headerEl, wrapper);
+          headerEl.style.position = headerPosOrig;
+          headerEl.style.display = headerOrigDisplay;
+        }
+        document.body.insertBefore(reviewEl, wrapper);
+        document.body.removeChild(wrapper);
+      }catch(e){}
+      savedData.forEach(function(d){
+        if(d.prev) d.el.setAttribute('style', d.prev);
+        else d.el.removeAttribute('style');
+      });
+      btns.forEach(function(b){ b.style.display=''; });
+      if(loading) loading.textContent = '❌ 캡처 실패. 다시 시도해주세요.';
+    });
+  }, 200);
+}
+
+// ══════════════════════════════════════════
+// localStorage 자동저장 / 복원
+// ══════════════════════════════════════════
+var SAVE_KEY = 'guri_checklist_state';
+
+function saveState(){
+  try {
+    // checkedIds를 role별로 저장
+    var roleChecked = {};
+    if(currentRole){
+      roleChecked[currentRole] = Array.from(checkedIds);
+    }
+    // 기존 저장된 다른 role 체크 내용도 유지
+    try {
+      var prev = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
+      if(prev.roleChecked){
+        Object.keys(prev.roleChecked).forEach(function(r){
+          if(r !== currentRole) roleChecked[r] = prev.roleChecked[r];
+        });
+      }
+    } catch(e2){}
+    var state = {
+      memberUnit:    (document.getElementById('member-unit')||{}).value || '',
+      memberRank:    (document.getElementById('member-rank') ? document.getElementById('member-rank').value : '') || '',
+      memberName:    (document.getElementById('member-name')||{}).value || '',
+      mobilizeTime:  mobilizeTime,
+      earlyEndTime:  earlyEndTime,
+      activityEndTime: activityEndTime,
+      departChecked: Array.from(departChecked),
+      checkedIds:    Array.from(checkedIds),
+      roleChecked:   roleChecked,
+      currentRole:   currentRole,
+      departCardOpen: departCardOpen,
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  } catch(e) {}
+}
+
+function loadState(){
+  try {
+    var raw = localStorage.getItem(SAVE_KEY);
+    if(!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function clearSavedState(){
+  try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+}
+
+function restoreSelectScreen(){
+  var state = loadState();
+  if(!state) return;
+
+  // 대원정보
+  var u = document.getElementById('member-unit');
+  if(u && state.memberUnit) u.value = state.memberUnit;
+  var r = document.getElementById('member-rank');
+  if(r && state.memberRank) r.value = state.memberRank;
+  var n = document.getElementById('member-name');
+  if(n && state.memberName) n.value = state.memberName;
+
+  // 비상소집
+  if(state.mobilizeTime){
+    mobilizeTime = state.mobilizeTime;
+    ['essential','general'].forEach(function(type){
+      if(mobilizeTime[type]){
+        var chk = document.getElementById('mob-chk-' + type);
+        var out = document.getElementById('mob-time-' + type);
+        var other = type==='essential'?'general':'essential';
+        var otherItem = document.getElementById('mob-item-' + other);
+        if(chk) chk.classList.add('checked');
+        if(out) out.textContent = mobilizeTime[type];
+        if(otherItem) otherItem.classList.add('disabled');
+      }
+    });
+  }
+
+  // 현장 출동 전 종료
+  if(state.earlyEndTime){
+    earlyEndTime = state.earlyEndTime;
+    activityEndTime = state.activityEndTime;
+    var ee = document.getElementById('early-end-item');
+    if(ee) ee.classList.add('checked');
+    var eet = document.getElementById('ee-time-out');
+    if(eet) eet.textContent = earlyEndTime;
+    // 출동단계·요원선택 비활성화
+    var da = document.getElementById('depart-role-area');
+    if(da) da.classList.add('disabled');
+    var rc = document.getElementById('role-select-cards');
+    if(rc) rc.classList.add('disabled');
+  }
+
+  // 출동단계
+  if(state.departChecked && state.departChecked.length > 0){
+    departChecked = new Set(state.departChecked.map(Number));
+    buildDepartItems();
+    // 부모 체크 상태 갱신
+    var parentEl = document.getElementById('depart-parent');
+    var parentCircle = document.getElementById('depart-parent-circle');
+    var parentTick = document.getElementById('depart-parent-tick');
+    var allDept = (departChecked.size === SUP_ITEMS.length);
+    if(parentEl) allDept ? parentEl.classList.add('checked') : parentEl.classList.remove('checked');
+    if(parentCircle) parentCircle.style.cssText = allDept ? 'background:var(--green);border-color:var(--green)' : '';
+    if(parentTick) parentTick.style.opacity = allDept ? '1' : '0';
+  }
+
+  // 임무완료 버튼 상태 갱신
+  updateSelectBtn();
+}
+
+function restoreChecklist(){
+  var state = loadState();
+  if(!state) return;
+
+  // 현재 role에 해당하는 checkedIds만 복원
+  var savedIds = [];
+  if(state.roleChecked && currentRole && state.roleChecked[currentRole]){
+    savedIds = state.roleChecked[currentRole];
+  } else if(state.currentRole === currentRole && state.checkedIds && state.checkedIds.length > 0){
+    // 이전 버전 호환
+    savedIds = state.checkedIds;
+  }
+
+  if(savedIds.length === 0) return;
+
+  checkedIds.clear();
+  savedIds.forEach(function(id){
+    checkedIds.add(id);
+    var el = document.querySelector('[data-id="'+id+'"]');
+    if(el) el.classList.add('checked');
+    // 인라인 스타일 제거 (CSS 클래스로만 처리되어야 toggleParent 해제가 정상 작동)
+    if(el && el.classList.contains('chk-item')){
+      var circle = el.querySelector('.chk-circle');
+      var tick = el.querySelector('.tick');
+      if(circle) circle.style.cssText = '';
+      if(tick) tick.style.opacity = '';
+    }
+  });
+
+  // 활동종료 복원
+  if(state.activityEndTime && !earlyEndTime){
+    activityEndTime = state.activityEndTime;
+    withdrawalSids.forEach(function(sid){
+      if(checkedIds.has(sid)){
+        var badge = document.getElementById('sub-end-'+sid);
+        if(badge) badge.innerHTML='<span class="end-label">활동 종료</span>'+activityEndTime;
+      }
+    });
+    withdrawalSids.forEach(function(pid){
+      if(checkedIds.has(pid)){
+        var badge2 = document.getElementById('sub-end-'+pid);
+        if(badge2) badge2.innerHTML='<span class="end-label">활동 종료</span>'+activityEndTime;
+      }
+    });
+  }
+  updateProgress();
+}
+
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('service-worker.js')
+      .then(function(reg){ console.log('SW 등록 완료:', reg.scope); })
+      .catch(function(err){ console.log('SW 등록 실패:', err); });
+  });
+}
+</script>
+</body>
+</html>
