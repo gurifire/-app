@@ -53,7 +53,8 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .role-card.com{border-color:rgba(125,60,152,0.2)}.role-card.com h3{color:var(--purple)}
 /* ── SELECT HERO ── */
 .select-screen{padding:0 0 32px}
-.select-hero{background:linear-gradient(150deg,#C0392B 0%,#922B21 55%,#7B241C 100%);padding:24px 20px;display:flex;align-items:center;gap:16px;color:white;min-height:100px}
+.select-hero{background:linear-gradient(150deg,#C0392B 0%,#922B21 55%,#7B241C 100%);padding:24px 20px;display:flex;align-items:center;gap:16px;color:white;min-height:100px;position:relative}
+.maker-badge{position:absolute;top:10px;right:12px;font-size:10px;opacity:0.85;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:6px;padding:3px 8px;color:white;white-space:nowrap}
 .select-hero-icon{font-size:40px;flex-shrink:0;line-height:1;width:64px;height:64px;background:rgba(255,255,255,0.18);border-radius:50%;display:flex;align-items:center;justify-content:center}
 .select-badge{font-size:10px;font-weight:700;opacity:0.8;letter-spacing:0.5px;margin-bottom:4px;text-transform:uppercase}
 .select-hero-text h2{font-size:22px;font-weight:800;line-height:1.3;letter-spacing:-0.5px;margin:0}
@@ -470,6 +471,7 @@ function captureScreen(){
         </div>
         <div class="ee-time-out" id="ee-time-out">--:--</div>
       </div>
+      <div class="maker-badge">제작자 : 소방교 김대운</div>
     </div>
     <div class="select-divider">
       <span>출동단계</span>
