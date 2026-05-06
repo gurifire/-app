@@ -1,4 +1,4 @@
-var CACHE_NAME = 'guri-checklist-v1';
+var CACHE_NAME = 'guri-checklist-v2';
 var CACHE_FILES = [
   './',
   './index.html',
