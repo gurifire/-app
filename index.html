@@ -1814,29 +1814,8 @@ function restoreChecklist(){
 if('serviceWorker' in navigator){
   window.addEventListener('load', function(){
     navigator.serviceWorker.register('service-worker.js')
-      .then(function(reg){
-        console.log('SW 등록 완료:', reg.scope);
-
-        // 새 버전 감지 시 자동 업데이트
-        reg.addEventListener('updatefound', function(){
-          var newWorker = reg.installing;
-          newWorker.addEventListener('statechange', function(){
-            if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
-              // 새 버전 있음 → 즉시 적용
-              newWorker.postMessage('skipWaiting');
-            }
-          });
-        });
-
-        // 주기적으로 업데이트 확인 (5분마다)
-        setInterval(function(){ reg.update(); }, 5 * 60 * 1000);
-      })
+      .then(function(reg){ console.log('SW 등록 완료:', reg.scope); })
       .catch(function(err){ console.log('SW 등록 실패:', err); });
-
-    // SW 교체 시 페이지 자동 새로고침
-    navigator.serviceWorker.addEventListener('controllerchange', function(){
-      window.location.reload();
-    });
   });
 }
 </script>
