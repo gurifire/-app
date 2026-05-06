@@ -562,7 +562,7 @@ function captureScreen(){
     <div class="action-status" id="action-status">항목을 모두 체크하면 버튼이 활성화됩니다</div>
     <div class="action-btns">
       <button class="btn-complete" id="btn-complete" disabled onclick="completeTask()">임무 완료</button>
-      <button class="btn-review" id="btn-review" disabled onclick="showReview()">완료된<br>임무 확인</button>
+      
     </div>
   </div>
 </div>
@@ -1270,16 +1270,13 @@ function updateProgress(){
   document.getElementById('prog-fill').style.width  = pct + '%';
 
   var bc = document.getElementById('btn-complete');
-  var br = document.getElementById('btn-review');
   var st = document.getElementById('action-status');
 
-  // 활동 종료 OR 현장출동전종료 중 하나라도 있으면 활성화 (전체 완료 불필요)
   var endOk = !!(activityEndTime || earlyEndTime);
   var allDone = (n === totalCount && totalCount > 0);
 
   if(endOk || allDone){
     bc.disabled = false; bc.classList.add('active');
-    br.disabled = false; br.classList.add('active');
     if(allDone){
       st.textContent = '✅ 전체 완료! 임무완료 버튼을 눌러주세요';
     } else {
@@ -1289,7 +1286,6 @@ function updateProgress(){
     bc.textContent = '🎖️ 임무 완료';
   } else {
     bc.disabled = true;  bc.classList.remove('active');
-    br.disabled = true;  br.classList.remove('active');
     st.textContent = '항목을 모두 체크하면 버튼이 활성화됩니다 (' + n + '/' + totalCount + ')';
     st.classList.remove('all-done');
     bc.textContent = '임무 완료';
