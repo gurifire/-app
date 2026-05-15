@@ -821,25 +821,16 @@ document.addEventListener('DOMContentLoaded', function(){
   // 뒤로가기: 아래 스크립트에서 처리
 
   // ── 핸드폰 뒤로가기 처리
-  // 모바일 브라우저에서는 history guard를 타이머 안에서 계속 추가하면
-  // 뒤로가기 횟수가 누적되어 토스트 종료 후에도 두 번째 뒤로가기로 인식될 수 있음
   var backPressedOnce = false;
   var backToastTimer = null;
   var allowRealBack = false;
+  var backGuardReady = false;
 
   function pushBackGuard(){
     try{
-      history.pushState({page:'guard', t:(new Date()).getTime()}, '', location.href);
+      history.pushState({page:'guard'}, '', location.href);
+      backGuardReady = true;
     }catch(e){}
-  }
-
-  function restoreBackGuard(){
-    // popstate 처리 직후 guard를 1회만 복구
-    setTimeout(function(){
-      if(!allowRealBack){
-        pushBackGuard();
-      }
-    }, 0);
   }
 
   function hideBackToast(){
@@ -853,21 +844,35 @@ document.addEventListener('DOMContentLoaded', function(){
     toast.classList.add('show');
     clearTimeout(backToastTimer);
     backToastTimer = setTimeout(function(){
-      hideBackToast();
-      // 핵심: 토스트가 사라지면 뒤로가기 1회 상태만 초기화
-      // guard는 popstate가 발생할 때만 복구하여 모바일에서 히스토리 누적 방지
+      toast.classList.remove('show');
+      // 토스트가 사라지면 뒤로가기 1회 상태만 초기화
+      // history.pushState는 여기서 실행하지 않아 모바일 히스토리 누적을 방지
       backPressedOnce = false;
     }, 3000);
   }
 
-  // 앱 진입 즉시 뒤로가기 guard 생성
+  // 앱 진입 즉시 첫 화면에서도 뒤로가기 이벤트를 잡기 위한 guard 생성
   try{
     history.replaceState({page:'app'}, '', location.href);
   }catch(e){}
   pushBackGuard();
 
+  // 일부 모바일 WebView에서 초기 pushState 반영이 늦는 경우 보강
+  setTimeout(function(){
+    if(!backGuardReady){
+      pushBackGuard();
+    }
+  }, 300);
+
+  window.addEventListener('pageshow', function(){
+    // 뒤로 갔다가 앱이 복원되는 모바일 bfcache 상황 대비
+    backPressedOnce = false;
+    hideBackToast();
+  });
+
   window.addEventListener('popstate', function(e){
     if(allowRealBack) return;
+    backGuardReady = false;
 
     var active = document.querySelector('.screen.active') ?
       document.querySelector('.screen.active').id : '';
@@ -880,18 +885,18 @@ document.addEventListener('DOMContentLoaded', function(){
         if(dw) dw.style.display = 'none';
         if(da) da.textContent = '›';
         departCardOpen = false;
-        restoreBackGuard();
+        pushBackGuard();
         return;
       }
       goBack();
-      restoreBackGuard();
+      pushBackGuard();
       return;
     }
 
     // 결과화면
     if(active === 'screen-review'){
       showList();
-      restoreBackGuard();
+      pushBackGuard();
       return;
     }
 
@@ -902,7 +907,7 @@ document.addEventListener('DOMContentLoaded', function(){
       if(dw2) dw2.style.display = 'none';
       if(da2) da2.textContent = '›';
       departCardOpen = false;
-      restoreBackGuard();
+      pushBackGuard();
       return;
     }
 
@@ -918,10 +923,10 @@ document.addEventListener('DOMContentLoaded', function(){
         try{ window.close(); }catch(e){}
       }, 50);
     } else {
-      // 첫번째 뒤로가기 → 토스트 표시
+      // 첫번째 뒤로가기 → 토스트 표시 후 앱 안에 머물도록 guard 복구
       backPressedOnce = true;
       showBackToast();
-      restoreBackGuard();
+      pushBackGuard();
     }
   });
 
