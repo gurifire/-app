@@ -839,11 +839,14 @@ document.addEventListener('DOMContentLoaded', function(){
     }, 3000);
   }
 
-  // guard 즉시 추가 + clearSavedState 이후 재실행 보장
+  // guard 즉시 추가
   ensureGuard();
-  // clearSavedState가 history를 초기화할 수 있으므로 추가 보장
-  setTimeout(function(){ ensureGuard(); }, 100);
-  setTimeout(function(){ ensureGuard(); }, 500);
+  // 주기적으로 guard 상태 유지 (다른 코드가 history 건드려도 보장)
+  setInterval(function(){
+    if(history.state === null || history.state.page !== 'guard'){
+      ensureGuard();
+    }
+  }, 200);
 
   window.addEventListener('popstate', function(e){
     var active = document.querySelector('.screen.active') ?
