@@ -839,16 +839,17 @@ document.addEventListener('DOMContentLoaded', function(){
     }, 3000);
   }
 
-  // guard 즉시 추가
+  // guard 1회만 추가 (중복 방지)
+  var guardAdded = false;
+  function ensureGuardOnce(){
+    if(!guardAdded){
+      guardAdded = true;
+      ensureGuard();
+    }
+  }
+
+  // DOMContentLoaded 완료 후 guard 1번만 추가
   ensureGuard();
-  // 200ms마다 guard 상태 확인 - 없으면 즉시 재추가
-  var guardInterval = setInterval(function(){
-    try {
-      if(!history.state || history.state.page !== 'guard'){
-        ensureGuard();
-      }
-    } catch(e){}
-  }, 200);
 
   window.addEventListener('popstate', function(e){
     var active = document.querySelector('.screen.active') ?
@@ -890,6 +891,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // 첫화면 본 처리
     if(backPressedOnce){
+      // 두번째 뒤로가기 → 종료
       clearTimeout(backToastTimer);
       var t2 = document.getElementById('back-toast');
       if(t2) t2.classList.remove('show');
@@ -897,6 +899,7 @@ document.addEventListener('DOMContentLoaded', function(){
       ensureGuard();
       setTimeout(function(){ window.close(); }, 100);
     } else {
+      // 첫번째 뒤로가기 → 토스트
       backPressedOnce = true;
       showBackToast();
       ensureGuard();
