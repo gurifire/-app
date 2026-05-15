@@ -839,10 +839,11 @@ document.addEventListener('DOMContentLoaded', function(){
     }, 3000);
   }
 
-  // 500ms 후 guard 추가 (다른 초기화 완료 후 실행)
-  setTimeout(function(){
-    ensureGuard();
-  }, 500);
+  // guard 즉시 추가 + clearSavedState 이후 재실행 보장
+  ensureGuard();
+  // clearSavedState가 history를 초기화할 수 있으므로 추가 보장
+  setTimeout(function(){ ensureGuard(); }, 100);
+  setTimeout(function(){ ensureGuard(); }, 500);
 
   window.addEventListener('popstate', function(e){
     var active = document.querySelector('.screen.active') ?
