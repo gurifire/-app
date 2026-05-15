@@ -239,6 +239,17 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .time-sub{font-size:12px;color:var(--text-muted);margin-top:4px}
 .rv-score{font-size:14px;font-weight:600;margin-top:12px;padding:8px;background:#F8F9FA;border-radius:8px}
 .print-btn{width:100%;padding:14px;font-size:14px;font-weight:700;border:none;border-radius:12px;cursor:pointer;background:var(--red);color:white;font-family:inherit;margin-top:4px}
+/* 뒤로가기 토스트 */
+.back-toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  background:rgba(30,30,30,0.85);color:white;
+  font-size:14px;font-weight:600;font-family:'맑은 고딕','Apple SD Gothic Neo',sans-serif;
+  padding:12px 24px;border-radius:24px;
+  z-index:9999;pointer-events:none;
+  opacity:0;transition:opacity 0.3s ease;
+  white-space:nowrap;
+}
+.back-toast.show{opacity:1;}
 .capture-btn{width:100%;padding:13px;font-size:14px;font-weight:700;border:1.5px solid var(--red);border-radius:12px;cursor:pointer;background:white;color:var(--red);font-family:inherit;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}
 .capture-btn:active{background:#FEF5F4}
 .capture-loading{text-align:center;font-size:12px;color:var(--text-muted);margin-top:8px;min-height:20px}
@@ -730,6 +741,74 @@ document.addEventListener('DOMContentLoaded', function(){
   document.querySelector('.app-header').style.display = 'none';
   // 앱 실행 시 localStorage 완전 초기화 (항상 새로 시작)
   clearSavedState();
+
+  // ── 핸드폰 뒤로가기 버튼 처리
+  var backPressedOnce = false;
+  var backToastTimer = null;
+
+  function getActiveScreen(){
+    var s = document.querySelector('.screen.active');
+    return s ? s.id : '';
+  }
+
+  function showBackToast(){
+    var toast = document.getElementById('back-toast');
+    if(!toast) return;
+    toast.classList.add('show');
+    clearTimeout(backToastTimer);
+    backToastTimer = setTimeout(function(){
+      toast.classList.remove('show');
+      backPressedOnce = false;
+    }, 3000);
+  }
+
+  // 항상 히스토리 스택 2개 유지: 더미 + 현재
+  // 뒤로가기 누르면 더미가 팝되고 popstate 발생
+  function setupHistory(){
+    history.replaceState({page:'app'}, '');
+    history.pushState({page:'dummy'}, '');
+    history.back(); // dummy 제거해서 실제론 replaceState만 남음
+  }
+
+  // 진입 시 guard 히스토리 추가
+  history.replaceState({page:'app'}, '');
+  history.pushState({page:'guard'}, '');
+
+  window.addEventListener('popstate', function(e){
+    var active = getActiveScreen();
+
+    if(active === 'screen-list'){
+      goBack();
+      history.pushState({page:'guard'}, '');
+      return;
+    }
+
+    if(active === 'screen-review'){
+      showList();
+      history.pushState({page:'guard'}, '');
+      return;
+    }
+
+    // 첫화면
+    if(backPressedOnce){
+      // 두 번째 → 종료
+      clearTimeout(backToastTimer);
+      var toast2 = document.getElementById('back-toast');
+      if(toast2) toast2.classList.remove('show');
+      backPressedOnce = false;
+      // PWA: window.close, 브라우저: 히스토리 뒤로
+      if(window.history.length <= 2){
+        window.close();
+      } else {
+        history.go(-(history.length));
+      }
+    } else {
+      // 첫 번째 → 토스트 표시 후 guard 다시 추가
+      backPressedOnce = true;
+      showBackToast();
+      history.pushState({page:'guard'}, '');
+    }
+  });
 
   // 소속·계급·성명 변경 실시간 감지 (select 드롭다운 포함)
   setInterval(function(){
@@ -1907,6 +1986,8 @@ function restoreChecklist(){
 }
 
 </script>
+<div class="back-toast" id="back-toast">한 번 더 뒤로 누르시면 종료됩니다.</div>
+
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load', function(){
