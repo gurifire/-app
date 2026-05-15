@@ -820,119 +820,135 @@ document.addEventListener('DOMContentLoaded', function(){
 
   // 뒤로가기: 아래 스크립트에서 처리
 
-  // ── 모바일 앱(PWA/WebView) 뒤로가기 토스트 처리
-  // 핵심 원칙
-  // 1) 앱 최초 진입 직후 첫 화면에서도 뒤로가기 이벤트를 잡기 위해 guard를 1개 유지
-  // 2) 토스트가 사라지면 backPressedOnce만 false로 초기화
-  // 3) 토스트 만료 시 history.pushState를 추가로 누적하지 않음
-  // 4) 뒤로가기 이벤트로 guard가 소비된 순간에만 다시 guard를 1개 복구
-  var backPressedOnce = false;
+  // ── 핸드폰 뒤로가기 처리
+  // 모바일 앱/PWA 기준 안정화 버전
+  // - 최초 접속 첫 화면에서도 뒤로가기 토스트 작동
+  // - 토스트가 사라지면 뒤로가기 횟수 초기화
+  // - 토스트 만료 후 다시 뒤로가기를 눌러도 종료되지 않고 토스트 재작동
+  // - popstate로 소비된 guard는 즉시 1개만 복구
   var backToastTimer = null;
-  var backGuardArmed = false;
+  var backLastPressedAt = 0;
+  var backToastVisible = false;
   var allowRealBack = false;
 
-  function getActiveScreenForBack(){
-    var s = document.querySelector('.screen.active');
-    return s ? s.id : '';
+  function nowForBack(){
+    return (new Date()).getTime();
   }
 
-  function armBackGuard(){
-    if(allowRealBack || backGuardArmed) return;
+  function pushBackGuard(){
+    if(allowRealBack) return;
     try{
-      history.pushState({page:'back-guard'}, '', location.href);
-      backGuardArmed = true;
+      history.pushState({page:'back-guard', t:nowForBack()}, '', location.href);
     }catch(e){}
   }
 
-  function resetBackToastState(){
+  function hideBackToast(){
     var toast = document.getElementById('back-toast');
     if(toast) toast.classList.remove('show');
-    backPressedOnce = false;
+    backToastVisible = false;
+  }
+
+  function resetBackToastCount(){
+    clearTimeout(backToastTimer);
+    hideBackToast();
+    backLastPressedAt = 0;
   }
 
   function showBackToast(){
     var toast = document.getElementById('back-toast');
     if(!toast) return;
     toast.classList.add('show');
+    backToastVisible = true;
     clearTimeout(backToastTimer);
     backToastTimer = setTimeout(function(){
-      // 토스트가 사라지면 뒤로가기 횟수만 초기화한다.
-      // guard는 이미 1개 유지 중이므로 여기서 pushState를 추가하지 않는다.
-      resetBackToastState();
+      // 핵심: 토스트가 사라지면 뒤로가기 1회 상태를 완전히 초기화
+      // 여기서는 history.pushState를 추가하지 않는다.
+      hideBackToast();
+      backLastPressedAt = 0;
     }, 3000);
   }
 
-  // 최초 접속 직후 아무 입력이 없어도 모바일 뒤로가기를 잡도록 guard 1개 생성
+  function closeKeyboardFocus(){
+    try{
+      var ae = document.activeElement;
+      if(ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')){
+        ae.blur();
+      }
+    }catch(e){}
+  }
+
+  // 앱 진입 즉시 뒤로가기 guard 생성: 아무것도 입력하지 않은 첫 화면도 보호
   try{
     history.replaceState({page:'app'}, '', location.href);
   }catch(e){}
-  armBackGuard();
+  pushBackGuard();
 
-  // 일부 모바일 WebView/PWA에서 복귀 후 guard가 풀리는 경우를 대비해 1개만 보강
   window.addEventListener('pageshow', function(){
-    setTimeout(function(){ armBackGuard(); }, 0);
+    // 모바일 앱이 백그라운드에서 복원될 때 토스트 카운트만 초기화
+    resetBackToastCount();
   });
 
   window.addEventListener('popstate', function(e){
     if(allowRealBack) return;
 
-    // 뒤로가기로 guard 1개가 소비된 상태
-    backGuardArmed = false;
-
-    var active = getActiveScreenForBack();
+    var active = document.querySelector('.screen.active') ?
+      document.querySelector('.screen.active').id : '';
 
     // 체크리스트 화면
     if(active === 'screen-list'){
-      resetBackToastState();
+      resetBackToastCount();
       if(typeof departCardOpen !== 'undefined' && departCardOpen){
         var dw = document.getElementById('depart-sub-wrap');
         var da = document.getElementById('depart-arrow');
         if(dw) dw.style.display = 'none';
         if(da) da.textContent = '›';
         departCardOpen = false;
-        armBackGuard();
+        pushBackGuard();
         return;
       }
       goBack();
-      armBackGuard();
+      pushBackGuard();
       return;
     }
 
     // 결과화면
     if(active === 'screen-review'){
-      resetBackToastState();
+      resetBackToastCount();
       showList();
-      armBackGuard();
+      pushBackGuard();
       return;
     }
 
-    // 첫화면 - 출동단계가 열려 있으면 먼저 닫기
+    // 첫화면 - 출동단계 열려있으면 닫기
     if(typeof departCardOpen !== 'undefined' && departCardOpen){
-      resetBackToastState();
+      resetBackToastCount();
       var dw2 = document.getElementById('depart-sub-wrap');
       var da2 = document.getElementById('depart-arrow');
       if(dw2) dw2.style.display = 'none';
       if(da2) da2.textContent = '›';
       departCardOpen = false;
-      armBackGuard();
+      pushBackGuard();
       return;
     }
 
     // 첫화면 본 처리
-    if(backPressedOnce){
+    var now = nowForBack();
+    var isSecondBackWithinToast = backToastVisible && backLastPressedAt && ((now - backLastPressedAt) <= 3000);
+
+    if(isSecondBackWithinToast){
       // 토스트가 보이는 3초 안에 한 번 더 뒤로가기 → 종료 시도
-      clearTimeout(backToastTimer);
-      resetBackToastState();
+      resetBackToastCount();
       allowRealBack = true;
       setTimeout(function(){
         try{ history.back(); }catch(e){}
         try{ window.close(); }catch(e){}
       }, 30);
     } else {
-      // 첫 번째 뒤로가기 → 토스트 표시, 앱 내부에 머물도록 guard 1개 복구
-      backPressedOnce = true;
+      // 첫 번째 뒤로가기 또는 토스트 만료 후 다시 누른 뒤로가기 → 토스트 재작동
+      closeKeyboardFocus();
+      backLastPressedAt = now;
       showBackToast();
-      armBackGuard();
+      pushBackGuard();
     }
   });
 
