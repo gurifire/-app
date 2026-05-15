@@ -823,12 +823,17 @@ document.addEventListener('DOMContentLoaded', function(){
   // ── 핸드폰 뒤로가기 처리
   var backPressedOnce = false;
   var backToastTimer = null;
-  var isExitingByBack = false;
+  var allowRealBack = false;
 
   function pushBackGuard(){
     try{
-      history.pushState({page:'guard'}, '');
+      history.pushState({page:'guard', t:(new Date()).getTime()}, '', location.href);
     }catch(e){}
+  }
+
+  function hideBackToast(){
+    var toast = document.getElementById('back-toast');
+    if(toast) toast.classList.remove('show');
   }
 
   function showBackToast(){
@@ -839,26 +844,22 @@ document.addEventListener('DOMContentLoaded', function(){
     backToastTimer = setTimeout(function(){
       toast.classList.remove('show');
       backPressedOnce = false;
+      // 토스트가 사라진 뒤에도 다음 뒤로가기는 다시 토스트가 뜨도록 guard 보강
+      pushBackGuard();
     }, 3000);
   }
 
-  // 첫 진입 상태를 앱 상태로 고정하고, 뒤로가기 감지용 guard를 1개 올림
+  // 앱 진입 즉시 뒤로가기 guard 생성
   try{
-    history.replaceState({page:'app'}, '');
-    pushBackGuard();
+    history.replaceState({page:'app'}, '', location.href);
   }catch(e){}
+  pushBackGuard();
 
   window.addEventListener('popstate', function(e){
-    if(isExitingByBack) return;
+    if(allowRealBack) return;
 
-    var activeEl = document.querySelector('.screen.active');
-    var active = activeEl ? activeEl.id : '';
-
-    // 기본 동작: 뒤로가기 1회가 발생하면 다시 guard를 올려 다음 뒤로가기도 앱에서 감지
-    // 단, 실제 종료를 실행할 때만 guard를 다시 올리지 않음
-    function keepAppBackGuard(){
-      pushBackGuard();
-    }
+    var active = document.querySelector('.screen.active') ?
+      document.querySelector('.screen.active').id : '';
 
     // 체크리스트 화면
     if(active === 'screen-list'){
@@ -868,18 +869,18 @@ document.addEventListener('DOMContentLoaded', function(){
         if(dw) dw.style.display = 'none';
         if(da) da.textContent = '›';
         departCardOpen = false;
-        keepAppBackGuard();
+        pushBackGuard();
         return;
       }
       goBack();
-      keepAppBackGuard();
+      pushBackGuard();
       return;
     }
 
     // 결과화면
     if(active === 'screen-review'){
       showList();
-      keepAppBackGuard();
+      pushBackGuard();
       return;
     }
 
@@ -890,28 +891,26 @@ document.addEventListener('DOMContentLoaded', function(){
       if(dw2) dw2.style.display = 'none';
       if(da2) da2.textContent = '›';
       departCardOpen = false;
-      keepAppBackGuard();
+      pushBackGuard();
       return;
     }
 
     // 첫화면 본 처리
     if(backPressedOnce){
-      // 토스트가 보이는 3초 안에 한 번 더 뒤로가기 → 종료
+      // 토스트가 보이는 동안 두번째 뒤로가기 → 실제 종료 시도
       clearTimeout(backToastTimer);
-      var t2 = document.getElementById('back-toast');
-      if(t2) t2.classList.remove('show');
+      hideBackToast();
       backPressedOnce = false;
-      isExitingByBack = true;
+      allowRealBack = true;
       setTimeout(function(){
-        try{ window.close(); }catch(e){}
         try{ history.back(); }catch(e){}
+        try{ window.close(); }catch(e){}
       }, 50);
     } else {
-      // 첫 번째 뒤로가기 → 토스트 표시
-      // 토스트가 사라진 뒤에는 backPressedOnce가 false로 돌아가므로, 다시 누르면 토스트가 다시 표시됨
+      // 첫번째 뒤로가기 → 토스트 표시 후 앱 안에 머물도록 guard 복구
       backPressedOnce = true;
       showBackToast();
-      keepAppBackGuard();
+      pushBackGuard();
     }
   });
 
