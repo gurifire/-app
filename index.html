@@ -838,21 +838,25 @@ document.addEventListener('DOMContentLoaded', function(){
     }, 3000);
   }
 
+  // guard 히스토리 유지 함수
   function ensureGuard(){
     history.pushState({page:'guard'}, '');
   }
 
+  // 최초 진입 시 guard 추가
   ensureGuard();
 
   window.addEventListener('popstate', function(e){
     var active = getActiveScreen();
 
+    // 체크리스트 화면 → 첫화면
     if(active === 'screen-list'){
       goBack();
       ensureGuard();
       return;
     }
 
+    // 결과화면 → 이전화면
     if(active === 'screen-review'){
       showList();
       ensureGuard();
@@ -861,6 +865,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // 첫화면
     if(backPressedOnce){
+      // 두 번째 뒤로가기 → 종료
       clearTimeout(backToastTimer);
       var toast2 = document.getElementById('back-toast');
       if(toast2) toast2.classList.remove('show');
@@ -868,6 +873,7 @@ document.addEventListener('DOMContentLoaded', function(){
       ensureGuard();
       setTimeout(function(){ window.close(); }, 50);
     } else {
+      // 첫 번째 뒤로가기 → 토스트
       backPressedOnce = true;
       showBackToast();
       ensureGuard();
