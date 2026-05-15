@@ -821,6 +821,8 @@ document.addEventListener('DOMContentLoaded', function(){
   // 뒤로가기: 아래 스크립트에서 처리
 
   // ── 핸드폰 뒤로가기 처리
+  // 모바일 브라우저에서는 history guard를 타이머 안에서 계속 추가하면
+  // 뒤로가기 횟수가 누적되어 토스트 종료 후에도 두 번째 뒤로가기로 인식될 수 있음
   var backPressedOnce = false;
   var backToastTimer = null;
   var allowRealBack = false;
@@ -829,6 +831,15 @@ document.addEventListener('DOMContentLoaded', function(){
     try{
       history.pushState({page:'guard', t:(new Date()).getTime()}, '', location.href);
     }catch(e){}
+  }
+
+  function restoreBackGuard(){
+    // popstate 처리 직후 guard를 1회만 복구
+    setTimeout(function(){
+      if(!allowRealBack){
+        pushBackGuard();
+      }
+    }, 0);
   }
 
   function hideBackToast(){
@@ -842,10 +853,10 @@ document.addEventListener('DOMContentLoaded', function(){
     toast.classList.add('show');
     clearTimeout(backToastTimer);
     backToastTimer = setTimeout(function(){
-      toast.classList.remove('show');
+      hideBackToast();
+      // 핵심: 토스트가 사라지면 뒤로가기 1회 상태만 초기화
+      // guard는 popstate가 발생할 때만 복구하여 모바일에서 히스토리 누적 방지
       backPressedOnce = false;
-      // 토스트가 사라진 뒤에도 다음 뒤로가기는 다시 토스트가 뜨도록 guard 보강
-      pushBackGuard();
     }, 3000);
   }
 
@@ -869,18 +880,18 @@ document.addEventListener('DOMContentLoaded', function(){
         if(dw) dw.style.display = 'none';
         if(da) da.textContent = '›';
         departCardOpen = false;
-        pushBackGuard();
+        restoreBackGuard();
         return;
       }
       goBack();
-      pushBackGuard();
+      restoreBackGuard();
       return;
     }
 
     // 결과화면
     if(active === 'screen-review'){
       showList();
-      pushBackGuard();
+      restoreBackGuard();
       return;
     }
 
@@ -891,7 +902,7 @@ document.addEventListener('DOMContentLoaded', function(){
       if(dw2) dw2.style.display = 'none';
       if(da2) da2.textContent = '›';
       departCardOpen = false;
-      pushBackGuard();
+      restoreBackGuard();
       return;
     }
 
@@ -907,10 +918,10 @@ document.addEventListener('DOMContentLoaded', function(){
         try{ window.close(); }catch(e){}
       }, 50);
     } else {
-      // 첫번째 뒤로가기 → 토스트 표시 후 앱 안에 머물도록 guard 복구
+      // 첫번째 뒤로가기 → 토스트 표시
       backPressedOnce = true;
       showBackToast();
-      pushBackGuard();
+      restoreBackGuard();
     }
   });
 
