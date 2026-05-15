@@ -841,11 +841,13 @@ document.addEventListener('DOMContentLoaded', function(){
 
   // guard 즉시 추가
   ensureGuard();
-  // 주기적으로 guard 상태 유지 (다른 코드가 history 건드려도 보장)
-  setInterval(function(){
-    if(history.state === null || history.state.page !== 'guard'){
-      ensureGuard();
-    }
+  // 200ms마다 guard 상태 확인 - 없으면 즉시 재추가
+  var guardInterval = setInterval(function(){
+    try {
+      if(!history.state || history.state.page !== 'guard'){
+        ensureGuard();
+      }
+    } catch(e){}
   }, 200);
 
   window.addEventListener('popstate', function(e){
