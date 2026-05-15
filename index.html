@@ -820,6 +820,83 @@ document.addEventListener('DOMContentLoaded', function(){
 
   // 뒤로가기: 아래 스크립트에서 처리
 
+  // ── 핸드폰 뒤로가기 처리
+  var backPressedOnce = false;
+  var backToastTimer = null;
+
+  function ensureGuard(){
+    history.pushState({page:'guard'}, '');
+  }
+
+  function showBackToast(){
+    var toast = document.getElementById('back-toast');
+    if(!toast) return;
+    toast.classList.add('show');
+    clearTimeout(backToastTimer);
+    backToastTimer = setTimeout(function(){
+      toast.classList.remove('show');
+      backPressedOnce = false;
+    }, 3000);
+  }
+
+  // 500ms 후 guard 추가 (다른 초기화 완료 후 실행)
+  setTimeout(function(){
+    ensureGuard();
+  }, 500);
+
+  window.addEventListener('popstate', function(e){
+    var active = document.querySelector('.screen.active') ?
+      document.querySelector('.screen.active').id : '';
+
+    // 체크리스트 화면
+    if(active === 'screen-list'){
+      if(typeof departCardOpen !== 'undefined' && departCardOpen){
+        var dw = document.getElementById('depart-sub-wrap');
+        var da = document.getElementById('depart-arrow');
+        if(dw) dw.style.display = 'none';
+        if(da) da.textContent = '›';
+        departCardOpen = false;
+        ensureGuard();
+        return;
+      }
+      goBack();
+      ensureGuard();
+      return;
+    }
+
+    // 결과화면
+    if(active === 'screen-review'){
+      showList();
+      ensureGuard();
+      return;
+    }
+
+    // 첫화면 - 출동단계 열려있으면 닫기
+    if(typeof departCardOpen !== 'undefined' && departCardOpen){
+      var dw2 = document.getElementById('depart-sub-wrap');
+      var da2 = document.getElementById('depart-arrow');
+      if(dw2) dw2.style.display = 'none';
+      if(da2) da2.textContent = '›';
+      departCardOpen = false;
+      ensureGuard();
+      return;
+    }
+
+    // 첫화면 본 처리
+    if(backPressedOnce){
+      clearTimeout(backToastTimer);
+      var t2 = document.getElementById('back-toast');
+      if(t2) t2.classList.remove('show');
+      backPressedOnce = false;
+      ensureGuard();
+      setTimeout(function(){ window.close(); }, 100);
+    } else {
+      backPressedOnce = true;
+      showBackToast();
+      ensureGuard();
+    }
+  });
+
   // 소속·계급·성명 변경 실시간 감지 (select 드롭다운 포함)
   setInterval(function(){
     var currentScreen = document.querySelector('.screen.active');
@@ -2052,91 +2129,6 @@ if('serviceWorker' in navigator){
 }
 </script>
 </script>
-<script>
-// ── 뒤로가기 버튼 처리
-(function(){
-  var backPressedOnce = false;
-  var backToastTimer = null;
 
-  function getActiveScreen(){
-    var s = document.querySelector('.screen.active');
-    return s ? s.id : '';
-  }
-
-  function showBackToast(){
-    var toast = document.getElementById('back-toast');
-    if(!toast) return;
-    toast.classList.add('show');
-    clearTimeout(backToastTimer);
-    backToastTimer = setTimeout(function(){
-      toast.classList.remove('show');
-      backPressedOnce = false;  // ✅ 3초 후 완전 초기화
-    }, 3000);
-  }
-
-  function ensureGuard(){
-    history.pushState({page:'guard'}, '');
-  }
-
-  window.addEventListener('load', function(){
-    ensureGuard();
-  });
-
-  window.addEventListener('popstate', function(e){
-    var active = getActiveScreen();
-
-    // 체크리스트 화면 → 첫화면
-    if(active === 'screen-list'){
-      // 출동단계 열려있으면 닫기
-      if(typeof departCardOpen !== 'undefined' && departCardOpen){
-        var dw = document.getElementById('depart-sub-wrap');
-        var da = document.getElementById('depart-arrow');
-        if(dw) dw.style.display = 'none';
-        if(da) da.textContent = '›';
-        departCardOpen = false;
-        ensureGuard();
-        return;
-      }
-      if(typeof goBack === 'function') goBack();
-      ensureGuard();
-      return;
-    }
-
-    // 결과화면 → 이전화면
-    if(active === 'screen-review'){
-      if(typeof showList === 'function') showList();
-      ensureGuard();
-      return;
-    }
-
-    // 첫화면 - 출동단계 열려있으면 먼저 닫기
-    if(typeof departCardOpen !== 'undefined' && departCardOpen){
-      var dw2 = document.getElementById('depart-sub-wrap');
-      var da2 = document.getElementById('depart-arrow');
-      if(dw2) dw2.style.display = 'none';
-      if(da2) da2.textContent = '›';
-      departCardOpen = false;
-      ensureGuard();
-      return;
-    }
-
-    // 첫화면 (출동단계 닫힌 상태)
-    if(backPressedOnce){
-      // 두 번째 뒤로가기 → 종료
-      clearTimeout(backToastTimer);
-      var toast2 = document.getElementById('back-toast');
-      if(toast2) toast2.classList.remove('show');
-      backPressedOnce = false;
-      ensureGuard();
-      setTimeout(function(){ window.close(); }, 100);
-    } else {
-      // 첫 번째 뒤로가기 → 토스트
-      backPressedOnce = true;
-      showBackToast();
-      ensureGuard();
-    }
-  });
-})();
-</script>
 </body>
 </html>
