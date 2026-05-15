@@ -823,33 +823,45 @@ document.addEventListener('DOMContentLoaded', function(){
   // ── 핸드폰 뒤로가기 처리
   var backPressedOnce = false;
   var backToastTimer = null;
+  var backToastVisibleUntil = 0;
 
   function ensureGuard(){
-    history.pushState({page:'guard'}, '');
+    try{
+      history.pushState({page:'guard'}, '');
+    }catch(e){}
+  }
+
+  function hideBackToast(){
+    var toast = document.getElementById('back-toast');
+    if(toast) toast.classList.remove('show');
+    backPressedOnce = false;
+    backToastVisibleUntil = 0;
   }
 
   function showBackToast(){
     var toast = document.getElementById('back-toast');
     if(!toast) return;
     toast.classList.add('show');
+    backPressedOnce = true;
+    backToastVisibleUntil = new Date().getTime() + 3000;
     clearTimeout(backToastTimer);
     backToastTimer = setTimeout(function(){
-      toast.classList.remove('show');
-      backPressedOnce = false;
+      hideBackToast();
+      ensureGuard();
     }, 3000);
   }
 
-  // guard 1회만 추가 (중복 방지)
-  var guardAdded = false;
-  function ensureGuardOnce(){
-    if(!guardAdded){
-      guardAdded = true;
-      ensureGuard();
-    }
+  function closeByBackButton(){
+    clearTimeout(backToastTimer);
+    hideBackToast();
+    try{
+      window.close();
+    }catch(e){}
   }
 
-  // DOMContentLoaded 완료 후 guard 1번만 추가
+  // 첫 접속 직후 아무 입력이 없어도 뒤로가기 토스트가 작동하도록 guard 추가
   ensureGuard();
+  setTimeout(function(){ ensureGuard(); }, 0);
 
   window.addEventListener('popstate', function(e){
     var active = document.querySelector('.screen.active') ?
@@ -863,9 +875,11 @@ document.addEventListener('DOMContentLoaded', function(){
         if(dw) dw.style.display = 'none';
         if(da) da.textContent = '›';
         departCardOpen = false;
+        hideBackToast();
         ensureGuard();
         return;
       }
+      hideBackToast();
       goBack();
       ensureGuard();
       return;
@@ -873,6 +887,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // 결과화면
     if(active === 'screen-review'){
+      hideBackToast();
       showList();
       ensureGuard();
       return;
@@ -885,25 +900,22 @@ document.addEventListener('DOMContentLoaded', function(){
       if(dw2) dw2.style.display = 'none';
       if(da2) da2.textContent = '›';
       departCardOpen = false;
+      hideBackToast();
       ensureGuard();
       return;
     }
 
     // 첫화면 본 처리
-    if(backPressedOnce){
-      // 두번째 뒤로가기 → 종료
-      clearTimeout(backToastTimer);
-      var t2 = document.getElementById('back-toast');
-      if(t2) t2.classList.remove('show');
-      backPressedOnce = false;
-      ensureGuard();
-      setTimeout(function(){ window.close(); }, 100);
-    } else {
-      // 첫번째 뒤로가기 → 토스트
-      backPressedOnce = true;
-      showBackToast();
-      ensureGuard();
+    var nowTime = new Date().getTime();
+    if(backPressedOnce && backToastVisibleUntil && nowTime <= backToastVisibleUntil){
+      // 토스트가 보이는 3초 이내에 한 번 더 누른 경우에만 종료
+      closeByBackButton();
+      return;
     }
+
+    // 토스트가 사라진 뒤에는 다시 첫 번째 뒤로가기로 처리
+    showBackToast();
+    ensureGuard();
   });
 
   // 소속·계급·성명 변경 실시간 감지 (select 드롭다운 포함)
