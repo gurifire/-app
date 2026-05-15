@@ -266,7 +266,83 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .sub-end-time{font-size:11px;font-weight:700;color:#C0392B;white-space:nowrap;text-align:right;margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:1px}
 .end-label{font-size:9px;font-weight:700;color:#E74C3C;letter-spacing:0.3px;opacity:0.8}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+
+// ─────────────────────────────────────
+// 구형 스마트폰 호환 패치
+// - Array.from / NodeList.forEach / Set / fetch 미지원 기기 대응
+// - Android 구형 WebView, iOS 구형 Safari에서 스크립트 중단 방지
+// ─────────────────────────────────────
+(function(){
+  if(!Array.from){
+    Array.from = function(obj){
+      return Array.prototype.slice.call(obj);
+    };
+  }
+  if(window.NodeList && !NodeList.prototype.forEach){
+    NodeList.prototype.forEach = Array.prototype.forEach;
+  }
+  if(window.HTMLCollection && !HTMLCollection.prototype.forEach){
+    HTMLCollection.prototype.forEach = Array.prototype.forEach;
+  }
+  if(!window.Set){
+    window.Set = function(items){
+      this._items = [];
+      if(items && items.length){
+        for(var i=0;i<items.length;i++){ this.add(items[i]); }
+      }
+    };
+    window.Set.prototype.add = function(v){
+      if(!this.has(v)) this._items.push(v);
+      this.size = this._items.length;
+      return this;
+    };
+    window.Set.prototype.delete = function(v){
+      for(var i=0;i<this._items.length;i++){
+        if(this._items[i] === v){ this._items.splice(i,1); this.size = this._items.length; return true; }
+      }
+      this.size = this._items.length;
+      return false;
+    };
+    window.Set.prototype.has = function(v){
+      for(var i=0;i<this._items.length;i++){
+        if(this._items[i] === v) return true;
+      }
+      return false;
+    };
+    window.Set.prototype.clear = function(){
+      this._items = [];
+      this.size = 0;
+    };
+    window.Set.prototype.forEach = function(fn, thisArg){
+      for(var i=0;i<this._items.length;i++) fn.call(thisArg, this._items[i], this._items[i], this);
+    };
+    Object.defineProperty(window.Set.prototype, 'size', {
+      get: function(){ return this._items.length; },
+      set: function(){}
+    });
+  }
+  if(!window.fetch){
+    window.fetch = function(url, options){
+      return new Promise(function(resolve, reject){
+        try{
+          var xhr = new XMLHttpRequest();
+          xhr.open((options && options.method) || 'GET', url, true);
+          if(options && options.headers){
+            for(var h in options.headers){
+              if(options.headers.hasOwnProperty(h)) xhr.setRequestHeader(h, options.headers[h]);
+            }
+          }
+          xhr.onload = function(){ resolve({ ok:true, status:xhr.status, text:function(){ return Promise.resolve(xhr.responseText); } }); };
+          xhr.onerror = function(){ reject(new Error('network error')); };
+          xhr.send(options && options.body ? options.body : null);
+        }catch(e){ reject(e); }
+      });
+    };
+  }
+})();
+
 // ── 결과화면 캡처
 function captureScreen(){
   var loading = document.getElementById('capture-loading');
@@ -953,7 +1029,7 @@ function toggleDepart(idx){
     departChecked.add(idx);
   }
   var el = document.querySelector('[data-di="' + idx + '"]');
-  if(el) el.classList.toggle('checked', departChecked.has(idx));
+  if(el){ if(departChecked.has(idx)){ el.classList.add('checked'); } else { el.classList.remove('checked'); } }
   // 부모 자동 체크/해제
   var parentEl = document.getElementById('depart-parent');
   var parentCircle = document.getElementById('depart-parent-circle');
@@ -1662,6 +1738,34 @@ function showReview(){
 // ══════════════════════════════════════════
 // GOOGLE SHEETS 전송
 // ══════════════════════════════════════════
+
+function sendPayloadCompat(url, payload, onOk, onFail){
+  try{
+    var body = JSON.stringify(payload);
+    if(window.fetch){
+      window.fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: body
+      }).then(function(){ if(onOk) onOk(); }).catch(function(){ if(onFail) onFail(); });
+      return;
+    }
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function(){
+      if(xhr.readyState === 4){
+        if(onOk) onOk();
+      }
+    };
+    xhr.onerror = function(){ if(onFail) onFail(); };
+    xhr.send(body);
+  }catch(e){
+    if(onFail) onFail();
+  }
+}
+
 function sendToSheet(){
   if(!WEBHOOK_URL || WEBHOOK_URL === 'YOUR_WEBHOOK_URL_HERE') return;
   // 현장 출동 전 종료(요원 미선택)인 경우 전송 시도하지 않음
@@ -1703,14 +1807,9 @@ function sendToSheet(){
   var statusEl = document.getElementById('send-status');
   if(statusEl) { statusEl.textContent = '📤 기록 전송 중...'; statusEl.className = 'send-status sending'; }
 
-  fetch(WEBHOOK_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  }).then(function(){
+  sendPayloadCompat(WEBHOOK_URL, payload, function(){
     if(statusEl){ statusEl.textContent = '✅ 기록이 저장되었습니다'; statusEl.className = 'send-status ok'; }
-  }).catch(function(){
+  }, function(){
     if(statusEl){ statusEl.textContent = ''; statusEl.className = 'send-status'; }
   });
 }
