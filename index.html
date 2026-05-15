@@ -2053,7 +2053,7 @@ if('serviceWorker' in navigator){
 </script>
 </script>
 <script>
-// ── 뒤로가기 버튼 처리 (DOMContentLoaded 밖에서 독립 실행)
+// ── 뒤로가기 버튼 처리
 (function(){
   var backPressedOnce = false;
   var backToastTimer = null;
@@ -2070,7 +2070,7 @@ if('serviceWorker' in navigator){
     clearTimeout(backToastTimer);
     backToastTimer = setTimeout(function(){
       toast.classList.remove('show');
-      backPressedOnce = false;
+      backPressedOnce = false;  // ✅ 3초 후 완전 초기화
     }, 3000);
   }
 
@@ -2078,7 +2078,6 @@ if('serviceWorker' in navigator){
     history.pushState({page:'guard'}, '');
   }
 
-  // 페이지 로드 완료 후 guard 추가
   window.addEventListener('load', function(){
     ensureGuard();
   });
@@ -2086,20 +2085,44 @@ if('serviceWorker' in navigator){
   window.addEventListener('popstate', function(e){
     var active = getActiveScreen();
 
+    // 체크리스트 화면 → 첫화면
     if(active === 'screen-list'){
+      // 출동단계 열려있으면 닫기
+      if(typeof departCardOpen !== 'undefined' && departCardOpen){
+        var dw = document.getElementById('depart-sub-wrap');
+        var da = document.getElementById('depart-arrow');
+        if(dw) dw.style.display = 'none';
+        if(da) da.textContent = '›';
+        departCardOpen = false;
+        ensureGuard();
+        return;
+      }
       if(typeof goBack === 'function') goBack();
       ensureGuard();
       return;
     }
 
+    // 결과화면 → 이전화면
     if(active === 'screen-review'){
       if(typeof showList === 'function') showList();
       ensureGuard();
       return;
     }
 
-    // 첫화면
+    // 첫화면 - 출동단계 열려있으면 먼저 닫기
+    if(typeof departCardOpen !== 'undefined' && departCardOpen){
+      var dw2 = document.getElementById('depart-sub-wrap');
+      var da2 = document.getElementById('depart-arrow');
+      if(dw2) dw2.style.display = 'none';
+      if(da2) da2.textContent = '›';
+      departCardOpen = false;
+      ensureGuard();
+      return;
+    }
+
+    // 첫화면 (출동단계 닫힌 상태)
     if(backPressedOnce){
+      // 두 번째 뒤로가기 → 종료
       clearTimeout(backToastTimer);
       var toast2 = document.getElementById('back-toast');
       if(toast2) toast2.classList.remove('show');
@@ -2107,6 +2130,7 @@ if('serviceWorker' in navigator){
       ensureGuard();
       setTimeout(function(){ window.close(); }, 100);
     } else {
+      // 첫 번째 뒤로가기 → 토스트
       backPressedOnce = true;
       showBackToast();
       ensureGuard();
