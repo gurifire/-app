@@ -940,8 +940,9 @@ document.addEventListener('DOMContentLoaded', function(){
       resetBackToastCount();
       allowRealBack = true;
       setTimeout(function(){
-        try{ history.back(); }catch(e){}
         try{ window.close(); }catch(e){}
+        // window.close 실패 시 (브라우저 제한) allowRealBack 복구
+        setTimeout(function(){ allowRealBack = false; pushBackGuard(); }, 300);
       }, 30);
     } else {
       // 첫 번째 뒤로가기 또는 토스트 만료 후 다시 누른 뒤로가기 → 토스트 재작동
@@ -2182,7 +2183,6 @@ if('serviceWorker' in navigator){
     });
   });
 }
-</script>
 </script>
 
 </body>
