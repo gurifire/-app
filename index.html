@@ -585,7 +585,7 @@ function captureScreen(){
     </div>
     <div class="role-cards" id="role-select-cards">
       <div class="role-card cmd" onclick="selectRole('cmd')">
-        <div class="role-icon">🎖️</div>
+        <div class="role-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" fill="#C0392B"/><path d="M8 8l-2 8 6-3 6 3-2-8" fill="#C0392B" opacity="0.7"/><path d="M10 2h4v6h-4z" fill="#E74C3C"/></svg></div>
         <div class="role-info">
           <h3>현장지휘요원</h3>
           <p>현장 지휘 총괄 · 명령사항 기록 및 전달<br>상황판 설치 · 대응활동 계획수립</p>
@@ -593,7 +593,7 @@ function captureScreen(){
         <div class="role-arrow">›</div>
       </div>
       <div class="role-card res" onclick="selectRole('res')">
-        <div class="role-icon">🏕️</div>
+        <div class="role-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L3 18h18L12 3z" fill="#E67E22"/><path d="M10 18v-5h4v5h-4z" fill="#D35400"/><path d="M2 18h20" stroke="#BDC3C7" stroke-width="1.5"/></svg></div>
         <div class="role-info">
           <h3>자원지원요원</h3>
           <p>자원대기소 운영 · 소방력 파악 및 배치<br>소방용수 확보 · 필요장비 지원</p>
@@ -601,7 +601,7 @@ function captureScreen(){
         <div class="role-arrow">›</div>
       </div>
       <div class="role-card com" onclick="selectRole('com')">
-        <div class="role-icon">📡</div>
+        <div class="role-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="2" fill="#7D3C98"/><path d="M8.5 8.5a5 5 0 017 7" stroke="#7D3C98" stroke-width="2" stroke-linecap="round"/><path d="M5.5 5.5a9 9 0 0113 13" stroke="#7D3C98" stroke-width="2" stroke-linecap="round" opacity="0.5"/><line x1="12" y1="14" x2="12" y2="20" stroke="#7D3C98" stroke-width="2"/><line x1="9" y1="20" x2="15" y2="20" stroke="#7D3C98" stroke-width="2"/></svg></div>
         <div class="role-info">
           <h3>통신지원요원</h3>
           <p>통신체계 확보 · 비상동원 발령<br>유관기관 연락 · 상황전파</p>
@@ -1627,7 +1627,7 @@ function updateProgress(){
       st.textContent = '✅ 종료 시각이 기록되었습니다. 임무완료를 눌러주세요';
     }
     st.classList.add('all-done');
-    bc.textContent = '🎖️ 임무 완료';
+    bc.textContent = '✔ 임무 완료';
   } else {
     bc.disabled = true;  bc.classList.remove('active');
     if(!infoOk){
