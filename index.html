@@ -12,19 +12,10 @@
 <title>긴급지원반 임무 체크리스트</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
-  --red:#C0392B;--red-dark:#922B21;
-  --orange:#E67E22;--purple:#7D3C98;
-  --green:#1E8449;--blue:#1A5276;
-  --gray:#566573;--gray-light:#F2F3F4;
-  --text:#1a1a1a;--text-muted:#6c757d;
-  --border:rgba(0,0,0,0.1);
-  --shadow:0 2px 12px rgba(0,0,0,0.12);
-}
-html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#F0F2F5;color:var(--text);font-size:14px}
+html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#F0F2F5;color:#1a1a1a;font-size:14px}
 
 /* ── HEADER ── */
-.app-header{background:var(--red);color:white;padding:16px 16px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.25)}
+.app-header{background:#C0392B;color:white;padding:16px 16px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.25)}
 .logo-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:4px 9px;font-size:11px;font-weight:700;white-space:nowrap;text-align:center;line-height:1.5}
 .header-title h1{font-size:15px;font-weight:700;letter-spacing:-0.3px}
 .header-title p{font-size:11px;opacity:0.75;margin-top:1px}
@@ -38,19 +29,19 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .select-screen{padding:20px 16px}
 .select-title{text-align:center;margin-bottom:20px}
 .select-title h2{font-size:18px;font-weight:700}
-.select-title p{font-size:12px;color:var(--text-muted);margin-top:5px}
+.select-title p{font-size:12px;color:#6c757d;margin-top:5px}
 .role-cards{display:flex;flex-direction:column;gap:12px}
-.role-card{background:white;border-radius:16px;padding:18px 20px;border:2px solid transparent;box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;gap:16px;transition:all 0.2s}
+.role-card{background:white;border-radius:16px;padding:18px 20px;border:2px solid transparent;box-shadow:0 2px 12px rgba(0,0,0,0.12);cursor:pointer;display:flex;align-items:center;gap:16px;transition:all 0.2s}
 .role-card:active{transform:scale(0.98)}
 .role-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
 .role-card.cmd .role-icon{background:#FADBD8}
 .role-card.res .role-icon{background:#FDEBD0}
 .role-card.com .role-icon{background:#F5EEF8}
 .role-info h3{font-size:16px;font-weight:700;margin-bottom:3px}
-.role-info p{font-size:12px;color:var(--text-muted);line-height:1.5}
-.role-card.cmd{border-color:rgba(192,57,43,0.2)}.role-card.cmd h3{color:var(--red)}
-.role-card.res{border-color:rgba(230,126,34,0.2)}.role-card.res h3{color:var(--orange)}
-.role-card.com{border-color:rgba(125,60,152,0.2)}.role-card.com h3{color:var(--purple)}
+.role-info p{font-size:12px;color:#6c757d;line-height:1.5}
+.role-card.cmd{border-color:rgba(192,57,43,0.2)}.role-card.cmd h3{color:#C0392B}
+.role-card.res{border-color:rgba(230,126,34,0.2)}.role-card.res h3{color:#E67E22}
+.role-card.com{border-color:rgba(125,60,152,0.2)}.role-card.com h3{color:#7D3C98}
 /* ── SELECT HERO ── */
 .select-screen{padding:0 0 32px}
 .select-hero{background:linear-gradient(150deg,#C0392B 0%,#922B21 55%,#7B241C 100%);padding:24px 20px;display:flex;align-items:center;gap:16px;color:white;min-height:100px}
@@ -58,16 +49,16 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .select-badge{font-size:10px;font-weight:700;opacity:0.8;letter-spacing:0.5px;margin-bottom:4px;text-transform:uppercase}
 .select-hero-text h2{font-size:22px;font-weight:800;line-height:1.3;letter-spacing:-0.5px;margin:0}
 .select-hero-text p{font-size:12px;opacity:0.75;margin-top:6px}
-.select-divider{display:flex;align-items:center;gap:10px;padding:18px 20px 10px;color:var(--text-muted);font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase}
-.select-divider::before,.select-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.select-divider{display:flex;align-items:center;gap:10px;padding:18px 20px 10px;color:#6c757d;font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase}
+.select-divider::before,.select-divider::after{content:'';flex:1;height:1px;background:rgba(0,0,0,0.1)}
 .role-cards{padding:0 16px;display:flex;flex-direction:column;gap:10px}
 .role-card{background:white;border-radius:14px;padding:16px 18px;border:1.5px solid transparent;box-shadow:0 1px 6px rgba(0,0,0,0.08);cursor:pointer;display:flex;align-items:center;gap:14px;transition:all 0.18s}
 .role-card:active{transform:scale(0.98);box-shadow:none}
 .role-arrow{font-size:20px;color:#CCC;flex-shrink:0;font-weight:300;margin-left:auto}
-.role-card.cmd:active .role-arrow,.role-card.cmd:hover .role-arrow{color:var(--red)}
-.role-card.res:active .role-arrow,.role-card.res:hover .role-arrow{color:var(--orange)}
-.role-card.com:active .role-arrow,.role-card.com:hover .role-arrow{color:var(--purple)}
-.select-footer{text-align:center;font-size:11px;color:var(--text-muted);margin-top:16px;padding:0 16px}
+.role-card.cmd:active .role-arrow,.role-card.cmd:hover .role-arrow{color:#C0392B}
+.role-card.res:active .role-arrow,.role-card.res:hover .role-arrow{color:#E67E22}
+.role-card.com:active .role-arrow,.role-card.com:hover .role-arrow{color:#7D3C98}
+.select-footer{text-align:center;font-size:11px;color:#6c757d;margin-top:16px;padding:0 16px}
 /* ── 출동단계 카드 ── */
 .depart-card{margin:0 16px;background:white;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(192,57,43,0.12)}
 .depart-header{background:#C0392B;padding:10px 16px;display:flex;align-items:center;gap:8px}
@@ -78,10 +69,10 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .depart-item:active{background:#FEF5F4}
 .depart-item.checked{background:#F4FDF8}
 .depart-item .d-circle{width:22px;height:22px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:white;transition:all 0.2s}
-.depart-item.checked .d-circle{background:var(--green);border-color:var(--green)}
+.depart-item.checked .d-circle{background:#1E8449;border-color:#1E8449}
 .d-tick{width:8px;height:5px;border-left:2px solid white;border-bottom:2px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
 .depart-item.checked .d-tick{opacity:1}
-.depart-item .d-text{flex:1;font-size:13px;color:var(--text)}
+.depart-item .d-text{flex:1;font-size:13px;color:#1a1a1a}
 .depart-item.checked .d-text{color:#AAA;text-decoration:line-through;text-decoration-color:#CCC}
 .depart-item.disabled{opacity:0.35;pointer-events:none}
 .depart-sub-wrap{margin:0 16px}
@@ -94,22 +85,22 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .early-end-item:active{background:#F5F6F8}
 .early-end-item.checked{background:#F4FDF8}
 .early-end-item .ee-circle{width:24px;height:24px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:white;transition:all 0.2s}
-.early-end-item.checked .ee-circle{background:var(--gray);border-color:var(--gray)}
+.early-end-item.checked .ee-circle{background:#566573;border-color:#566573}
 .ee-tick{width:9px;height:6px;border-left:2px solid white;border-bottom:2px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
 .early-end-item.checked .ee-tick{opacity:1}
 .ee-text{flex:1}
-.ee-label{font-size:13px;font-weight:600;color:var(--text)}
-.ee-desc{font-size:11px;color:var(--text-muted);margin-top:2px}
+.ee-label{font-size:13px;font-weight:600;color:#1a1a1a}
+.ee-desc{font-size:11px;color:#6c757d;margin-top:2px}
 .early-end-item.checked .ee-label{color:#AAA;text-decoration:line-through}
-.ee-time-out{font-size:13px;font-weight:700;color:var(--gray);min-width:42px;text-align:right}
+.ee-time-out{font-size:13px;font-weight:700;color:#566573;min-width:42px;text-align:right}
 .early-end-item.disabled{opacity:0.35;pointer-events:none}
 #early-end-item.disabled{opacity:0.35;pointer-events:none;cursor:not-allowed}
 /* ── 첫화면 임무완료 버튼 ── */
 .select-action-bar{padding:12px 16px 20px;background:transparent}
-.select-action-status{font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:8px}
-.select-action-status.ready{color:var(--green);font-weight:700}
+.select-action-status{font-size:11px;color:#6c757d;text-align:center;margin-bottom:8px}
+.select-action-status.ready{color:#1E8449;font-weight:700}
 .select-btn-complete{width:100%;padding:13px;font-size:15px;font-weight:700;border:none;border-radius:12px;cursor:not-allowed;background:#CCC;color:white;font-family:inherit;transition:all 0.3s;letter-spacing:-0.3px}
-.select-btn-complete.active{background:var(--red);cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,0.3)}
+.select-btn-complete.active{background:#C0392B;cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,0.3)}
 .select-btn-complete.active:active{transform:scale(0.98)}
 /* 요원카드 비활성화 */
 .role-cards.disabled .role-card{opacity:0.35;pointer-events:none}
@@ -119,16 +110,16 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .member-row{display:flex;align-items:center;border-bottom:0.5px solid #F0F0F0}
 .member-row:last-child{border-bottom:none}
 .member-label{font-size:12px;font-weight:700;color:white;background:#C0392B;padding:12px 14px;min-width:52px;text-align:center;flex-shrink:0}
-.member-input{flex:1;border:none;outline:none;font-size:14px;padding:12px 14px;font-family:inherit;color:var(--text);background:white}
+.member-input{flex:1;border:none;outline:none;font-size:14px;padding:12px 14px;font-family:inherit;color:#1a1a1a;background:white}
 .member-input::placeholder{color:#BBB}
-.member-select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23999' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;color:var(--text)}
-.member-select option{color:var(--text)}
+.member-select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23999' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;color:#1a1a1a}
+.member-select option{color:#1a1a1a}
 /* ── MOBILIZE CARD ── */
 .mobilize-card{margin:0 16px;background:white;border-radius:14px;padding:14px 16px;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(192,57,43,0.12)}
-.mob-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px}
+.mob-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:8px}
 .mob-icon{font-size:16px}
 .mob-col-header{display:flex;justify-content:space-between;padding:0 4px 6px;border-bottom:1px solid #F0F0F0;margin-bottom:8px}
-.mob-col-left{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase}
+.mob-col-left{font-size:10px;font-weight:700;color:#6c757d;letter-spacing:0.5px;text-transform:uppercase}
 .mob-col-right{font-size:10px;font-weight:700;color:#C0392B;letter-spacing:0.5px}
 .mob-items{display:flex;flex-direction:column;gap:10px}
 .mob-item{display:flex;align-items:center;gap:10px;transition:opacity 0.2s}
@@ -141,25 +132,25 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .mob-label{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
 .essential-label{background:#FADBD8;color:#922B21}
 .general-label{background:#FDEBD0;color:#A04000}
-.mob-desc{font-size:12px;color:var(--text-muted)}
+.mob-desc{font-size:12px;color:#6c757d}
 .mob-time-out{font-size:13px;font-weight:700;color:#C0392B;min-width:42px;text-align:right;letter-spacing:0.5px}
 .mob-footer{text-align:right;margin-top:12px;border-top:1px solid #F0F0F0;padding-top:10px}
-.mob-reset-btn{font-size:11px;font-weight:600;color:var(--text-muted);background:#F0F2F5;border:none;border-radius:8px;padding:5px 12px;cursor:pointer;font-family:inherit}
+.mob-reset-btn{font-size:11px;font-weight:600;color:#6c757d;background:#F0F2F5;border:none;border-radius:8px;padding:5px 12px;cursor:pointer;font-family:inherit}
 .mob-reset-btn:active{background:#DDD}
 
 /* ── CHECKLIST ── */
 .list-screen{padding-bottom:20px}
-.list-header{padding:14px 16px;background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.back-btn{background:var(--gray-light);border:none;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s}
+.list-header{padding:14px 16px;background:white;border-bottom:1px solid rgba(0,0,0,0.1);display:flex;align-items:center;gap:10px}
+.back-btn{background:#F2F3F4;border:none;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s}
 .back-btn:active{background:#DDD}
 .role-header-info h2{font-size:16px;font-weight:700}
-.role-header-info p{font-size:11px;color:var(--text-muted);margin-top:1px}
+.role-header-info p{font-size:11px;color:#6c757d;margin-top:1px}
 
 /* progress */
-.progress-wrap{background:white;padding:12px 16px;border-bottom:1px solid var(--border)}
+.progress-wrap{background:white;padding:12px 16px;border-bottom:1px solid rgba(0,0,0,0.1)}
 .prog-nums{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
-.prog-nums span{font-size:12px;color:var(--text-muted)}
-.prog-nums strong{font-size:14px;font-weight:700;color:var(--red)}
+.prog-nums span{font-size:12px;color:#6c757d}
+.prog-nums strong{font-size:14px;font-weight:700;color:#C0392B}
 .prog-bar-bg{background:#EAECEE;border-radius:999px;height:7px;overflow:hidden}
 .prog-bar-fill{height:100%;border-radius:999px;transition:width 0.4s cubic-bezier(0.4,0,0.2,1);width:0}
 
@@ -168,7 +159,7 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .phase-section:last-child{margin-bottom:8px}
 .phase-section:not(:first-child){margin-top:10px}
 .phase-label{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px 12px 0 0;font-size:13px;font-weight:700;color:white}
-.phase-items{background:white;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid var(--border);border-top:none}
+.phase-items{background:white;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid rgba(0,0,0,0.1);border-top:none}
 
 /* ★ 단계별 색상 — ph-gray 포함 모두 명시 */
 .ph-red  .phase-label{background:#C0392B}
@@ -177,17 +168,17 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .ph-gray .phase-label{background:#566573}
 
 /* 부모 체크 아이템 */
-.chk-item{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background 0.12s;user-select:none}
+.chk-item{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border-bottom:0.5px solid rgba(0,0,0,0.1);cursor:pointer;transition:background 0.12s;user-select:none}
 .chk-item:last-child{border-bottom:none}
 .chk-item:active{background:#F0FBF5}
 .chk-item.checked{background:#F4FDF8}
 .chk-circle{width:24px;height:24px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;background:white}
-.chk-item.checked .chk-circle{background:var(--green);border-color:var(--green)}
+.chk-item.checked .chk-circle{background:#1E8449;border-color:#1E8449}
 .tick{width:9px;height:6px;border-left:2px solid white;border-bottom:2px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
 .chk-item.checked .tick{opacity:1}
 .chk-text{flex:1}
-.chk-sub{font-size:11px;color:var(--text-muted);margin-bottom:2px}
-.chk-main{font-size:13px;font-weight:500;line-height:1.5;color:var(--text)}
+.chk-sub{font-size:11px;color:#6c757d;margin-bottom:2px}
+.chk-main{font-size:13px;font-weight:500;line-height:1.5;color:#1a1a1a}
 .chk-item.checked .chk-main{color:#AAA;text-decoration:line-through;text-decoration-color:#CCC}
 
 /* 세부 아이템 */
@@ -196,49 +187,49 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .sub-item:active{background:#F0FBF5}
 .sub-item.checked{background:#F4FDF8}
 .sub-circle{width:20px;height:20px;border-radius:50%;border:2px solid #DDD;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:white;transition:all 0.2s}
-.sub-item.checked .sub-circle{background:var(--green);border-color:var(--green)}
+.sub-item.checked .sub-circle{background:#1E8449;border-color:#1E8449}
 .sub-tick{width:7px;height:5px;border-left:1.5px solid white;border-bottom:1.5px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
 .sub-item.checked .sub-tick{opacity:1}
-.sub-text{font-size:12px;color:var(--text);line-height:1.5}
+.sub-text{font-size:12px;color:#1a1a1a;line-height:1.5}
 .sub-item.checked .sub-text{color:#AAA;text-decoration:line-through;text-decoration-color:#CCC}
 
 /* keyword badge */
 .kw{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;margin-right:4px;vertical-align:middle}
-.kw-red{background:#FADBD8;color:var(--red-dark)}
-.kw-blue{background:#D6EAF8;color:var(--blue)}
-.kw-green{background:#D5F5E3;color:var(--green)}
+.kw-red{background:#FADBD8;color:#922B21}
+.kw-blue{background:#D6EAF8;color:#1A5276}
+.kw-green{background:#D5F5E3;color:#1E8449}
 .kw-gray{background:#EAECEE;color:#555}
 .kw-orange{background:#FDEBD0;color:#A04000}
-.kw-purple{background:#F5EEF8;color:var(--purple)}
+.kw-purple{background:#F5EEF8;color:#7D3C98}
 
 /* ── ACTION BAR ── */
-.action-bar{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--border);padding:7px 12px 10px;box-shadow:0 -3px 14px rgba(0,0,0,0.09)}
-.action-status{font-size:10px;color:var(--text-muted);text-align:center;margin-bottom:5px}
-.action-status.all-done{color:var(--green);font-weight:700}
+.action-bar{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid rgba(0,0,0,0.1);padding:7px 12px 10px;box-shadow:0 -3px 14px rgba(0,0,0,0.09)}
+.action-status{font-size:10px;color:#6c757d;text-align:center;margin-bottom:5px}
+.action-status.all-done{color:#1E8449;font-weight:700}
 .action-btns{display:flex;gap:8px}
 .btn-complete{flex:1;padding:10px;font-size:14px;font-weight:700;border:none;border-radius:10px;cursor:not-allowed;background:#CCC;color:white;font-family:inherit;transition:all 0.3s;letter-spacing:-0.3px}
-.btn-complete.active{background:var(--red);cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,0.3)}
+.btn-complete.active{background:#C0392B;cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,0.3)}
 .btn-complete.active:active{transform:scale(0.98)}
 .btn-review{padding:10px 11px;font-size:11px;font-weight:600;border:1.5px solid #CCC;border-radius:10px;cursor:not-allowed;background:white;color:#CCC;font-family:inherit;transition:all 0.3s;white-space:nowrap;line-height:1.5;text-align:center}
-.btn-review.active{border-color:var(--red);color:var(--red);cursor:pointer}
+.btn-review.active{border-color:#C0392B;color:#C0392B;cursor:pointer}
 .btn-review.active:active{transform:scale(0.98)}
 
 /* ── REVIEW ── */
 .review-screen{padding:16px 16px 32px}
 .review-header{display:flex;align-items:center;gap:10px;margin-bottom:20px}
-.review-card{background:white;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
-.review-card h3{font-size:14px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.review-card{background:white;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,0.12)}
+.review-card h3{font-size:14px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(0,0,0,0.1)}
 .review-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:12px;line-height:1.5}
 .rv-dot{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px;font-weight:700}
-.rv-done{background:var(--green);color:white}
+.rv-done{background:#1E8449;color:white}
 .rv-miss{background:#EAECEE;color:#999}
-.rv-text-done{color:var(--text)}
+.rv-text-done{color:#1a1a1a}
 .rv-text-miss{color:#AAA;text-decoration:line-through}
-.summary-box{background:white;border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:var(--shadow);text-align:center}
-.time-big{font-size:28px;font-weight:700;color:var(--red);letter-spacing:-1px}
-.time-sub{font-size:12px;color:var(--text-muted);margin-top:4px}
+.summary-box{background:white;border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.12);text-align:center}
+.time-big{font-size:28px;font-weight:700;color:#C0392B;letter-spacing:-1px}
+.time-sub{font-size:12px;color:#6c757d;margin-top:4px}
 .rv-score{font-size:14px;font-weight:600;margin-top:12px;padding:8px;background:#F8F9FA;border-radius:8px}
-.print-btn{width:100%;padding:14px;font-size:14px;font-weight:700;border:none;border-radius:12px;cursor:pointer;background:var(--red);color:white;font-family:inherit;margin-top:4px}
+.print-btn{width:100%;padding:14px;font-size:14px;font-weight:700;border:none;border-radius:12px;cursor:pointer;background:#C0392B;color:white;font-family:inherit;margin-top:4px}
 /* 뒤로가기 토스트 */
 .back-toast{
   position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
@@ -250,9 +241,9 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
   white-space:nowrap;
 }
 .back-toast.show{opacity:1;}
-.capture-btn{width:100%;padding:13px;font-size:14px;font-weight:700;border:1.5px solid var(--red);border-radius:12px;cursor:pointer;background:white;color:var(--red);font-family:inherit;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}
+.capture-btn{width:100%;padding:13px;font-size:14px;font-weight:700;border:1.5px solid #C0392B;border-radius:12px;cursor:pointer;background:white;color:#C0392B;font-family:inherit;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}
 .capture-btn:active{background:#FEF5F4}
-.capture-loading{text-align:center;font-size:12px;color:var(--text-muted);margin-top:8px;min-height:20px}
+.capture-loading{text-align:center;font-size:12px;color:#6c757d;margin-top:8px;min-height:20px}
 .send-status{text-align:center;font-size:12px;font-weight:600;padding:8px 12px;border-radius:10px;margin-bottom:10px;min-height:36px;display:flex;align-items:center;justify-content:center}
 .send-status.sending{background:#EBF5FB;color:#1A5276}
 .send-status.ok{background:#D5F5E3;color:#1E8449}
@@ -260,7 +251,7 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 /* ── REVIEW TIME INPUTS ── */
 .rv-time-inputs{margin-top:14px;display:flex;flex-direction:column;gap:8px;text-align:left}
 .rv-time-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#F8F9FA;border-radius:10px;padding:10px 12px}
-.rv-time-label{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap}
+.rv-time-label{font-size:12px;font-weight:600;color:#1a1a1a;white-space:nowrap}
 .rv-time-val{font-size:14px;font-weight:700;color:#C0392B;letter-spacing:0.5px}
 /* 종료 세부항목 배지 */
 .sub-end-time{font-size:11px;font-weight:700;color:#C0392B;white-space:nowrap;text-align:right;margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:1px}
@@ -623,6 +614,7 @@ function captureScreen(){
       <div class="select-action-status" id="select-action-status">소속·계급·성명 입력 후 활동 종료 또는 출동 전 종료 시 활성화</div>
       <button class="select-btn-complete" id="select-btn-complete" disabled onclick="completeFromSelect()">임무 완료</button>
     </div>
+    <div style="text-align:center;font-size:10px;color:#BBBBBB;padding-bottom:16px;letter-spacing:0.3px;">제작 : 구리소방서 소방교 김대운</div>
   </div>
 </div>
 
@@ -662,8 +654,8 @@ function captureScreen(){
       <h2 style="font-size:16px;font-weight:700">완료된 임무 확인</h2>
     </div>
     <div class="summary-box">
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:2px" id="rv-role-name"></div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px" id="rv-member-info"></div>
+      <div style="font-size:13px;color:#6c757d;margin-bottom:2px" id="rv-role-name"></div>
+      <div style="font-size:12px;color:#6c757d;margin-bottom:6px" id="rv-member-info"></div>
       <div class="time-big" id="rv-time">--:--:--</div>
       <div class="time-sub" id="rv-date"></div>
       <div class="rv-score" id="rv-score"></div>
@@ -698,6 +690,18 @@ function captureScreen(){
 // ══════════════════════════════════════════
 // ★ Google Sheets 웹훅 URL (배포 후 여기에 입력)
 // ══════════════════════════════════════════
+// ── Array.from polyfill (구형 브라우저 호환)
+if(!Array.from){
+  Array.from = function(obj){
+    var arr = [];
+    if(obj && obj.forEach){
+      obj.forEach(function(v){ arr.push(v); });
+    } else if(obj && obj.length !== undefined){
+      for(var i=0;i<obj.length;i++) arr.push(obj[i]);
+    }
+    return arr;
+  };
+}
 var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwUs76tJHC8srq1T6I61n1qU-VmXMKX9g7LmIPkwwioxms581t_sfo_O0l4ZjasA4KC/exec';
 
 // ══════════════════════════════════════════
@@ -1085,7 +1089,7 @@ function updateDepartParent(){
   var parentTick = document.getElementById('depart-parent-tick');
   var allChecked = (departChecked.size === SUP_ITEMS.length && SUP_ITEMS.length > 0);
   if(parentEl) allChecked ? parentEl.classList.add('checked') : parentEl.classList.remove('checked');
-  if(parentCircle) parentCircle.style.cssText = allChecked ? 'background:var(--green);border-color:var(--green)' : '';
+  if(parentCircle) parentCircle.style.cssText = allChecked ? 'background:#1E8449;border-color:#1E8449' : '';
   if(parentTick) parentTick.style.opacity = allChecked ? '1' : '0';
 }
 
@@ -1103,7 +1107,7 @@ function toggleDepart(idx){
   var parentTick = document.getElementById('depart-parent-tick');
   var allChecked = (departChecked.size === SUP_ITEMS.length);
   if(parentEl) allChecked ? parentEl.classList.add('checked') : parentEl.classList.remove('checked');
-  if(parentCircle) parentCircle.style.cssText = allChecked ? 'background:var(--green);border-color:var(--green)' : '';
+  if(parentCircle) parentCircle.style.cssText = allChecked ? 'background:#1E8449;border-color:#1E8449' : '';
   if(parentTick) parentTick.style.opacity = allChecked ? '1' : '0';
   updateSelectBtn();
   updateProgress();
@@ -1124,7 +1128,7 @@ function toggleDepartParent(){
   } else {
     SUP_ITEMS.forEach(function(_, i){ departChecked.add(i); });
     if(parentEl) parentEl.classList.add('checked');
-    if(parentCircle) parentCircle.style.cssText = 'background:var(--green);border-color:var(--green)';
+    if(parentCircle) parentCircle.style.cssText = 'background:#1E8449;border-color:#1E8449';
     if(parentTick) parentTick.style.opacity = '1';
     document.querySelectorAll('[data-di]').forEach(function(el){ el.classList.add('checked'); });
   }
@@ -2095,7 +2099,7 @@ function restoreSelectScreen(){
     var parentTick = document.getElementById('depart-parent-tick');
     var allDept = (departChecked.size === SUP_ITEMS.length);
     if(parentEl) allDept ? parentEl.classList.add('checked') : parentEl.classList.remove('checked');
-    if(parentCircle) parentCircle.style.cssText = allDept ? 'background:var(--green);border-color:var(--green)' : '';
+    if(parentCircle) parentCircle.style.cssText = allDept ? 'background:#1E8449;border-color:#1E8449' : '';
     if(parentTick) parentTick.style.opacity = allDept ? '1' : '0';
   }
 
