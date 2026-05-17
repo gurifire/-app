@@ -122,7 +122,7 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .mob-col-left{font-size:10px;font-weight:700;color:#6c757d;letter-spacing:0.5px;text-transform:uppercase}
 .mob-col-right{font-size:10px;font-weight:700;color:#C0392B;letter-spacing:0.5px}
 .mob-items{display:flex;flex-direction:column;gap:10px}
-.mob-item{display:flex;align-items:center;gap:10px;transition:opacity 0.2s}
+.mob-item{display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-transition:opacity 0.2s;transition:opacity 0.2s}
 .mob-item.disabled{opacity:0.35;pointer-events:none}
 .mob-chk-wrap{width:28px;height:28px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .mob-chk{width:24px;height:24px;-webkit-border-radius:50%;border-radius:50%;border:2px solid #CCC;background:white;display:flex;align-items:center;justify-content:center;-webkit-transition:all 0.2s;transition:all 0.2s;position:relative}
@@ -511,8 +511,8 @@ function captureScreen(){
         <span class="mob-col-right">응소시간</span>
       </div>
       <div class="mob-items">
-        <div class="mob-item" id="mob-item-essential">
-          <div class="mob-chk-wrap" onclick="toggleMobilize('essential')">
+        <div class="mob-item" id="mob-item-essential" onclick="toggleMobilize('essential')">
+          <div class="mob-chk-wrap">
             <div class="mob-chk" id="mob-chk-essential"></div>
           </div>
           <div class="mob-text">
@@ -521,8 +521,8 @@ function captureScreen(){
           </div>
           <div class="mob-time-out" id="mob-time-essential">--:--</div>
         </div>
-        <div class="mob-item" id="mob-item-general">
-          <div class="mob-chk-wrap" onclick="toggleMobilize('general')">
+        <div class="mob-item" id="mob-item-general" onclick="toggleMobilize('general')">
+          <div class="mob-chk-wrap">
             <div class="mob-chk" id="mob-chk-general"></div>
           </div>
           <div class="mob-text">
@@ -957,24 +957,28 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   });
 
-  // 구형 안드로이드 터치 이벤트 보완
-  // onclick이 동작 안하는 경우 touchend로 보완
+  // 구형 안드로이드 터치 이벤트 보완 (onclick 미동작 시 touchend로 대체)
   function addTouchFallback(selector, fn){
     var els = document.querySelectorAll(selector);
     for(var i=0; i<els.length; i++){
       (function(el){
-        var touched = false;
-        el.addEventListener('touchstart', function(){ touched = true; }, {passive:true});
+        var touchMoved = false;
+        el.addEventListener('touchstart', function(e){ touchMoved = false; }, {passive:true});
+        el.addEventListener('touchmove', function(e){ touchMoved = true; }, {passive:true});
         el.addEventListener('touchend', function(e){
-          if(touched){ touched = false; fn(el, e); }
+          if(!touchMoved){
+            e.preventDefault();
+            fn(el, e);
+          }
+          touchMoved = false;
         });
       })(els[i]);
     }
   }
 
-  // 비상소집 터치 보완
-  addTouchFallback('#mob-item-essential .mob-chk-wrap', function(){ toggleMobilize('essential'); });
-  addTouchFallback('#mob-item-general .mob-chk-wrap', function(){ toggleMobilize('general'); });
+  // 비상소집 전체 영역 터치 보완
+  addTouchFallback('#mob-item-essential', function(){ toggleMobilize('essential'); });
+  addTouchFallback('#mob-item-general', function(){ toggleMobilize('general'); });
   // 현장 출동 전 종료 터치 보완
   addTouchFallback('#early-end-item', function(){ toggleEarlyEnd(); });
 
