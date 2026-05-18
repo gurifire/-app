@@ -155,19 +155,21 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .prog-bar-fill{height:100%;border-radius:999px;transition:width 0.4s cubic-bezier(0.4,0,0.2,1);width:0}
 
 /* phase sections */
-.phase-section{margin:12px 12px 0}
+.phase-section{margin:12px 12px 0;border-radius:12px;overflow:hidden}
 .phase-section:last-child{margin-bottom:8px}
 .phase-section:not(:first-child){margin-top:10px}
 .phase-label{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px 12px 0 0;font-size:13px;font-weight:700;color:white}
 .phase-items{background:white;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid rgba(0,0,0,0.1);border-top:none}
 
 /* ★ 단계별 색상 — ph-gray 포함 모두 명시 */
-.ph-red  .phase-label{background:#C0392B}
-.ph-blue .phase-label{background:#2471A3}
-.ph-green .phase-label{background:#1E8449}
+.ph-red  .phase-label{background:#E67F22}
+.ph-blue .phase-label{background:#2472A3}
+.ph-green .phase-label{background:#E67F22}
 .ph-gray .phase-label{background:#566573}
 
 /* 부모 체크 아이템 */
+.chk-item-indent{padding-left:28px !important;}
+.sub-group-label{font-size:11px;font-weight:700;color:#7D3C98;padding:6px 16px 2px 42px;letter-spacing:0.3px;}
 .chk-item{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border-bottom:0.5px solid rgba(0,0,0,0.1);cursor:pointer;transition:background 0.12s;-webkit-user-select:none;user-select:none}
 .chk-item:last-child{border-bottom:none}
 .chk-item:active{background:#F0FBF5}
@@ -199,6 +201,13 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .kw-blue{background:#D6EAF8;color:#1A5276}
 .kw-green{background:#D5F5E3;color:#1E8449}
 .kw-gray{background:#EAECEE;color:#555}
+.ph-orange{background:#E67E22}
+.ph-orange .phase-label{background:#E67F22}
+.ph-green{background:#1E8449}
+.ph-purple{background:#7D3C98}
+.ph-purple .phase-label{background:#E67F22}
+.kw-green{background:#D5F5E3;color:#1E8449}
+.kw-purple{background:#E8DAEF;color:#7D3C98}
 .kw-orange{background:#FDEBD0;color:#A04000}
 .kw-purple{background:#F5EEF8;color:#7D3C98}
 
@@ -616,6 +625,38 @@ function captureScreen(){
         </div>
         <div class="role-arrow">›</div>
       </div>
+      <div class="role-card" style="border-color:rgba(230,126,34,0.3)" onclick="selectRole('safe')">
+        <div class="role-icon" style="background:#FEF5E7"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 3L5 7v7c0 5 4 9.5 9 10.5C19 23.5 23 19 23 14V7L14 3z" fill="#E67E22" opacity="0.2" stroke="#E67E22" stroke-width="1.5"/><path d="M10 14l3 3 5-5" stroke="#E67E22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="role-info">
+          <h3 style="color:#E67E22">안전관리요원</h3>
+          <p>현장 안전관리 및 통제<br>차량배치 · 방면안전관리</p>
+        </div>
+        <div class="role-arrow">›</div>
+      </div>
+      <div class="role-card" style="border-color:rgba(26,82,118,0.3)" onclick="selectRole('invest')">
+        <div class="role-icon" style="background:#EBF5FB"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="6" stroke="#1A5276" stroke-width="1.5" fill="none"/><line x1="17.5" y1="17.5" x2="22" y2="22" stroke="#1A5276" stroke-width="2" stroke-linecap="round"/><line x1="10" y1="13" x2="16" y2="13" stroke="#1A5276" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="10" x2="13" y2="16" stroke="#1A5276" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="role-info">
+          <h3 style="color:#1A5276">상황조사요원</h3>
+          <p>현장 상황 조사 및 분석<br>피해규모 파악 · 영상 기록</p>
+        </div>
+        <div class="role-arrow">›</div>
+      </div>
+      <div class="role-card" style="border-color:rgba(30,132,73,0.3)" onclick="selectRole('decon')">
+        <div class="role-icon" style="background:#E9F7EF"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 4c0 0-7 6-7 12a7 7 0 0014 0C21 10 14 4 14 4z" fill="#1E8449" opacity="0.2" stroke="#1E8449" stroke-width="1.5"/><path d="M11 17c1 1.5 4 1.5 5 0" stroke="#1E8449" stroke-width="1.5" stroke-linecap="round"/><circle cx="14" cy="13" r="1.5" fill="#1E8449"/></svg></div>
+        <div class="role-info">
+          <h3 style="color:#1E8449">오염통제요원</h3>
+          <p>오염 확인 및 확산 방지<br>유관기관 통보 · 현장통제</p>
+        </div>
+        <div class="role-arrow">›</div>
+      </div>
+      <div class="role-card" style="border-color:rgba(125,60,152,0.3)" onclick="selectRole('ems')">
+        <div class="role-icon" style="background:#F5EEF8"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="8" width="18" height="13" rx="2" stroke="#7D3C98" stroke-width="1.5" fill="none"/><line x1="14" y1="11" x2="14" y2="18" stroke="#7D3C98" stroke-width="2" stroke-linecap="round"/><line x1="10.5" y1="14.5" x2="17.5" y2="14.5" stroke="#7D3C98" stroke-width="2" stroke-linecap="round"/><path d="M10 8V6a4 4 0 018 0v2" stroke="#7D3C98" stroke-width="1.5"/></svg></div>
+        <div class="role-info">
+          <h3 style="color:#7D3C98">구급지휘요원</h3>
+          <p>구급 지휘 및 임시의료소 운영<br>환자분류 · 이송 지휘</p>
+        </div>
+        <div class="role-arrow">›</div>
+      </div>
     </div>
     <div class="select-footer">각 요원별 임무를 빠짐없이 확인하세요</div>
     <div class="select-action-bar">
@@ -739,7 +780,7 @@ var ROLES = {
         { kw:'자원확인', kc:'kw-green', main:'자원 확인',
           subs:['출동력(선착) 확인','추가 소방력 파악','대응단계 확인','유관기관 확인'] }
       ]},
-      { phase:'임무수행단계', ph:'ph-green', items:[
+      { phase:'임무수행단계', ph:'ph-orange', items:[
         { kw:'주요임무',   kc:'kw-green',  main:'현장지휘대장 보좌',
           subs:['명령사항 기록','명령사항 전달 완료'] },
         { kw:'현장지휘소', kc:'kw-orange', main:'현장지휘소 설치',
@@ -768,7 +809,7 @@ var ROLES = {
         { kw:'자원확인', kc:'kw-green', main:'자원 확인',
           subs:['출동력(선착) 확인','추가 소방력 파악','대응단계 확인','유관기관 확인'] }
       ]},
-      { phase:'임무수행단계', ph:'ph-green', items:[
+      { phase:'임무수행단계', ph:'ph-orange', items:[
         { kw:'자원대기소', kc:'kw-green', main:'자원대기소 운영',
           subs:['자원대기소 운영 완료','교대조 편성','휴식조 편성'] },
         { kw:'소방력', kc:'kw-orange', main:'소방력 파악 및 배치',
@@ -803,7 +844,7 @@ var ROLES = {
         { kw:'자원확인', kc:'kw-green', main:'자원 확인',
           subs:['출동력(선착) 확인','추가 소방력 파악','대응단계 확인','유관기관 확인'] }
       ]},
-      { phase:'임무수행단계', ph:'ph-green', items:[
+      { phase:'임무수행단계', ph:'ph-orange', items:[
         { kw:'통신체계', kc:'kw-purple', main:'통신체계 확보',
           subs:['예비채널 확보','무전망 분리(지휘/작전/지원)','작전망 확인(통신망 단일화)','무전채널 공지(지원기관)'] },
         { kw:'비상동원', kc:'kw-red', main:'비상동원',
@@ -812,6 +853,131 @@ var ROLES = {
           subs:['시청(오염통제·중장비)','경찰','보건소','군','한국전력공사','도시가스','헬기'] },
         { kw:'상황전파', kc:'kw-green', main:'상황 전파',
           subs:['P119 활용 상황전파','상황실 연락체계 구축'] }
+      ]},
+      { phase:'종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 안전관리요원 ─── */
+  safe:{
+    name:'안전관리요원',
+    subtitle:'현장 안전관리 및 통제',
+    barColor:'#E67E22',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue', main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악','기타 정보 수집'] },
+        { kw:'자원확인', kc:'kw-blue', main:'소방력 및 자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 확인','대응단계 파악','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'현장안전', kc:'kw-orange', main:'현장 안전 관리',
+          subs:['위험구역 진출입 관리','탈출로 확보','안전관련 정보수집'] },
+        { kw:'현장통제', kc:'kw-orange', main:'현장 통제',
+          subs:['Fire/Police Line 설치','진입차량 통제','1차 통제선 설정','2차 통제선 설정'] },
+        { kw:'차량배치', kc:'kw-orange', main:'차량 배치 관리',
+          subs:['1선 진입','2선 대기','꼬리물기 금지','필요시 차량 대기 장소 지정'] },
+        { kw:'방면안전관리', kc:'kw-orange', main:'방면 안전관리',
+          subs:['방면지휘관 보좌','안전·인력관리','교대조 운영'] }
+      ]},
+      { phase:'종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 상황조사요원 ─── */
+  invest:{
+    name:'상황조사요원',
+    subtitle:'현장 상황 조사 및 분석',
+    barColor:'#1A5276',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue', main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악','기타 정보 수집'] },
+        { kw:'자원확인', kc:'kw-blue', main:'소방력 및 자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 확인','대응단계 파악','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'현장확인', kc:'kw-blue', main:'현장 확인',
+          subs:['전체 현장 확인','수신반 확인','관계인 정보 수집'] },
+        { kw:'상황분석', kc:'kw-blue', main:'상황 분석',
+          subs:['피해규모 파악','인명피해 확인','위험요인 식별','구조필요 지역 식별','환경모니터링','사진·영상 기록'] },
+        { kw:'재평가', kc:'kw-blue', main:'재평가',
+          subs:['상황변화에 따라 전략·대응계획 유지·조정'] }
+      ]},
+      { phase:'종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 오염통제요원 ─── */
+  decon:{
+    name:'오염통제요원',
+    subtitle:'오염 확인 및 확산 방지',
+    barColor:'#1E8449',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue', main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악','기타 정보 수집'] },
+        { kw:'자원확인', kc:'kw-blue', main:'소방력 및 자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 확인','대응단계 파악','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'오염확인', kc:'kw-green', main:'오염 상황 확인',
+          subs:['유해화학물질 확인','폐기물 확인','오염물질 확인'] },
+        { kw:'현장통제', kc:'kw-green', main:'현장 통제',
+          subs:['Fire/Police Line 설치','출입통제'] },
+        { kw:'확산방지', kc:'kw-green', main:'오염 확산 방지',
+          subs:['흡착포 활용','제독제 사용','소방용수 활용'] },
+        { kw:'유관기관', kc:'kw-green', main:'유관기관 통보(필요시)',
+          subs:['시청(오염통제·중장비)','보건소','한국전력공사','도시가스','경찰','헬기','군'] }
+      ]},
+      { phase:'종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 구급지휘요원 ─── */
+  ems:{
+    name:'구급지휘요원',
+    subtitle:'구급 지휘 및 임시의료소 운영',
+    barColor:'#7D3C98',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'대응계획', kc:'kw-purple', main:'대응 계획 수립',
+          subs:['우선순위 결정'] },
+        { kw:'통신체계', kc:'kw-purple', main:'통신체계 확보',
+          subs:['MCS 운영'] },
+        { kw:'상황평가', kc:'kw-purple', main:'상황 평가',
+          subs:['정확한 사고 위치 파악','구체적인 사고유형 확인','사상자 규모(현재 → 앞으로 예측되는 수)','장애요인 확인','날씨 확인','위험요소 파악'] },
+        { kw:'핵심목표', kc:'kw-purple', main:'핵심 목표 파악',
+          subs:['해결해야 할 문제 파악(우선순위)','자력대피자 확인','환자분류','응급처치','이송','임시의료소 설치·운영','통제'] },
+        { kw:'자원요청', kc:'kw-purple', main:'자원 요청',
+          subs:['구급대','신속대응반','진압대','구조대','DMAT','경찰','진단버스','수요예측물품'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'운영지원', kc:'kw-purple', main:'운영 지원',
+          subs:['임시의료소 지원'] },
+        { kw:'위치선정', kc:'kw-purple', main:'위치 선정 및 전파',
+          subs:['통제선 확인','환자 및 구급차 동선 확인','날씨 확인','위험요소 구분','임시영안소 위치 선정 및 전파','임시의료소 위치 전파','환자집결지 위치 전파','구급차 집결지 위치 전파'] },
+        { kw:'임무지정', kc:'kw-purple', main:'임무 지정',
+          subs:['분류반','처치반','이송반','이동반'] },
+        { kw:'재평가', kc:'kw-purple', main:'재평가',
+          subs:['[분류] m-MASS','[분류] START','[초기대응] 분류','[초기대응] 처치 중심(긴급환자)','[후기대응] 이송 중심(긴급→비응급)'],
+          subGroups:[
+            {label:'분류', items:['m-MASS','START']},
+            {label:'초기대응', items:['분류','처치 중심(긴급환자)']},
+            {label:'후기대응', items:['이송 중심(긴급→비응급)']}
+          ] }
       ]},
       { phase:'종료', ph:'ph-gray', items:[
         { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
@@ -1466,7 +1632,7 @@ function buildChecklist(rd){
 
       /* 부모 행 */
       var div = document.createElement('div');
-      div.className = 'chk-item';
+      div.className = 'chk-item' + (item.indent ? ' chk-item-indent' : '');
       div.setAttribute('data-id', pid);
       if(isWithdrawalParent){
         div.innerHTML =
@@ -1488,7 +1654,26 @@ function buildChecklist(rd){
       wrap.appendChild(div);
 
       /* 세부 행 */
-      item.subs.forEach(function(sub){
+      // subGroups가 있으면 그룹 레이블과 함께 subs 렌더링
+      var subsList = item.subs;
+      if(item.subGroups && item.subGroups.length > 0){
+        // subGroups를 flat하게 subs로 변환 (그룹 레이블 포함)
+        subsList = [];
+        item.subGroups.forEach(function(grp){
+          subsList.push('__group__' + grp.label); // 그룹 레이블 마커
+          grp.items.forEach(function(it){ subsList.push(it); });
+        });
+      }
+      subsList.forEach(function(sub){
+        // 그룹 레이블이면 체크항목 아닌 레이블로 렌더링
+        if(typeof sub === 'string' && sub.indexOf('__group__') === 0){
+          var grpLabel = sub.replace('__group__','');
+          var gl = document.createElement('div');
+          gl.className = 'sub-group-label';
+          gl.textContent = grpLabel;
+          wrap.appendChild(gl);
+          return;
+        }
         var sid = 'chk-' + ic;
         ic++;
         totalCount++;
@@ -1818,7 +2003,26 @@ function showReview(){
         '<div class="'+(done?'rv-text-done':'rv-text-miss')+'" style="font-weight:500">['+item.kw+'] '+item.main+'</div>';
       card.appendChild(row);
 
-      item.subs.forEach(function(sub){
+      // subGroups가 있으면 그룹 레이블과 함께 subs 렌더링
+      var subsList = item.subs;
+      if(item.subGroups && item.subGroups.length > 0){
+        // subGroups를 flat하게 subs로 변환 (그룹 레이블 포함)
+        subsList = [];
+        item.subGroups.forEach(function(grp){
+          subsList.push('__group__' + grp.label); // 그룹 레이블 마커
+          grp.items.forEach(function(it){ subsList.push(it); });
+        });
+      }
+      subsList.forEach(function(sub){
+        // 그룹 레이블이면 체크항목 아닌 레이블로 렌더링
+        if(typeof sub === 'string' && sub.indexOf('__group__') === 0){
+          var grpLabel = sub.replace('__group__','');
+          var gl = document.createElement('div');
+          gl.className = 'sub-group-label';
+          gl.textContent = grpLabel;
+          wrap.appendChild(gl);
+          return;
+        }
         var sid  = 'chk-' + ic; ic++;
         var sdone = checkedIds.has(sid);
         var sr   = document.createElement('div');
