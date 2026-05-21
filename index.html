@@ -558,6 +558,20 @@ function captureScreen(){
         <div class="ee-time-out" id="ee-time-out">--:--</div>
       </div>
     </div>
+
+    <div class="select-divider">
+      <span>지원반장 확인 목록</span>
+    </div>
+    <div class="role-cards" id="chief-role-area">
+      <div class="role-card" style="border-color:rgba(36,114,163,0.3)" onclick="selectRole('chief')">
+        <div class="role-icon" style="background:#EBF5FB"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="4" width="18" height="21" rx="2" stroke="#2472A3" stroke-width="1.5" fill="none"/><line x1="9" y1="9" x2="19" y2="9" stroke="#2472A3" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="13" x2="19" y2="13" stroke="#2472A3" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="17" x2="15" y2="17" stroke="#2472A3" stroke-width="1.5" stroke-linecap="round"/><path d="M16 19l2 2 4-4" stroke="#2472A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="role-info">
+          <h3 style="color:#2472A3">지원반장 확인 목록</h3>
+          <p>지원반장 총괄 확인</p>
+        </div>
+        <div class="role-arrow">›</div>
+      </div>
+    </div>
     <div class="select-divider">
       <span>출동단계</span>
     </div>
@@ -593,6 +607,15 @@ function captureScreen(){
       <span>요원 선택</span>
     </div>
     <div class="role-cards" id="role-select-cards">
+      <div class="role-card" id="role-select-toggle-card" style="border-color:rgba(86,101,115,0.25)" onclick="toggleRoleSelectCard()">
+        <div class="role-icon" style="background:#F2F3F4">👥</div>
+        <div class="role-info">
+          <h3 style="color:#566573">요원별 임무 선택</h3>
+          <p>클릭하여 담당 요원 선택</p>
+        </div>
+        <div class="role-arrow" id="role-select-arrow">›</div>
+      </div>
+      <div id="role-select-list" style="display:none;flex-direction:column;gap:10px">
       <div class="role-card cmd" onclick="selectRole('cmd')">
         <div class="role-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- 배경 원 -->
@@ -656,6 +679,7 @@ function captureScreen(){
           <p>구급 지휘 및 임시의료소 운영<br>환자분류 · 이송 지휘</p>
         </div>
         <div class="role-arrow">›</div>
+      </div>
       </div>
     </div>
     <div class="select-footer">각 요원별 임무를 빠짐없이 확인하세요</div>
@@ -981,6 +1005,47 @@ var ROLES = {
       ]},
       { phase:'종료', ph:'ph-gray', items:[
         { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 지원반장 확인 목록 ─── */
+  chief:{
+    name:'지원반장 확인 목록',
+    subtitle:'출동 전 지원반장 최종 확인 사항',
+    barColor:'#2472A3',
+    phases:[
+      { phase:'비상소집', ph:'ph-blue', items:[
+        { kw:'인원파악', kc:'kw-blue', main:'긴급지원반 인원 파악(총 13명)',
+          subs:['필수요원 5명(1시간 이내 응소)','필수요원 외 8명'] }
+      ]},
+      { phase:'지원준비', ph:'ph-blue', items:[
+        { kw:'물품적재', kc:'kw-blue', main:'긴급지원반 필요물품 적재(화물차 또는 생활안전차)',
+          subs:['천막 2개','테이블 2개','의자 8개','긴급지원반 소모품 박스','긴급지원반 조끼 및 헬멧 보관함','상황판 및 상황판 거치대','긴급지원반 백팩','PS-LTE 가방(17개)(사무실 보관·통제단 담당자 자리)','식수 및 이온음료(긴급구조통제단 창고 보관)'] }
+      ]},
+      { phase:'임무수행', ph:'ph-orange', items:[
+        { kw:'지휘소', kc:'kw-orange', main:'현장지휘소 운영 (필수인원 2명·팀원)',
+          subs:['현장지휘소 설치','천막','테이블','의자','상황판','노트북','상황판 작성','일반현황','시간대별조치상황','작전도','시스템 운용','노트북 운용(P119 현장출동지원시스템)','연락망 구축','필요 지원기관 연락망 구축(지원기관 연락관)'],
+          subGroups:[
+            {label:'현장지휘소 설치', items:['천막','테이블','의자','상황판','노트북']},
+            {label:'상황판 작성', items:['일반현황','시간대별조치상황','작전도']},
+            {label:'시스템 운용', items:['노트북 운용(P119 현장출동지원시스템)']},
+            {label:'연락망 구축', items:['필요 지원기관 연락망 구축(지원기관 연락관)']}
+          ] },
+        { kw:'민간인통제', kc:'kw-orange', main:'민간인 통제 (필수인원 1명, 차량통제와 병행)',
+          subs:['1, 2통제선 설치','민간인 통제선 내 접근 통제'] },
+        { kw:'차량통제', kc:'kw-orange', main:'차량 통제',
+          subs:['차량 통제 인원 배치'] },
+        { kw:'자원집결지', kc:'kw-orange', main:'자원집결지 운영 (필수인원 1명·팀장)',
+          subs:['타·시도 소방력 현장 배치(필요시 중계급수체계 형성 지원)'] },
+        { kw:'자원대기소', kc:'kw-orange', main:'자원대기소 운영 (필수인원 1명)',
+          subs:['지원기관 연락관 운영(지원기관 도착·무전기 교육·배부)','소방력 교대조 편성 운영(휴식 및 물품 지원)'] },
+        { kw:'오염통제', kc:'kw-orange', main:'오염통제',
+          subs:['재난현장 위험물질 누출이나 누출 위험 여부 확인','지원기관에 긴급오염통제 활동 지원 요청'] }
+      ]},
+      { phase:'종료', ph:'ph-gray', items:[
+        { kw:'확인완료', kc:'kw-gray', main:'지원반장 확인 완료',
           subs:[] }
       ]}
     ]
@@ -1334,6 +1399,15 @@ function toggleDepartParent(){
   updateSelectBtn();
 }
 
+var roleSelectOpen = false;
+function toggleRoleSelectCard(){
+  roleSelectOpen = !roleSelectOpen;
+  var list = document.getElementById('role-select-list');
+  var arrow = document.getElementById('role-select-arrow');
+  if(list) list.style.display = roleSelectOpen ? 'flex' : 'none';
+  if(arrow) arrow.textContent = roleSelectOpen ? '∨' : '›';
+}
+
 var departCardOpen = false;
 function toggleDepartCard(){
   departCardOpen = !departCardOpen;
@@ -1349,6 +1423,7 @@ function toggleEarlyEnd(){
   var item = document.getElementById('early-end-item');
   var timeOut = document.getElementById('ee-time-out');
   var roleSelectCards = document.getElementById('role-select-cards');
+  var chiefArea = document.getElementById('chief-role-area');
   var departArea = document.getElementById('depart-role-area');
   var departSubWrap = document.getElementById('depart-sub-wrap');
 
@@ -1362,6 +1437,7 @@ function toggleEarlyEnd(){
     item.classList.remove('checked');
     timeOut.textContent = '--:--';
     if(roleSelectCards) roleSelectCards.classList.remove('disabled');
+    if(chiefArea) chiefArea.classList.remove('disabled');
     if(departArea) departArea.classList.remove('disabled');
     if(departSubWrap){ departSubWrap.style.pointerEvents=''; departSubWrap.style.opacity=''; }
     enableActivityEnd();
@@ -1392,6 +1468,7 @@ function toggleEarlyEnd(){
     if(departSubWrap){ departSubWrap.style.pointerEvents='none'; departSubWrap.style.opacity='0.35'; }
     // 요원선택 비활성화
     if(roleSelectCards) roleSelectCards.classList.add('disabled');
+    if(chiefArea) chiefArea.classList.add('disabled');
     disableActivityEnd();
   }
   updateSelectBtn();
@@ -1535,8 +1612,9 @@ function resetForRole(){
   withdrawalSids = [];
 }
 
-function reset(){ checkedIds.clear(); completedTime = null; parentToSubs = {}; activityEndTime = null; withdrawalSids = []; earlyEndTime = null; departCardOpen=false; var dw=document.getElementById('depart-sub-wrap'); if(dw){ dw.style.display='none'; dw.style.pointerEvents=''; dw.style.opacity=''; } var da2=document.getElementById('depart-role-area'); if(da2) da2.classList.remove('disabled'); var da=document.getElementById('depart-arrow'); if(da) da.textContent='›';
+function reset(){ checkedIds.clear(); completedTime = null; parentToSubs = {}; activityEndTime = null; withdrawalSids = []; earlyEndTime = null; departCardOpen=false; roleSelectOpen=false; var dw=document.getElementById('depart-sub-wrap'); if(dw){ dw.style.display='none'; dw.style.pointerEvents=''; dw.style.opacity=''; } var da2=document.getElementById('depart-role-area'); if(da2) da2.classList.remove('disabled'); var da=document.getElementById('depart-arrow'); if(da) da.textContent='›'; var rsl=document.getElementById('role-select-list'); if(rsl) rsl.style.display='none'; var rsa=document.getElementById('role-select-arrow'); if(rsa) rsa.textContent='›';
   // 출동단계 부모 체크 초기화
+  var ch=document.getElementById('chief-role-area'); if(ch) ch.classList.remove('disabled');
   var dp=document.getElementById('depart-parent'); if(dp) dp.classList.remove('checked');
   var dpc=document.getElementById('depart-parent-circle'); if(dpc) dpc.style.cssText='';
   var dpt=document.getElementById('depart-parent-tick'); if(dpt) dpt.style.opacity='0'; var rc=document.getElementById('role-select-cards'); if(rc) rc.classList.remove('disabled'); var ee=document.getElementById('early-end-item'); if(ee) ee.classList.remove('checked'); var eet=document.getElementById('ee-time-out'); if(eet) eet.textContent='--:--';
@@ -1627,7 +1705,7 @@ function buildChecklist(rd){
       ic++;
       totalCount++;
       var subIds = [];
-      var isWithdrawalParent = (item.main === '지원반 철수 완료');
+      var isWithdrawalParent = (item.main === '지원반 철수 완료' || item.main === '지원반장 확인 완료');
       if(isWithdrawalParent){ withdrawalSids.push(pid); }
 
       /* 부모 행 */
@@ -2020,7 +2098,7 @@ function showReview(){
           var gl = document.createElement('div');
           gl.className = 'sub-group-label';
           gl.textContent = grpLabel;
-          wrap.appendChild(gl);
+          card.appendChild(gl);
           return;
         }
         var sid  = 'chk-' + ic; ic++;
@@ -2322,6 +2400,8 @@ function restoreSelectScreen(){
     // 출동단계·요원선택 비활성화
     var da = document.getElementById('depart-role-area');
     if(da) da.classList.add('disabled');
+    var ca = document.getElementById('chief-role-area');
+    if(ca) ca.classList.add('disabled');
     var rc = document.getElementById('role-select-cards');
     if(rc) rc.classList.add('disabled');
   }
