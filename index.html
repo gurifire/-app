@@ -265,6 +265,61 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 /* 종료 세부항목 배지 */
 .sub-end-time{font-size:11px;font-weight:700;color:#C0392B;white-space:nowrap;text-align:right;margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:1px}
 .end-label{font-size:9px;font-weight:700;color:#E74C3C;letter-spacing:0.3px;opacity:0.8}
+
+/* ── 메인 접이식 묶음 ── */
+.main-accordion{margin:12px 16px;background:white;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(192,57,43,0.12)}
+.main-accordion.disabled,.control-accordion.disabled{opacity:0.35;pointer-events:none;filter:grayscale(0.2)}
+.main-accordion-head{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;-webkit-user-select:none;user-select:none;transition:background 0.15s}
+.main-accordion-head:active{background:#FEF5F4}
+.main-accordion-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;background:#FADBD8}
+.main-accordion-info{flex:1}
+.main-accordion-title{font-size:16px;font-weight:800;color:#C0392B;margin-bottom:3px;letter-spacing:-0.3px}
+.main-accordion-desc{font-size:12px;color:#6c757d;line-height:1.45}
+.main-accordion-arrow{font-size:22px;color:#CCC;transition:transform 0.18s;flex-shrink:0}
+.main-accordion.open .main-accordion-arrow{transform:rotate(90deg);color:#C0392B}
+.main-accordion-body{display:none;padding-bottom:12px;border-top:1px solid #F0F0F0;background:#FCFCFC}
+.main-accordion.open .main-accordion-body{display:block}
+.main-accordion-body .select-divider{padding-left:12px;padding-right:12px}
+.main-accordion-body .role-cards{padding-left:12px;padding-right:12px}
+.main-accordion-body .depart-sub-wrap{margin-left:12px;margin-right:12px}
+.control-accordion{margin:12px 16px;background:white;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(125,60,152,0.16)}
+.control-accordion.open .main-accordion-arrow{transform:rotate(90deg);color:#7D3C98}
+.control-accordion .main-accordion-icon{background:#F5EEF8;color:#7D3C98}
+.control-accordion .main-accordion-title{color:#7D3C98}
+.control-body{display:none;padding:0 0 12px;background:#FCFCFC;border-top:1px solid #F0F0F0}
+.control-accordion.open .control-body{display:block}
+.control-dept{margin:12px 12px 0;background:white;border:1px solid rgba(0,0,0,0.08);border-radius:12px;overflow:hidden}
+.control-dept-head{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;-webkit-user-select:none;user-select:none;background:#fff}
+.control-dept-head:active{background:#F8F9FA}
+.control-dept-badge{font-size:11px;font-weight:800;color:white;padding:4px 8px;border-radius:999px;white-space:nowrap}
+.badge-plan{background:#2472A3}.badge-field{background:#E67E22}.badge-resource{background:#7D3C98}
+.control-dept-title{font-size:14px;font-weight:800;color:#1a1a1a;flex:1}
+.control-dept-arrow{font-size:20px;color:#CCC;transition:transform 0.18s}
+.control-dept.open .control-dept-arrow{transform:rotate(90deg)}
+.control-dept-body{display:none;border-top:1px solid #F0F0F0}
+.control-dept.open .control-dept-body{display:block}
+.ctrl-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:0.5px solid #F0F0F0;cursor:pointer;-webkit-user-select:none;user-select:none;background:white}
+.ctrl-item:last-child{border-bottom:none}
+.ctrl-item:active{background:#F0FBF5}
+.ctrl-item.checked{background:#F4FDF8}
+.ctrl-circle{width:21px;height:21px;border-radius:50%;border:2px solid #DDD;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:white;transition:all 0.2s}
+.ctrl-item.checked .ctrl-circle{background:#1E8449;border-color:#1E8449}
+.ctrl-tick{width:7px;height:5px;border-left:1.5px solid white;border-bottom:1.5px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
+.ctrl-item.checked .ctrl-tick{opacity:1}
+.ctrl-text{font-size:12px;color:#1a1a1a;line-height:1.5;flex:1}
+.ctrl-item.checked .ctrl-text{color:#AAA;text-decoration:line-through;text-decoration-color:#CCC}
+
+/* ── 통합 결과 접이식 출력 ── */
+.review-accordion{background:white;border-radius:14px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,0.12);overflow:hidden;border:1px solid rgba(0,0,0,0.06)}
+.review-accordion summary{list-style:none;cursor:pointer;padding:14px 16px;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid rgba(0,0,0,0.06)}
+.review-accordion summary::-webkit-details-marker{display:none}
+.review-accordion summary::after{content:'›';font-size:22px;color:#CCC;transition:transform 0.18s}
+.review-accordion[open] summary::after{transform:rotate(90deg);color:#C0392B}
+.review-accordion-body{padding:0 0 12px}
+.review-accordion .review-card{box-shadow:none;margin:0;border-radius:0;border-bottom:1px solid rgba(0,0,0,0.06)}
+.review-accordion .review-card:last-child{border-bottom:none}
+.review-small-summary{font-size:11px;font-weight:600;color:#6c757d;margin-left:auto;white-space:nowrap}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
@@ -560,6 +615,20 @@ function captureScreen(){
     </div>
 
     <div class="select-divider">
+      <span>지원반 및 통제단 기능별 임무 선택</span>
+    </div>
+
+    <div class="main-accordion" id="support-branch-accordion">
+      <div class="main-accordion-head" onclick="toggleMainAccordion('support-branch-accordion')">
+        <div class="main-accordion-icon">🚒</div>
+        <div class="main-accordion-info">
+          <div class="main-accordion-title">긴급구조현장지휘대 지원반</div>
+          <div class="main-accordion-desc">지원반장 확인 목록 · 출동단계 · 요원별 임무선택</div>
+        </div>
+        <div class="main-accordion-arrow">›</div>
+      </div>
+      <div class="main-accordion-body">
+    <div class="select-divider">
       <span>지원반장 확인 목록</span>
     </div>
     <div class="role-cards" id="chief-role-area">
@@ -682,6 +751,48 @@ function captureScreen(){
       </div>
       </div>
     </div>
+      </div>
+    </div>
+
+    <div class="control-accordion" id="control-dan-accordion">
+      <div class="main-accordion-head" onclick="toggleMainAccordion('control-dan-accordion')">
+        <div class="main-accordion-icon">🧭</div>
+        <div class="main-accordion-info">
+          <div class="main-accordion-title">긴급구조통제단</div>
+          <div class="main-accordion-desc">대응계획부 · 현장지휘부 · 자원지원부 기능별 체크리스트</div>
+        </div>
+        <div class="main-accordion-arrow">›</div>
+      </div>
+      <div class="control-body">
+        <div class="role-cards" style="padding-top:12px">
+          <div class="role-card" style="border-color:rgba(36,114,163,0.3)" onclick="selectRole('controlPlan')">
+            <div class="role-icon" style="background:#EBF5FB">📊</div>
+            <div class="role-info">
+              <h3 style="color:#2472A3">대응계획부</h3>
+              <p>상황분석 · 작전계획 · 공보·대중정보</p>
+            </div>
+            <div class="role-arrow">›</div>
+          </div>
+          <div class="role-card" style="border-color:rgba(230,126,34,0.3)" onclick="selectRole('controlField')">
+            <div class="role-icon" style="background:#FEF5E7">🚒</div>
+            <div class="role-info">
+              <h3 style="color:#E67E22">현장지휘부</h3>
+              <p>구조·진압 · 현장통제 · 안전관리</p>
+            </div>
+            <div class="role-arrow">›</div>
+          </div>
+          <div class="role-card" style="border-color:rgba(125,60,152,0.3)" onclick="selectRole('controlResource')">
+            <div class="role-icon" style="background:#F5EEF8">📦</div>
+            <div class="role-info">
+              <h3 style="color:#7D3C98">자원지원부</h3>
+              <p>물품·급식지원 · 긴급복구 · 오염방제</p>
+            </div>
+            <div class="role-arrow">›</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="select-footer">각 요원별 임무를 빠짐없이 확인하세요</div>
     <div class="select-action-bar">
       <div class="select-action-status" id="select-action-status">소속·계급·성명 입력 후 활동 종료 또는 출동 전 종료 시 활성화</div>
@@ -760,6 +871,35 @@ function captureScreen(){
 </div>
 
 <script>
+
+// ── 메인 접이식 묶음 / 긴급구조통제단 체크리스트
+function toggleMainAccordion(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  if(el.className.indexOf('open') >= 0){
+    el.className = el.className.replace(/\s*open/g,'');
+  }else{
+    el.className += ' open';
+  }
+}
+function toggleControlDept(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  if(el.className.indexOf('open') >= 0){
+    el.className = el.className.replace(/\s*open/g,'');
+  }else{
+    el.className += ' open';
+  }
+}
+function toggleCtrlItem(el){
+  if(!el) return;
+  if(el.className.indexOf('checked') >= 0){
+    el.className = el.className.replace(/\s*checked/g,'');
+  }else{
+    el.className += ' checked';
+  }
+}
+
 // ══════════════════════════════════════════
 // ★ Google Sheets 웹훅 URL (배포 후 여기에 입력)
 // ══════════════════════════════════════════
@@ -814,7 +954,7 @@ var ROLES = {
         { kw:'대응활동',   kc:'kw-red',    main:'대응활동 계획 수립 및 실행',
           subs:['대응활동 계획수립','부책 작성','P119 활용','상황판단 회의 준비','통제단 인계 준비','보고자료 작성','언론브리핑 준비'] }
       ]},
-      { phase:'종료', ph:'ph-gray', items:[
+      { phase:'임무 종료', ph:'ph-gray', items:[
         { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
           subs:[] }
       ]}
@@ -849,7 +989,7 @@ var ROLES = {
         { kw:'회복지원', kc:'kw-gray', main:'회복 지원',
           subs:['회복차량 배치','식사·간식 제공'] }
       ]},
-      { phase:'종료', ph:'ph-gray', items:[
+      { phase:'임무 종료', ph:'ph-gray', items:[
         { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
           subs:[] }
       ]}
@@ -878,7 +1018,7 @@ var ROLES = {
         { kw:'상황전파', kc:'kw-green', main:'상황 전파',
           subs:['P119 활용 상황전파','상황실 연락체계 구축'] }
       ]},
-      { phase:'종료', ph:'ph-gray', items:[
+      { phase:'임무 종료', ph:'ph-gray', items:[
         { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
           subs:[] }
       ]}
@@ -907,7 +1047,7 @@ var ROLES = {
         { kw:'방면안전관리', kc:'kw-orange', main:'방면 안전관리',
           subs:['방면지휘관 보좌','안전·인력관리','교대조 운영'] }
       ]},
-      { phase:'종료', ph:'ph-gray', items:[
+      { phase:'임무 종료', ph:'ph-gray', items:[
         { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
           subs:[] }
       ]}
@@ -934,7 +1074,7 @@ var ROLES = {
         { kw:'재평가', kc:'kw-blue', main:'재평가',
           subs:['상황변화에 따라 전략·대응계획 유지·조정'] }
       ]},
-      { phase:'종료', ph:'ph-gray', items:[
+      { phase:'임무 종료', ph:'ph-gray', items:[
         { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
           subs:[] }
       ]}
@@ -963,7 +1103,7 @@ var ROLES = {
         { kw:'유관기관', kc:'kw-green', main:'유관기관 통보(필요시)',
           subs:['시청(오염통제·중장비)','보건소','한국전력공사','도시가스','경찰','헬기','군'] }
       ]},
-      { phase:'종료', ph:'ph-gray', items:[
+      { phase:'임무 종료', ph:'ph-gray', items:[
         { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
           subs:[] }
       ]}
@@ -1003,9 +1143,100 @@ var ROLES = {
             {label:'후기대응', items:['이송 중심(긴급→비응급)']}
           ] }
       ]},
-      { phase:'종료', ph:'ph-gray', items:[
+      { phase:'임무 종료', ph:'ph-gray', items:[
         { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
           subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 긴급구조통제단: 대응계획부 ─── */
+  controlPlan:{
+    name:'대응계획부',
+    subtitle:'상황분석 · 작전계획 · 공보·대중정보',
+    barColor:'#2472A3',
+    phases:[
+      { phase:'상황 분석·보고', ph:'ph-blue', items:[
+        { kw:'상황관리', kc:'kw-blue', main:'재난상황 분석 및 보고',
+          subs:['재난 상황 정보 수집·분석','상황보고서 작성 및 전파','피해 현황 최신화','상황판 운영 및 정보 표시','최초보고·최종보고 작성','지원기관 상황 공유'] }
+      ]},
+      { phase:'작전계획 수립', ph:'ph-orange', items:[
+        { kw:'작전계획', kc:'kw-orange', main:'대응목표 설정 및 임무 배정',
+          subs:['대응 목표 설정','우선순위 결정','자원 및 임무 배정','대응계획 수정·재조정','상황판단회의 운영'] }
+      ]},
+      { phase:'공보·대중정보 전파', ph:'ph-purple', items:[
+        { kw:'공보', kc:'kw-purple', main:'비상경고 및 대중정보 제공',
+          subs:['비상경고 메시지 작성','재난문자·방송 요청','언론 브리핑 및 보도자료 배포','대중정보센터 운영','주민 행동요령 전파','언론 대응 및 정보 통제'] }
+      ]},
+      { phase:'기관 연락·상급보고', ph:'ph-gray', items:[
+        { kw:'연락지원', kc:'kw-gray', main:'지원기관 연락 및 상급보고',
+          subs:['지원기관 연락관 운영','관계기관 소집·파견','상급기관 보고'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'통제단 대응계획부 임무 종료',
+          subs:['상황보고 및 기록 정리','인계·공유 사항 확인','대응계획부 철수 완료'] }
+      ]}
+    ]
+  },
+
+  /* ─── 긴급구조통제단: 현장지휘부 ─── */
+  controlField:{
+    name:'현장지휘부',
+    subtitle:'구조·진압 · 현장통제 · 안전관리',
+    barColor:'#E67E22',
+    phases:[
+      { phase:'구조·진압 활동', ph:'ph-orange', items:[
+        { kw:'구조진압', kc:'kw-orange', main:'위험진압 및 인명구조 활동',
+          subs:['위험진압 수행','수색·탐색 실시','인명구조 활동','주민 긴급대피 결정','교통·출입 통제 요청'] }
+      ]},
+      { phase:'현장지휘·상황보고', ph:'ph-blue', items:[
+        { kw:'현장지휘', kc:'kw-blue', main:'현장상황 취합 및 지휘 조정',
+          subs:['현장 상황 취합·보고','대응 목표 조정','자원 재배치','긴급대피 명령','현장 통신체계 유지'] }
+      ]},
+      { phase:'현장 안전관리', ph:'ph-green', items:[
+        { kw:'안전관리', kc:'kw-green', main:'현장 대응자 안전관리',
+          subs:['붕괴·유해물질 위험 점검','안전구역 설정','현장 대응자 안전관리','자원대기소 운영','대응 인력 교대·휴식 관리'] }
+      ]},
+      { phase:'특수대응·응급의료 연계', ph:'ph-purple', items:[
+        { kw:'특수대응', kc:'kw-purple', main:'특수위험 초동조치 및 지원',
+          subs:['긴급 오염방제 지원','방사능 탐지','가스 차단 초동조치','비상조명·전력 지원 협조'] },
+        { kw:'응급의료', kc:'kw-purple', main:'응급의료 활동 연계',
+          subs:['임시의료소 운영','현장응급의료소 협조','사상자 현황 공유','이송 지원'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'통제단 현장지휘부 임무 종료',
+          subs:['현장 안전상태 최종 확인','현장대응 자원 철수 확인','현장지휘부 철수 완료'] }
+      ]}
+    ]
+  },
+
+  /* ─── 긴급구조통제단: 자원지원부 ─── */
+  controlResource:{
+    name:'자원지원부',
+    subtitle:'물품·급식지원 · 긴급복구 · 오염방제',
+    barColor:'#7D3C98',
+    phases:[
+      { phase:'물품·급식 지원', ph:'ph-orange', items:[
+        { kw:'물품급식', kc:'kw-orange', main:'현장 물품·급식 지원',
+          subs:['현장 급식 지원','식수·용수 확보','필요 물품 공급','위생·세척 지원'] }
+      ]},
+      { phase:'자원집결·장비관리', ph:'ph-purple', items:[
+        { kw:'자원운영', kc:'kw-purple', main:'자원집결지 및 장비 관리',
+          subs:['자원집결지 운영','장비 관리','자원 동원·배정','자원 현황 관리','지원기관 협조 조정'] }
+      ]},
+      { phase:'긴급복구 지원', ph:'ph-blue', items:[
+        { kw:'긴급복구', kc:'kw-blue', main:'긴급구조활동 장애요소 제거',
+          subs:['중장비 지원','출동로 확보','장애물 제거','비상전력 공급 협조','가스·전기 안전 지원','긴급 안전진단 지원'] }
+      ]},
+      { phase:'오염방제·회복지원', ph:'ph-green', items:[
+        { kw:'오염방제', kc:'kw-green', main:'오염방제 및 환경 대응 지원',
+          subs:['오염원 확인','오염 확산 차단','방역·정화 지원','유해화학물질 처리 지원','환경오염 대응 지원','감염병 통제 지원'] },
+        { kw:'회복지원', kc:'kw-green', main:'이재민 및 대응인력 회복 지원',
+          subs:['이재민 지원 협조','대응인력 회복 지원','장기 대응 지원체계 운영'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'통제단 자원지원부 임무 종료',
+          subs:['자원·장비 회수 확인','지원기관 협조사항 정리','자원지원부 철수 완료'] }
       ]}
     ]
   },
@@ -1044,7 +1275,7 @@ var ROLES = {
         { kw:'오염통제', kc:'kw-orange', main:'오염통제',
           subs:['재난현장 위험물질 누출이나 누출 위험 여부 확인','지원기관에 긴급오염통제 활동 지원 요청'] }
       ]},
-      { phase:'종료', ph:'ph-gray', items:[
+      { phase:'임무 종료', ph:'ph-gray', items:[
         { kw:'확인완료', kc:'kw-gray', main:'지원반장 확인 완료',
           subs:[] }
       ]}
@@ -1426,6 +1657,8 @@ function toggleEarlyEnd(){
   var chiefArea = document.getElementById('chief-role-area');
   var departArea = document.getElementById('depart-role-area');
   var departSubWrap = document.getElementById('depart-sub-wrap');
+  var supportAccordion = document.getElementById('support-branch-accordion');
+  var controlAccordion = document.getElementById('control-dan-accordion');
 
   // 요원 체크리스트에 항목이 체크된 경우 현장 출동 전 종료 불가
   if(!earlyEndTime && checkedIds.size > 0){ return; }
@@ -1440,6 +1673,8 @@ function toggleEarlyEnd(){
     if(chiefArea) chiefArea.classList.remove('disabled');
     if(departArea) departArea.classList.remove('disabled');
     if(departSubWrap){ departSubWrap.style.pointerEvents=''; departSubWrap.style.opacity=''; }
+    if(supportAccordion) supportAccordion.classList.remove('disabled');
+    if(controlAccordion) controlAccordion.classList.remove('disabled');
     enableActivityEnd();
   } else {
     // 체크 - 활동 종료 시간이 이미 있으면 불가
@@ -1469,6 +1704,8 @@ function toggleEarlyEnd(){
     // 요원선택 비활성화
     if(roleSelectCards) roleSelectCards.classList.add('disabled');
     if(chiefArea) chiefArea.classList.add('disabled');
+    if(supportAccordion) supportAccordion.classList.add('disabled');
+    if(controlAccordion) controlAccordion.classList.add('disabled');
     disableActivityEnd();
   }
   updateSelectBtn();
@@ -1617,7 +1854,7 @@ function reset(){ checkedIds.clear(); completedTime = null; parentToSubs = {}; a
   var ch=document.getElementById('chief-role-area'); if(ch) ch.classList.remove('disabled');
   var dp=document.getElementById('depart-parent'); if(dp) dp.classList.remove('checked');
   var dpc=document.getElementById('depart-parent-circle'); if(dpc) dpc.style.cssText='';
-  var dpt=document.getElementById('depart-parent-tick'); if(dpt) dpt.style.opacity='0'; var rc=document.getElementById('role-select-cards'); if(rc) rc.classList.remove('disabled'); var ee=document.getElementById('early-end-item'); if(ee) ee.classList.remove('checked'); var eet=document.getElementById('ee-time-out'); if(eet) eet.textContent='--:--';
+  var dpt=document.getElementById('depart-parent-tick'); if(dpt) dpt.style.opacity='0'; var rc=document.getElementById('role-select-cards'); if(rc) rc.classList.remove('disabled'); var sa=document.getElementById('support-branch-accordion'); if(sa) sa.classList.remove('disabled'); var cta=document.getElementById('control-dan-accordion'); if(cta) cta.classList.remove('disabled'); var ee=document.getElementById('early-end-item'); if(ee) ee.classList.remove('checked'); var eet=document.getElementById('ee-time-out'); if(eet) eet.textContent='--:--';
   // 비상소집 초기화
   mobilizeTime = { essential: null, general: null };
   ['essential','general'].forEach(function(type){
@@ -1705,7 +1942,7 @@ function buildChecklist(rd){
       ic++;
       totalCount++;
       var subIds = [];
-      var isWithdrawalParent = (item.main === '지원반 철수 완료' || item.main === '지원반장 확인 완료');
+      var isWithdrawalParent = (item.main === '지원반 철수 완료' || item.main === '지원반장 확인 완료' || item.main.indexOf('임무 종료') >= 0);
       if(isWithdrawalParent){ withdrawalSids.push(pid); }
 
       /* 부모 행 */
@@ -1728,7 +1965,12 @@ function buildChecklist(rd){
             '<div class="chk-main">' + item.main + '</div>' +
           '</div>';
       }
-      (function(p, isW){ div.onclick = function(){ toggleParent(p, isW); }; })(pid, isWithdrawalParent);
+      if(item.allComplete){
+        div.className += ' all-complete-item';
+        (function(p){ div.onclick = function(){ toggleAllComplete(p); }; })(pid);
+      } else {
+        (function(p, isW){ div.onclick = function(){ toggleParent(p, isW); }; })(pid, isWithdrawalParent);
+      }
       wrap.appendChild(div);
 
       /* 세부 행 */
@@ -1794,6 +2036,27 @@ function buildChecklist(rd){
   updateProgress();
 }
 
+// 전체 완료 체크: 현재 화면의 모든 체크항목을 일괄 체크/해제
+function toggleAllComplete(pid){
+  var allItems = Array.from(document.querySelectorAll('#checklist-body [data-id]'));
+  if(allItems.length === 0) return;
+  var allChecked = allItems.every(function(el){ return checkedIds.has(el.getAttribute('data-id')); });
+  if(allChecked){
+    checkedIds.clear();
+    allItems.forEach(function(el){ el.classList.remove('checked'); });
+    activityEndTime = null;
+    document.querySelectorAll('[id^="sub-end-"]').forEach(function(el){ el.innerHTML = ''; });
+  } else {
+    allItems.forEach(function(el){
+      var id = el.getAttribute('data-id');
+      checkedIds.add(id);
+      el.classList.add('checked');
+    });
+  }
+  updateProgress();
+  saveState();
+}
+
 // ══════════════════════════════════════════
 // TOGGLE — 부모 클릭 시 하위 전체 자동 체크/해제
 // ══════════════════════════════════════════
@@ -1841,6 +2104,10 @@ function toggleSub(sid, pid, isWithdrawal){
   var el = document.querySelector('[data-id="' + sid + '"]');
   if(!el) return;
   var badge = document.getElementById('sub-end-' + sid);
+  var parentIsWithdrawal = false;
+  for(var wi=0; wi<withdrawalSids.length; wi++){
+    if(withdrawalSids[wi] === pid){ parentIsWithdrawal = true; break; }
+  }
 
   if(checkedIds.has(sid)){
     /* 해제 → 부모도 해제 */
@@ -1849,8 +2116,13 @@ function toggleSub(sid, pid, isWithdrawal){
     checkedIds.delete(pid);
     var pe = document.querySelector('[data-id="' + pid + '"]');
     if(pe) pe.classList.remove('checked');
-    // 종료항목 해제 시 activityEndTime 초기화
-    if(isWithdrawal){ activityEndTime = null; if(badge) badge.textContent = ''; }
+    // 종료항목 하위 체크 해제 시 활동 종료 시간 초기화
+    if(isWithdrawal || parentIsWithdrawal){
+      activityEndTime = null;
+      if(badge) badge.textContent = '';
+      var pb0 = document.getElementById('sub-end-' + pid);
+      if(pb0) pb0.innerHTML = '';
+    }
   } else {
     /* 체크 → 모든 세부 완료면 부모 자동 체크 */
     checkedIds.add(sid);
@@ -1866,6 +2138,13 @@ function toggleSub(sid, pid, isWithdrawal){
       checkedIds.add(pid);
       var pe2 = document.querySelector('[data-id="' + pid + '"]');
       if(pe2) pe2.classList.add('checked');
+      // 종료항목 하위항목을 모두 체크해서 부모가 자동 체크된 경우에도 임무완료 활성화
+      if(parentIsWithdrawal){
+        var now2 = new Date();
+        activityEndTime = pad(now2.getHours()) + ':' + pad(now2.getMinutes());
+        var pb = document.getElementById('sub-end-' + pid);
+        if(pb) pb.innerHTML = '<span class="end-label">활동 종료</span>' + activityEndTime;
+      }
     }
   }
   updateProgress();
@@ -1887,7 +2166,10 @@ function updateProgress(){
   // 소속·계급·성명 필수 확인
   var infoOk = checkMemberInfo();
 
-  var endOk = !!(activityEndTime || earlyEndTime);
+  var roleEndOk = hasCurrentRoleEndChecked();
+  if(roleEndOk && !activityEndTime && !earlyEndTime){ activityEndTime = getNowHHMM(); }
+  if(!roleEndOk && !earlyEndTime){ activityEndTime = null; }
+  var endOk = !!(earlyEndTime || roleEndOk);
   var allDone = (n === totalCount && totalCount > 0);
 
   if(infoOk && (endOk || allDone)){
@@ -1916,8 +2198,9 @@ function updateProgress(){
 // ══════════════════════════════════════════
 function completeTask(){
   recordTime();
-  clearSavedState();
+  saveState();
   showReview();
+  // 결과화면에서 뒤로가기 시 지원반·통제단 체크상태가 유지되도록 저장상태를 보존합니다.
 }
 
 function recordTime(){
@@ -1928,6 +2211,158 @@ function recordTime(){
     ['일','월','화','수','목','금','토'][now.getDay()] + '요일)';
 }
 function pad(n){ return String(n).padStart(2,'0'); }
+
+
+// ══════════════════════════════════════════
+// 통합 결과화면 생성 보조 함수
+// ══════════════════════════════════════════
+function getRoleCheckedMapForReview(){
+  var map = {};
+  try{
+    var state = loadState() || {};
+    if(state.roleChecked){
+      Object.keys(state.roleChecked).forEach(function(r){
+        if(state.roleChecked[r] && state.roleChecked[r].length > 0){
+          map[r] = state.roleChecked[r].slice();
+        }
+      });
+    }
+  }catch(e){}
+  if(currentRole && currentRole !== 'none' && checkedIds && checkedIds.size > 0){
+    map[currentRole] = Array.from(checkedIds);
+  }
+  return map;
+}
+
+function countRoleItems(rd){
+  var c = 0;
+  if(!rd || !rd.phases) return 0;
+  rd.phases.forEach(function(ph){
+    ph.items.forEach(function(item){
+      c++;
+      if(item.subGroups && item.subGroups.length > 0){
+        item.subGroups.forEach(function(grp){ c += (grp.items || []).length; });
+      } else {
+        c += (item.subs || []).length;
+      }
+    });
+  });
+  return c;
+}
+
+function getCheckedCountFromArray(arr){
+  return arr ? arr.length : 0;
+}
+
+function makeReviewRow(done, text, indent, bold){
+  var row = document.createElement('div');
+  row.className = 'review-item';
+  if(indent) row.style.paddingLeft = '24px';
+  row.innerHTML =
+    '<div class="rv-dot '+(done?'rv-done':'rv-miss')+'" '+(indent?'style="width:14px;height:14px;font-size:8px"':'')+'>'+(done?'✓':'–')+'</div>'+ 
+    '<div class="'+(done?'rv-text-done':'rv-text-miss')+'" '+(bold?'style="font-weight:500"':'')+'>'+text+'</div>';
+  return row;
+}
+
+function appendRoleReviewCards(container, roleKey, checkedArr, openByDefault){
+  var rd = ROLES[roleKey];
+  if(!rd || !checkedArr || checkedArr.length === 0) return;
+  var checkedMap = {};
+  checkedArr.forEach(function(id){ checkedMap[id] = true; });
+
+  var details = document.createElement('details');
+  details.className = 'review-accordion';
+  if(openByDefault) details.open = true;
+
+  var summary = document.createElement('summary');
+  summary.innerHTML = '<span>'+rd.name+'</span><span class="review-small-summary">'+checkedArr.length+' / '+countRoleItems(rd)+' 완료</span>';
+  details.appendChild(summary);
+
+  var accBody = document.createElement('div');
+  accBody.className = 'review-accordion-body';
+  var ic = 0;
+
+  rd.phases.forEach(function(ph){
+    var card = document.createElement('div');
+    card.className = 'review-card';
+    var h3 = document.createElement('h3');
+    h3.textContent = '📍 ' + ph.phase;
+    card.appendChild(h3);
+
+    ph.items.forEach(function(item){
+      var pid = 'chk-' + ic; ic++;
+      card.appendChild(makeReviewRow(!!checkedMap[pid], '['+item.kw+'] '+item.main, false, true));
+
+      var subsList = item.subs || [];
+      if(item.subGroups && item.subGroups.length > 0){
+        subsList = [];
+        item.subGroups.forEach(function(grp){
+          subsList.push('__group__' + grp.label);
+          grp.items.forEach(function(it){ subsList.push(it); });
+        });
+      }
+
+      subsList.forEach(function(sub){
+        if(typeof sub === 'string' && sub.indexOf('__group__') === 0){
+          var gl = document.createElement('div');
+          gl.className = 'sub-group-label';
+          gl.textContent = sub.replace('__group__','');
+          card.appendChild(gl);
+          return;
+        }
+        var sid = 'chk-' + ic; ic++;
+        card.appendChild(makeReviewRow(!!checkedMap[sid], sub, true, false));
+      });
+    });
+    accBody.appendChild(card);
+  });
+
+  details.appendChild(accBody);
+  container.appendChild(details);
+}
+
+function appendDepartReviewCard(container){
+  if(!departChecked || departChecked.size === 0) return;
+  var details = document.createElement('details');
+  details.className = 'review-accordion';
+  details.open = true;
+  var summary = document.createElement('summary');
+  summary.innerHTML = '<span>출동단계</span><span class="review-small-summary">'+departChecked.size+' / '+SUP_ITEMS.length+' 완료</span>';
+  details.appendChild(summary);
+  var accBody = document.createElement('div');
+  accBody.className = 'review-accordion-body';
+  var card = document.createElement('div');
+  card.className = 'review-card';
+  var h3 = document.createElement('h3');
+  h3.textContent = '📍 출동단계';
+  card.appendChild(h3);
+  var allDeptChecked = (departChecked.size === SUP_ITEMS.length);
+  card.appendChild(makeReviewRow(allDeptChecked, '[지원준비] 지원 장비 준비', false, true));
+  SUP_ITEMS.forEach(function(item, idx){
+    card.appendChild(makeReviewRow(departChecked.has(idx), item, true, false));
+  });
+  accBody.appendChild(card);
+  details.appendChild(accBody);
+  container.appendChild(details);
+}
+
+function renderAggregatedReviewBody(body){
+  body.innerHTML = '';
+  appendDepartReviewCard(body);
+  var roleMap = getRoleCheckedMapForReview();
+  var keys = ['chief','cmd','res','com','safe','invest','decon','ems','controlPlan','controlField','controlResource'];
+  var printed = 0;
+  keys.forEach(function(key){
+    if(roleMap[key] && roleMap[key].length > 0){
+      appendRoleReviewCards(body, key, roleMap[key], key === currentRole || printed === 0);
+      printed++;
+    }
+  });
+  if(printed === 0 && departChecked.size === 0){
+    body.innerHTML = '<div class="review-card"><h3>체크된 임무 없음</h3><div class="review-item"><div class="rv-dot rv-miss">–</div><div class="rv-text-miss">체크된 항목이 없습니다.</div></div></div>';
+  }
+  return printed;
+}
 
 // ══════════════════════════════════════════
 // REVIEW SCREEN
@@ -2032,89 +2467,17 @@ function showReview(){
   }
 
   var body = document.getElementById('review-body');
-  body.innerHTML = '';
-  var ic = 0;
-
-  // ── 출동단계 카드 (첫화면 체크 현황)
-  var departCard = document.createElement('div');
-  departCard.className = 'review-card';
-  var departH3 = document.createElement('h3');
-  departH3.textContent = '📍 출동단계';
-  departCard.appendChild(departH3);
-
-  // 지원준비 부모 행
-  var allDeptChecked = (departChecked.size === SUP_ITEMS.length);
-  var dRow = document.createElement('div');
-  dRow.className = 'review-item';
-  dRow.innerHTML =
-    '<div class="rv-dot '+(allDeptChecked?'rv-done':'rv-miss')+'">'+(allDeptChecked?'✓':'–')+'</div>'+
-    '<div class="'+(allDeptChecked?'rv-text-done':'rv-text-miss')+'" style="font-weight:500">[지원준비] 지원 장비 준비</div>';
-  departCard.appendChild(dRow);
-
-  // 세부 항목 12개
-  SUP_ITEMS.forEach(function(item, idx){
-    var done = departChecked.has(idx);
-    var sr = document.createElement('div');
-    sr.className = 'review-item';
-    sr.style.paddingLeft = '24px';
-    sr.innerHTML =
-      '<div class="rv-dot '+(done?'rv-done':'rv-miss')+'" style="width:14px;height:14px;font-size:8px">'+(done?'✓':'–')+'</div>'+
-      '<div class="'+(done?'rv-text-done':'rv-text-miss')+'">'+item+'</div>';
-    departCard.appendChild(sr);
+  var roleMapForScore = getRoleCheckedMapForReview();
+  var totalCheckedForScore = departChecked.size;
+  var totalPossibleForScore = departChecked.size > 0 ? SUP_ITEMS.length : 0;
+  Object.keys(roleMapForScore).forEach(function(rk){
+    if(ROLES[rk]){
+      totalCheckedForScore += roleMapForScore[rk].length;
+      totalPossibleForScore += countRoleItems(ROLES[rk]);
+    }
   });
-  body.appendChild(departCard);
-
-  rd.phases.forEach(function(ph){
-    var card = document.createElement('div');
-    card.className = 'review-card';
-    var h3 = document.createElement('h3');
-    h3.textContent = '📍 ' + ph.phase;
-    card.appendChild(h3);
-
-    ph.items.forEach(function(item){
-      var pid  = 'chk-' + ic; ic++;
-      var done = checkedIds.has(pid);
-      var row  = document.createElement('div');
-      row.className = 'review-item';
-      row.innerHTML =
-        '<div class="rv-dot '+(done?'rv-done':'rv-miss')+'">'+(done?'✓':'–')+'</div>'+
-        '<div class="'+(done?'rv-text-done':'rv-text-miss')+'" style="font-weight:500">['+item.kw+'] '+item.main+'</div>';
-      card.appendChild(row);
-
-      // subGroups가 있으면 그룹 레이블과 함께 subs 렌더링
-      var subsList = item.subs;
-      if(item.subGroups && item.subGroups.length > 0){
-        // subGroups를 flat하게 subs로 변환 (그룹 레이블 포함)
-        subsList = [];
-        item.subGroups.forEach(function(grp){
-          subsList.push('__group__' + grp.label); // 그룹 레이블 마커
-          grp.items.forEach(function(it){ subsList.push(it); });
-        });
-      }
-      subsList.forEach(function(sub){
-        // 그룹 레이블이면 체크항목 아닌 레이블로 렌더링
-        if(typeof sub === 'string' && sub.indexOf('__group__') === 0){
-          var grpLabel = sub.replace('__group__','');
-          var gl = document.createElement('div');
-          gl.className = 'sub-group-label';
-          gl.textContent = grpLabel;
-          card.appendChild(gl);
-          return;
-        }
-        var sid  = 'chk-' + ic; ic++;
-        var sdone = checkedIds.has(sid);
-        var sr   = document.createElement('div');
-        sr.className = 'review-item';
-        sr.style.paddingLeft = '24px';
-        sr.innerHTML =
-          '<div class="rv-dot '+(sdone?'rv-done':'rv-miss')+'" style="width:14px;height:14px;font-size:8px">'+(sdone?'✓':'–')+'</div>'+
-          '<div class="'+(sdone?'rv-text-done':'rv-text-miss')+'">'+sub+'</div>';
-        card.appendChild(sr);
-      });
-    });
-
-    body.appendChild(card);
-  });
+  document.getElementById('rv-score').textContent = '체크 완료: ' + totalCheckedForScore + ' / ' + totalPossibleForScore + ' 항목';
+  renderAggregatedReviewBody(body);
 
   showScreen('review');
   // Google Sheets 전송
@@ -2316,22 +2679,46 @@ function captureScreen(){
 // ══════════════════════════════════════════
 var SAVE_KEY = 'guri_checklist_state';
 
+// 현재 역할/부서의 종료 체크 여부만 기준으로 임무완료 활성화 상태를 판단합니다.
+function hasCurrentRoleEndChecked(){
+  if(!currentRole || !checkedIds) return false;
+  for(var i=0;i<withdrawalSids.length;i++){
+    if(checkedIds.has(withdrawalSids[i])) return true;
+  }
+  return false;
+}
+
+function getNowHHMM(){
+  var d = new Date();
+  return pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
 function saveState(){
   try {
-    // checkedIds를 role별로 저장
+    // checkedIds와 종료시각을 role별로 저장
     var roleChecked = {};
-    if(currentRole){
-      roleChecked[currentRole] = Array.from(checkedIds);
-    }
-    // 기존 저장된 다른 role 체크 내용도 유지
+    var roleEndTime = {};
+
+    // 기존 저장된 다른 role 체크/종료시각 유지
     try {
       var prev = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
       if(prev.roleChecked){
-        Object.keys(prev.roleChecked).forEach(function(r){
-          if(r !== currentRole) roleChecked[r] = prev.roleChecked[r];
-        });
+        Object.keys(prev.roleChecked).forEach(function(r){ roleChecked[r] = prev.roleChecked[r]; });
+      }
+      if(prev.roleEndTime){
+        Object.keys(prev.roleEndTime).forEach(function(r){ roleEndTime[r] = prev.roleEndTime[r]; });
       }
     } catch(e2){}
+
+    if(currentRole){
+      roleChecked[currentRole] = Array.from(checkedIds);
+      if(hasCurrentRoleEndChecked()){
+        roleEndTime[currentRole] = activityEndTime || roleEndTime[currentRole] || getNowHHMM();
+      } else {
+        delete roleEndTime[currentRole];
+      }
+    }
+
     var state = {
       memberUnit:    (document.getElementById('member-unit')||{}).value || '',
       memberRank:    (document.getElementById('member-rank') ? document.getElementById('member-rank').value : '') || '',
@@ -2339,6 +2726,7 @@ function saveState(){
       mobilizeTime:  mobilizeTime,
       earlyEndTime:  earlyEndTime,
       activityEndTime: activityEndTime,
+      roleEndTime:   roleEndTime,
       departChecked: Array.from(departChecked),
       checkedIds:    Array.from(checkedIds),
       roleChecked:   roleChecked,
@@ -2404,6 +2792,10 @@ function restoreSelectScreen(){
     if(ca) ca.classList.add('disabled');
     var rc = document.getElementById('role-select-cards');
     if(rc) rc.classList.add('disabled');
+    var sa = document.getElementById('support-branch-accordion');
+    if(sa) sa.classList.add('disabled');
+    var cta = document.getElementById('control-dan-accordion');
+    if(cta) cta.classList.add('disabled');
   }
 
   // 출동단계
@@ -2453,21 +2845,20 @@ function restoreChecklist(){
     }
   });
 
-  // 활동종료 복원
-  if(state.activityEndTime && !earlyEndTime){
-    activityEndTime = state.activityEndTime;
+  // 활동종료 복원: 현재 역할/부서에 종료 체크가 있는 경우에만 활성화
+  var roleHasEnd = hasCurrentRoleEndChecked();
+  if(roleHasEnd && !earlyEndTime){
+    var roleEnd = (state.roleEndTime && currentRole && state.roleEndTime[currentRole]) ? state.roleEndTime[currentRole] : (state.activityEndTime || getNowHHMM());
+    activityEndTime = roleEnd;
     withdrawalSids.forEach(function(sid){
       if(checkedIds.has(sid)){
         var badge = document.getElementById('sub-end-'+sid);
         if(badge) badge.innerHTML='<span class="end-label">활동 종료</span>'+activityEndTime;
       }
     });
-    withdrawalSids.forEach(function(pid){
-      if(checkedIds.has(pid)){
-        var badge2 = document.getElementById('sub-end-'+pid);
-        if(badge2) badge2.innerHTML='<span class="end-label">활동 종료</span>'+activityEndTime;
-      }
-    });
+  } else if(!earlyEndTime){
+    activityEndTime = null;
+    document.querySelectorAll('[id^="sub-end-"]').forEach(function(el){ el.innerHTML = ''; });
   }
   updateProgress();
 }
