@@ -12,19 +12,10 @@
 <title>긴급지원반 임무 체크리스트</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
-  --red:#C0392B;--red-dark:#922B21;
-  --orange:#E67E22;--purple:#7D3C98;
-  --green:#1E8449;--blue:#1A5276;
-  --gray:#566573;--gray-light:#F2F3F4;
-  --text:#1a1a1a;--text-muted:#6c757d;
-  --border:rgba(0,0,0,0.1);
-  --shadow:0 2px 12px rgba(0,0,0,0.12);
-}
-html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#F0F2F5;color:var(--text);font-size:14px}
+html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#F0F2F5;color:#1a1a1a;font-size:14px}
 
 /* ── HEADER ── */
-.app-header{background:var(--red);color:white;padding:16px 16px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.25)}
+.app-header{background:#C0392B;color:white;padding:16px 16px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.25)}
 .logo-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:4px 9px;font-size:11px;font-weight:700;white-space:nowrap;text-align:center;line-height:1.5}
 .header-title h1{font-size:15px;font-weight:700;letter-spacing:-0.3px}
 .header-title p{font-size:11px;opacity:0.75;margin-top:1px}
@@ -38,19 +29,19 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .select-screen{padding:20px 16px}
 .select-title{text-align:center;margin-bottom:20px}
 .select-title h2{font-size:18px;font-weight:700}
-.select-title p{font-size:12px;color:var(--text-muted);margin-top:5px}
+.select-title p{font-size:12px;color:#6c757d;margin-top:5px}
 .role-cards{display:flex;flex-direction:column;gap:12px}
-.role-card{background:white;border-radius:16px;padding:18px 20px;border:2px solid transparent;box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;gap:16px;transition:all 0.2s}
+.role-card{background:white;border-radius:16px;padding:18px 20px;border:2px solid transparent;box-shadow:0 2px 12px rgba(0,0,0,0.12);cursor:pointer;display:flex;align-items:center;gap:16px;-webkit--webkit-transition:all 0.2s;transition:all 0.2s;transition:all 0.2s}
 .role-card:active{transform:scale(0.98)}
 .role-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
 .role-card.cmd .role-icon{background:#FADBD8}
 .role-card.res .role-icon{background:#FDEBD0}
 .role-card.com .role-icon{background:#F5EEF8}
 .role-info h3{font-size:16px;font-weight:700;margin-bottom:3px}
-.role-info p{font-size:12px;color:var(--text-muted);line-height:1.5}
-.role-card.cmd{border-color:rgba(192,57,43,0.2)}.role-card.cmd h3{color:var(--red)}
-.role-card.res{border-color:rgba(230,126,34,0.2)}.role-card.res h3{color:var(--orange)}
-.role-card.com{border-color:rgba(125,60,152,0.2)}.role-card.com h3{color:var(--purple)}
+.role-info p{font-size:12px;color:#6c757d;line-height:1.5}
+.role-card.cmd{border-color:rgba(192,57,43,0.2)}.role-card.cmd h3{color:#C0392B}
+.role-card.res{border-color:rgba(230,126,34,0.2)}.role-card.res h3{color:#E67E22}
+.role-card.com{border-color:rgba(125,60,152,0.2)}.role-card.com h3{color:#7D3C98}
 /* ── SELECT HERO ── */
 .select-screen{padding:0 0 32px}
 .select-hero{background:linear-gradient(150deg,#C0392B 0%,#922B21 55%,#7B241C 100%);padding:24px 20px;display:flex;align-items:center;gap:16px;color:white;min-height:100px}
@@ -58,30 +49,30 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .select-badge{font-size:10px;font-weight:700;opacity:0.8;letter-spacing:0.5px;margin-bottom:4px;text-transform:uppercase}
 .select-hero-text h2{font-size:22px;font-weight:800;line-height:1.3;letter-spacing:-0.5px;margin:0}
 .select-hero-text p{font-size:12px;opacity:0.75;margin-top:6px}
-.select-divider{display:flex;align-items:center;gap:10px;padding:18px 20px 10px;color:var(--text-muted);font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase}
-.select-divider::before,.select-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.select-divider{display:flex;align-items:center;gap:10px;padding:18px 20px 10px;color:#6c757d;font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase}
+.select-divider::before,.select-divider::after{content:'';flex:1;height:1px;background:rgba(0,0,0,0.1)}
 .role-cards{padding:0 16px;display:flex;flex-direction:column;gap:10px}
 .role-card{background:white;border-radius:14px;padding:16px 18px;border:1.5px solid transparent;box-shadow:0 1px 6px rgba(0,0,0,0.08);cursor:pointer;display:flex;align-items:center;gap:14px;transition:all 0.18s}
 .role-card:active{transform:scale(0.98);box-shadow:none}
 .role-arrow{font-size:20px;color:#CCC;flex-shrink:0;font-weight:300;margin-left:auto}
-.role-card.cmd:active .role-arrow,.role-card.cmd:hover .role-arrow{color:var(--red)}
-.role-card.res:active .role-arrow,.role-card.res:hover .role-arrow{color:var(--orange)}
-.role-card.com:active .role-arrow,.role-card.com:hover .role-arrow{color:var(--purple)}
-.select-footer{text-align:center;font-size:11px;color:var(--text-muted);margin-top:16px;padding:0 16px}
+.role-card.cmd:active .role-arrow,.role-card.cmd:hover .role-arrow{color:#C0392B}
+.role-card.res:active .role-arrow,.role-card.res:hover .role-arrow{color:#E67E22}
+.role-card.com:active .role-arrow,.role-card.com:hover .role-arrow{color:#7D3C98}
+.select-footer{text-align:center;font-size:11px;color:#6c757d;margin-top:16px;padding:0 16px}
 /* ── 출동단계 카드 ── */
 .depart-card{margin:0 16px;background:white;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(192,57,43,0.12)}
 .depart-header{background:#C0392B;padding:10px 16px;display:flex;align-items:center;gap:8px}
 .depart-header span{font-size:13px;font-weight:700;color:white}
 .depart-items{display:flex;flex-direction:column}
-.depart-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:0.5px solid #F0F0F0;cursor:pointer;user-select:none;transition:background 0.12s}
+.depart-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:0.5px solid #F0F0F0;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-transition:background 0.12s;transition:background 0.12s}
 .depart-item:last-child{border-bottom:none}
 .depart-item:active{background:#FEF5F4}
 .depart-item.checked{background:#F4FDF8}
-.depart-item .d-circle{width:22px;height:22px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:white;transition:all 0.2s}
-.depart-item.checked .d-circle{background:var(--green);border-color:var(--green)}
+.depart-item .d-circle{width:22px;height:22px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:white;-webkit--webkit-transition:all 0.2s;transition:all 0.2s;transition:all 0.2s}
+.depart-item.checked .d-circle{background:#1E8449;border-color:#1E8449}
 .d-tick{width:8px;height:5px;border-left:2px solid white;border-bottom:2px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
 .depart-item.checked .d-tick{opacity:1}
-.depart-item .d-text{flex:1;font-size:13px;color:var(--text)}
+.depart-item .d-text{flex:1;font-size:13px;color:#1a1a1a}
 .depart-item.checked .d-text{color:#AAA;text-decoration:line-through;text-decoration-color:#CCC}
 .depart-item.disabled{opacity:0.35;pointer-events:none}
 .depart-sub-wrap{margin:0 16px}
@@ -90,26 +81,26 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .depart-role-card h3{color:#1A5276 !important}
 /* ── 현장 출동 전 종료 ── */
 .early-end-card{margin:0 16px;background:white;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(86,101,115,0.2)}
-.early-end-item{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;user-select:none;transition:background 0.12s}
+.early-end-item{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-transition:background 0.12s;transition:background 0.12s}
 .early-end-item:active{background:#F5F6F8}
 .early-end-item.checked{background:#F4FDF8}
-.early-end-item .ee-circle{width:24px;height:24px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:white;transition:all 0.2s}
-.early-end-item.checked .ee-circle{background:var(--gray);border-color:var(--gray)}
+.early-end-item .ee-circle{width:24px;height:24px;-webkit-border-radius:50%;border-radius:50%;border:2px solid #CCC;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:white;-webkit--webkit-transition:all 0.2s;transition:all 0.2s;transition:all 0.2s}
+.early-end-item.checked .ee-circle{background:#566573;border-color:#566573}
 .ee-tick{width:9px;height:6px;border-left:2px solid white;border-bottom:2px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
 .early-end-item.checked .ee-tick{opacity:1}
 .ee-text{flex:1}
-.ee-label{font-size:13px;font-weight:600;color:var(--text)}
-.ee-desc{font-size:11px;color:var(--text-muted);margin-top:2px}
+.ee-label{font-size:13px;font-weight:600;color:#1a1a1a}
+.ee-desc{font-size:11px;color:#6c757d;margin-top:2px}
 .early-end-item.checked .ee-label{color:#AAA;text-decoration:line-through}
-.ee-time-out{font-size:13px;font-weight:700;color:var(--gray);min-width:42px;text-align:right}
+.ee-time-out{font-size:13px;font-weight:700;color:#566573;min-width:42px;text-align:right}
 .early-end-item.disabled{opacity:0.35;pointer-events:none}
 #early-end-item.disabled{opacity:0.35;pointer-events:none;cursor:not-allowed}
 /* ── 첫화면 임무완료 버튼 ── */
 .select-action-bar{padding:12px 16px 20px;background:transparent}
-.select-action-status{font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:8px}
-.select-action-status.ready{color:var(--green);font-weight:700}
+.select-action-status{font-size:11px;color:#6c757d;text-align:center;margin-bottom:8px}
+.select-action-status.ready{color:#1E8449;font-weight:700}
 .select-btn-complete{width:100%;padding:13px;font-size:15px;font-weight:700;border:none;border-radius:12px;cursor:not-allowed;background:#CCC;color:white;font-family:inherit;transition:all 0.3s;letter-spacing:-0.3px}
-.select-btn-complete.active{background:var(--red);cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,0.3)}
+.select-btn-complete.active{background:#C0392B;cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,0.3)}
 .select-btn-complete.active:active{transform:scale(0.98)}
 /* 요원카드 비활성화 */
 .role-cards.disabled .role-card{opacity:0.35;pointer-events:none}
@@ -119,126 +110,135 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .member-row{display:flex;align-items:center;border-bottom:0.5px solid #F0F0F0}
 .member-row:last-child{border-bottom:none}
 .member-label{font-size:12px;font-weight:700;color:white;background:#C0392B;padding:12px 14px;min-width:52px;text-align:center;flex-shrink:0}
-.member-input{flex:1;border:none;outline:none;font-size:14px;padding:12px 14px;font-family:inherit;color:var(--text);background:white}
+.member-input{flex:1;border:none;outline:none;font-size:14px;padding:12px 14px;font-family:inherit;color:#1a1a1a;background:white}
 .member-input::placeholder{color:#BBB}
-.member-select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23999' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;color:var(--text)}
-.member-select option{color:var(--text)}
+.member-select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23999' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;color:#1a1a1a}
+.member-select option{color:#1a1a1a}
 /* ── MOBILIZE CARD ── */
 .mobilize-card{margin:0 16px;background:white;border-radius:14px;padding:14px 16px;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(192,57,43,0.12)}
-.mob-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px}
+.mob-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:8px}
 .mob-icon{font-size:16px}
 .mob-col-header{display:flex;justify-content:space-between;padding:0 4px 6px;border-bottom:1px solid #F0F0F0;margin-bottom:8px}
-.mob-col-left{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase}
+.mob-col-left{font-size:10px;font-weight:700;color:#6c757d;letter-spacing:0.5px;text-transform:uppercase}
 .mob-col-right{font-size:10px;font-weight:700;color:#C0392B;letter-spacing:0.5px}
 .mob-items{display:flex;flex-direction:column;gap:10px}
-.mob-item{display:flex;align-items:center;gap:10px;transition:opacity 0.2s}
+.mob-item{display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-transition:opacity 0.2s;transition:opacity 0.2s}
 .mob-item.disabled{opacity:0.35;pointer-events:none}
 .mob-chk-wrap{width:28px;height:28px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.mob-chk{width:24px;height:24px;border-radius:50%;border:2px solid #CCC;background:white;display:flex;align-items:center;justify-content:center;transition:all 0.2s;position:relative}
+.mob-chk{width:24px;height:24px;-webkit-border-radius:50%;border-radius:50%;border:2px solid #CCC;background:white;display:flex;align-items:center;justify-content:center;-webkit-transition:all 0.2s;transition:all 0.2s;position:relative}
 .mob-chk.checked{background:#C0392B;border-color:#C0392B}
 .mob-chk.checked::after{content:'';width:9px;height:6px;border-left:2px solid white;border-bottom:2px solid white;transform:rotate(-45deg) translateY(-1px);display:block}
 .mob-text{display:flex;align-items:center;gap:8px;flex:1}
 .mob-label{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
 .essential-label{background:#FADBD8;color:#922B21}
 .general-label{background:#FDEBD0;color:#A04000}
-.mob-desc{font-size:12px;color:var(--text-muted)}
+.mob-desc{font-size:12px;color:#6c757d}
 .mob-time-out{font-size:13px;font-weight:700;color:#C0392B;min-width:42px;text-align:right;letter-spacing:0.5px}
 .mob-footer{text-align:right;margin-top:12px;border-top:1px solid #F0F0F0;padding-top:10px}
-.mob-reset-btn{font-size:11px;font-weight:600;color:var(--text-muted);background:#F0F2F5;border:none;border-radius:8px;padding:5px 12px;cursor:pointer;font-family:inherit}
+.mob-reset-btn{font-size:11px;font-weight:600;color:#6c757d;background:#F0F2F5;border:none;border-radius:8px;padding:5px 12px;cursor:pointer;font-family:inherit}
 .mob-reset-btn:active{background:#DDD}
 
 /* ── CHECKLIST ── */
 .list-screen{padding-bottom:20px}
-.list-header{padding:14px 16px;background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.back-btn{background:var(--gray-light);border:none;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s}
+.list-header{padding:14px 16px;background:white;border-bottom:1px solid rgba(0,0,0,0.1);display:flex;align-items:center;gap:10px}
+.back-btn{background:#F2F3F4;border:none;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s}
 .back-btn:active{background:#DDD}
 .role-header-info h2{font-size:16px;font-weight:700}
-.role-header-info p{font-size:11px;color:var(--text-muted);margin-top:1px}
+.role-header-info p{font-size:11px;color:#6c757d;margin-top:1px}
 
 /* progress */
-.progress-wrap{background:white;padding:12px 16px;border-bottom:1px solid var(--border)}
+.progress-wrap{background:white;padding:12px 16px;border-bottom:1px solid rgba(0,0,0,0.1)}
 .prog-nums{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
-.prog-nums span{font-size:12px;color:var(--text-muted)}
-.prog-nums strong{font-size:14px;font-weight:700;color:var(--red)}
+.prog-nums span{font-size:12px;color:#6c757d}
+.prog-nums strong{font-size:14px;font-weight:700;color:#C0392B}
 .prog-bar-bg{background:#EAECEE;border-radius:999px;height:7px;overflow:hidden}
 .prog-bar-fill{height:100%;border-radius:999px;transition:width 0.4s cubic-bezier(0.4,0,0.2,1);width:0}
 
 /* phase sections */
-.phase-section{margin:12px 12px 0}
+.phase-section{margin:12px 12px 0;border-radius:12px;overflow:hidden}
 .phase-section:last-child{margin-bottom:8px}
 .phase-section:not(:first-child){margin-top:10px}
 .phase-label{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px 12px 0 0;font-size:13px;font-weight:700;color:white}
-.phase-items{background:white;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid var(--border);border-top:none}
+.phase-items{background:white;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid rgba(0,0,0,0.1);border-top:none}
 
 /* ★ 단계별 색상 — ph-gray 포함 모두 명시 */
-.ph-red  .phase-label{background:#C0392B}
-.ph-blue .phase-label{background:#2471A3}
-.ph-green .phase-label{background:#1E8449}
+.ph-red  .phase-label{background:#E67F22}
+.ph-blue .phase-label{background:#2472A3}
+.ph-green .phase-label{background:#E67F22}
 .ph-gray .phase-label{background:#566573}
 
 /* 부모 체크 아이템 */
-.chk-item{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background 0.12s;user-select:none}
+.chk-item-indent{padding-left:28px !important;}
+.sub-group-label{font-size:11px;font-weight:700;color:#7D3C98;padding:6px 16px 2px 42px;letter-spacing:0.3px;}
+.chk-item{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border-bottom:0.5px solid rgba(0,0,0,0.1);cursor:pointer;transition:background 0.12s;-webkit-user-select:none;user-select:none}
 .chk-item:last-child{border-bottom:none}
 .chk-item:active{background:#F0FBF5}
 .chk-item.checked{background:#F4FDF8}
-.chk-circle{width:24px;height:24px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;background:white}
-.chk-item.checked .chk-circle{background:var(--green);border-color:var(--green)}
+.chk-circle{width:24px;height:24px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;-webkit-transition:all 0.2s;transition:all 0.2s;background:white}
+.chk-item.checked .chk-circle{background:#1E8449;border-color:#1E8449}
 .tick{width:9px;height:6px;border-left:2px solid white;border-bottom:2px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
 .chk-item.checked .tick{opacity:1}
 .chk-text{flex:1}
-.chk-sub{font-size:11px;color:var(--text-muted);margin-bottom:2px}
-.chk-main{font-size:13px;font-weight:500;line-height:1.5;color:var(--text)}
+.chk-sub{font-size:11px;color:#6c757d;margin-bottom:2px}
+.chk-main{font-size:13px;font-weight:500;line-height:1.5;color:#1a1a1a}
 .chk-item.checked .chk-main{color:#AAA;text-decoration:line-through;text-decoration-color:#CCC}
 
 /* 세부 아이템 */
-.sub-item{display:flex;align-items:flex-start;gap:10px;padding:9px 14px 9px 40px;border-bottom:0.5px solid #F0F0F0;cursor:pointer;user-select:none;transition:background 0.12s}
+.sub-item{display:flex;align-items:flex-start;gap:10px;padding:9px 14px 9px 40px;border-bottom:0.5px solid #F0F0F0;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-transition:background 0.12s;transition:background 0.12s}
 .sub-item:last-child{border-bottom:none}
 .sub-item:active{background:#F0FBF5}
 .sub-item.checked{background:#F4FDF8}
-.sub-circle{width:20px;height:20px;border-radius:50%;border:2px solid #DDD;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:white;transition:all 0.2s}
-.sub-item.checked .sub-circle{background:var(--green);border-color:var(--green)}
+.sub-circle{width:20px;height:20px;border-radius:50%;border:2px solid #DDD;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:white;-webkit--webkit-transition:all 0.2s;transition:all 0.2s;transition:all 0.2s}
+.sub-item.checked .sub-circle{background:#1E8449;border-color:#1E8449}
 .sub-tick{width:7px;height:5px;border-left:1.5px solid white;border-bottom:1.5px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
 .sub-item.checked .sub-tick{opacity:1}
-.sub-text{font-size:12px;color:var(--text);line-height:1.5}
+.sub-text{font-size:12px;color:#1a1a1a;line-height:1.5}
 .sub-item.checked .sub-text{color:#AAA;text-decoration:line-through;text-decoration-color:#CCC}
 
 /* keyword badge */
 .kw{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;margin-right:4px;vertical-align:middle}
-.kw-red{background:#FADBD8;color:var(--red-dark)}
-.kw-blue{background:#D6EAF8;color:var(--blue)}
-.kw-green{background:#D5F5E3;color:var(--green)}
+.kw-red{background:#FADBD8;color:#922B21}
+.kw-blue{background:#D6EAF8;color:#1A5276}
+.kw-green{background:#D5F5E3;color:#1E8449}
 .kw-gray{background:#EAECEE;color:#555}
+.ph-orange{background:#E67E22}
+.ph-orange .phase-label{background:#E67F22}
+.ph-green{background:#1E8449}
+.ph-purple{background:#7D3C98}
+.ph-purple .phase-label{background:#E67F22}
+.kw-green{background:#D5F5E3;color:#1E8449}
+.kw-purple{background:#E8DAEF;color:#7D3C98}
 .kw-orange{background:#FDEBD0;color:#A04000}
-.kw-purple{background:#F5EEF8;color:var(--purple)}
+.kw-purple{background:#F5EEF8;color:#7D3C98}
 
 /* ── ACTION BAR ── */
-.action-bar{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--border);padding:7px 12px 10px;box-shadow:0 -3px 14px rgba(0,0,0,0.09)}
-.action-status{font-size:10px;color:var(--text-muted);text-align:center;margin-bottom:5px}
-.action-status.all-done{color:var(--green);font-weight:700}
+.action-bar{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid rgba(0,0,0,0.1);padding:7px 12px 10px;box-shadow:0 -3px 14px rgba(0,0,0,0.09)}
+.action-status{font-size:10px;color:#6c757d;text-align:center;margin-bottom:5px}
+.action-status.all-done{color:#1E8449;font-weight:700}
 .action-btns{display:flex;gap:8px}
 .btn-complete{flex:1;padding:10px;font-size:14px;font-weight:700;border:none;border-radius:10px;cursor:not-allowed;background:#CCC;color:white;font-family:inherit;transition:all 0.3s;letter-spacing:-0.3px}
-.btn-complete.active{background:var(--red);cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,0.3)}
+.btn-complete.active{background:#C0392B;cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,0.3)}
 .btn-complete.active:active{transform:scale(0.98)}
 .btn-review{padding:10px 11px;font-size:11px;font-weight:600;border:1.5px solid #CCC;border-radius:10px;cursor:not-allowed;background:white;color:#CCC;font-family:inherit;transition:all 0.3s;white-space:nowrap;line-height:1.5;text-align:center}
-.btn-review.active{border-color:var(--red);color:var(--red);cursor:pointer}
+.btn-review.active{border-color:#C0392B;color:#C0392B;cursor:pointer}
 .btn-review.active:active{transform:scale(0.98)}
 
 /* ── REVIEW ── */
 .review-screen{padding:16px 16px 32px}
 .review-header{display:flex;align-items:center;gap:10px;margin-bottom:20px}
-.review-card{background:white;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
-.review-card h3{font-size:14px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.review-card{background:white;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,0.12)}
+.review-card h3{font-size:14px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(0,0,0,0.1)}
 .review-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:12px;line-height:1.5}
 .rv-dot{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px;font-weight:700}
-.rv-done{background:var(--green);color:white}
+.rv-done{background:#1E8449;color:white}
 .rv-miss{background:#EAECEE;color:#999}
-.rv-text-done{color:var(--text)}
+.rv-text-done{color:#1a1a1a}
 .rv-text-miss{color:#AAA;text-decoration:line-through}
-.summary-box{background:white;border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:var(--shadow);text-align:center}
-.time-big{font-size:28px;font-weight:700;color:var(--red);letter-spacing:-1px}
-.time-sub{font-size:12px;color:var(--text-muted);margin-top:4px}
+.summary-box{background:white;border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.12);text-align:center}
+.time-big{font-size:28px;font-weight:700;color:#C0392B;letter-spacing:-1px}
+.time-sub{font-size:12px;color:#6c757d;margin-top:4px}
 .rv-score{font-size:14px;font-weight:600;margin-top:12px;padding:8px;background:#F8F9FA;border-radius:8px}
-.print-btn{width:100%;padding:14px;font-size:14px;font-weight:700;border:none;border-radius:12px;cursor:pointer;background:var(--red);color:white;font-family:inherit;margin-top:4px}
+.print-btn{width:100%;padding:14px;font-size:14px;font-weight:700;border:none;border-radius:12px;cursor:pointer;background:#C0392B;color:white;font-family:inherit;margin-top:4px}
 /* 뒤로가기 토스트 */
 .back-toast{
   position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
@@ -246,13 +246,13 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
   font-size:14px;font-weight:600;font-family:'맑은 고딕','Apple SD Gothic Neo',sans-serif;
   padding:12px 24px;border-radius:24px;
   z-index:9999;pointer-events:none;
-  opacity:0;transition:opacity 0.3s ease;
+  opacity:0;-webkit-transition:opacity 0.3s ease;transition:opacity 0.3s ease;
   white-space:nowrap;
 }
 .back-toast.show{opacity:1;}
-.capture-btn{width:100%;padding:13px;font-size:14px;font-weight:700;border:1.5px solid var(--red);border-radius:12px;cursor:pointer;background:white;color:var(--red);font-family:inherit;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}
+.capture-btn{width:100%;padding:13px;font-size:14px;font-weight:700;border:1.5px solid #C0392B;border-radius:12px;cursor:pointer;background:white;color:#C0392B;font-family:inherit;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}
 .capture-btn:active{background:#FEF5F4}
-.capture-loading{text-align:center;font-size:12px;color:var(--text-muted);margin-top:8px;min-height:20px}
+.capture-loading{text-align:center;font-size:12px;color:#6c757d;margin-top:8px;min-height:20px}
 .send-status{text-align:center;font-size:12px;font-weight:600;padding:8px 12px;border-radius:10px;margin-bottom:10px;min-height:36px;display:flex;align-items:center;justify-content:center}
 .send-status.sending{background:#EBF5FB;color:#1A5276}
 .send-status.ok{background:#D5F5E3;color:#1E8449}
@@ -260,13 +260,144 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 /* ── REVIEW TIME INPUTS ── */
 .rv-time-inputs{margin-top:14px;display:flex;flex-direction:column;gap:8px;text-align:left}
 .rv-time-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#F8F9FA;border-radius:10px;padding:10px 12px}
-.rv-time-label{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap}
+.rv-time-label{font-size:12px;font-weight:600;color:#1a1a1a;white-space:nowrap}
 .rv-time-val{font-size:14px;font-weight:700;color:#C0392B;letter-spacing:0.5px}
 /* 종료 세부항목 배지 */
 .sub-end-time{font-size:11px;font-weight:700;color:#C0392B;white-space:nowrap;text-align:right;margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:1px}
 .end-label{font-size:9px;font-weight:700;color:#E74C3C;letter-spacing:0.3px;opacity:0.8}
+
+/* ── 메인 접이식 묶음 ── */
+.main-accordion{margin:12px 16px;background:white;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(192,57,43,0.12)}
+.main-accordion.disabled,.control-accordion.disabled{opacity:0.35;pointer-events:none;filter:grayscale(0.2)}
+.main-accordion-head{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;-webkit-user-select:none;user-select:none;transition:background 0.15s}
+.main-accordion-head:active{background:#FEF5F4}
+.main-accordion-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;background:#FADBD8}
+.main-accordion-info{flex:1}
+.main-accordion-title{font-size:16px;font-weight:800;color:#C0392B;margin-bottom:3px;letter-spacing:-0.3px}
+.main-accordion-desc{font-size:12px;color:#6c757d;line-height:1.45}
+.main-accordion-arrow{font-size:22px;color:#CCC;transition:transform 0.18s;flex-shrink:0}
+.main-accordion.open .main-accordion-arrow{transform:rotate(90deg);color:#C0392B}
+.main-accordion-body{display:none;padding-bottom:12px;border-top:1px solid #F0F0F0;background:#FCFCFC}
+.main-accordion.open .main-accordion-body{display:block}
+.main-accordion-body .select-divider{padding-left:12px;padding-right:12px}
+.main-accordion-body .role-cards{padding-left:12px;padding-right:12px}
+.main-accordion-body .depart-sub-wrap{margin-left:12px;margin-right:12px}
+.control-accordion{margin:12px 16px;background:white;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(125,60,152,0.16)}
+.control-accordion.open .main-accordion-arrow{transform:rotate(90deg);color:#7D3C98}
+.control-accordion .main-accordion-icon{background:#F5EEF8;color:#7D3C98}
+.control-accordion .main-accordion-title{color:#7D3C98}
+.control-body{display:none;padding:0 0 12px;background:#FCFCFC;border-top:1px solid #F0F0F0}
+.control-accordion.open .control-body{display:block}
+.control-dept{margin:12px 12px 0;background:white;border:1px solid rgba(0,0,0,0.08);border-radius:12px;overflow:hidden}
+.control-dept-head{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;-webkit-user-select:none;user-select:none;background:#fff}
+.control-dept-head:active{background:#F8F9FA}
+.control-dept-badge{font-size:11px;font-weight:800;color:white;padding:4px 8px;border-radius:999px;white-space:nowrap}
+.badge-plan{background:#2472A3}.badge-field{background:#E67E22}.badge-resource{background:#7D3C98}
+.control-dept-title{font-size:14px;font-weight:800;color:#1a1a1a;flex:1}
+.control-dept-arrow{font-size:20px;color:#CCC;transition:transform 0.18s}
+.control-dept.open .control-dept-arrow{transform:rotate(90deg)}
+.control-dept-body{display:none;border-top:1px solid #F0F0F0}
+.control-dept.open .control-dept-body{display:block}
+.ctrl-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:0.5px solid #F0F0F0;cursor:pointer;-webkit-user-select:none;user-select:none;background:white}
+.ctrl-item:last-child{border-bottom:none}
+.ctrl-item:active{background:#F0FBF5}
+.ctrl-item.checked{background:#F4FDF8}
+.ctrl-circle{width:21px;height:21px;border-radius:50%;border:2px solid #DDD;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:white;transition:all 0.2s}
+.ctrl-item.checked .ctrl-circle{background:#1E8449;border-color:#1E8449}
+.ctrl-tick{width:7px;height:5px;border-left:1.5px solid white;border-bottom:1.5px solid white;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity 0.15s}
+.ctrl-item.checked .ctrl-tick{opacity:1}
+.ctrl-text{font-size:12px;color:#1a1a1a;line-height:1.5;flex:1}
+.ctrl-item.checked .ctrl-text{color:#AAA;text-decoration:line-through;text-decoration-color:#CCC}
+
+/* ── 통합 결과 접이식 출력 ── */
+.review-accordion{background:white;border-radius:14px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,0.12);overflow:hidden;border:1px solid rgba(0,0,0,0.06)}
+.review-accordion summary{list-style:none;cursor:pointer;padding:14px 16px;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid rgba(0,0,0,0.06)}
+.review-accordion summary::-webkit-details-marker{display:none}
+.review-accordion summary::after{content:'›';font-size:22px;color:#CCC;transition:transform 0.18s}
+.review-accordion[open] summary::after{transform:rotate(90deg);color:#C0392B}
+.review-accordion-body{padding:0 0 12px}
+.review-accordion .review-card{box-shadow:none;margin:0;border-radius:0;border-bottom:1px solid rgba(0,0,0,0.06)}
+.review-accordion .review-card:last-child{border-bottom:none}
+.review-small-summary{font-size:11px;font-weight:600;color:#6c757d;margin-left:auto;white-space:nowrap}
+
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+
+// ─────────────────────────────────────
+// 구형 스마트폰 호환 패치
+// - Array.from / NodeList.forEach / Set / fetch 미지원 기기 대응
+// - Android 구형 WebView, iOS 구형 Safari에서 스크립트 중단 방지
+// ─────────────────────────────────────
+(function(){
+  if(!Array.from){
+    Array.from = function(obj){
+      return Array.prototype.slice.call(obj);
+    };
+  }
+  if(window.NodeList && !NodeList.prototype.forEach){
+    NodeList.prototype.forEach = Array.prototype.forEach;
+  }
+  if(window.HTMLCollection && !HTMLCollection.prototype.forEach){
+    HTMLCollection.prototype.forEach = Array.prototype.forEach;
+  }
+  if(!window.Set){
+    window.Set = function(items){
+      this._items = [];
+      if(items && items.length){
+        for(var i=0;i<items.length;i++){ this.add(items[i]); }
+      }
+    };
+    window.Set.prototype.add = function(v){
+      if(!this.has(v)) this._items.push(v);
+      this.size = this._items.length;
+      return this;
+    };
+    window.Set.prototype.delete = function(v){
+      for(var i=0;i<this._items.length;i++){
+        if(this._items[i] === v){ this._items.splice(i,1); this.size = this._items.length; return true; }
+      }
+      this.size = this._items.length;
+      return false;
+    };
+    window.Set.prototype.has = function(v){
+      for(var i=0;i<this._items.length;i++){
+        if(this._items[i] === v) return true;
+      }
+      return false;
+    };
+    window.Set.prototype.clear = function(){
+      this._items = [];
+      this.size = 0;
+    };
+    window.Set.prototype.forEach = function(fn, thisArg){
+      for(var i=0;i<this._items.length;i++) fn.call(thisArg, this._items[i], this._items[i], this);
+    };
+    Object.defineProperty(window.Set.prototype, 'size', {
+      get: function(){ return this._items.length; },
+      set: function(){}
+    });
+  }
+  if(!window.fetch){
+    window.fetch = function(url, options){
+      return new Promise(function(resolve, reject){
+        try{
+          var xhr = new XMLHttpRequest();
+          xhr.open((options && options.method) || 'GET', url, true);
+          if(options && options.headers){
+            for(var h in options.headers){
+              if(options.headers.hasOwnProperty(h)) xhr.setRequestHeader(h, options.headers[h]);
+            }
+          }
+          xhr.onload = function(){ resolve({ ok:true, status:xhr.status, text:function(){ return Promise.resolve(xhr.responseText); } }); };
+          xhr.onerror = function(){ reject(new Error('network error')); };
+          xhr.send(options && options.body ? options.body : null);
+        }catch(e){ reject(e); }
+      });
+    };
+  }
+})();
+
 // ── 결과화면 캡처
 function captureScreen(){
   var loading = document.getElementById('capture-loading');
@@ -384,7 +515,7 @@ function captureScreen(){
 <div class="app-header">
   <div class="logo-badge">경기도소방<br>구리소방서</div>
   <div class="header-title">
-    <h1>🚒 긴급지원반 임무 체크리스트</h1>
+    <h1>🚒 긴급지원반 및 긴급구조통제단 임무 체크리스트</h1>
     <p>출동 전 전 항목을 확인하세요</p>
   </div>
 </div>
@@ -396,7 +527,7 @@ function captureScreen(){
       <div class="select-hero-icon">🚒</div>
       <div class="select-hero-text">
         <div class="select-badge">경기도소방 구리소방서</div>
-        <h2>긴급지원반<br>임무 체크리스트</h2>
+        <h2>긴급지원반 및 긴급구조통제단<br>임무 체크리스트</h2>
         
       </div>
     </div>
@@ -444,8 +575,8 @@ function captureScreen(){
         <span class="mob-col-right">응소시간</span>
       </div>
       <div class="mob-items">
-        <div class="mob-item" id="mob-item-essential">
-          <div class="mob-chk-wrap" onclick="toggleMobilize('essential')">
+        <div class="mob-item" id="mob-item-essential" onclick="toggleMobilize('essential')">
+          <div class="mob-chk-wrap">
             <div class="mob-chk" id="mob-chk-essential"></div>
           </div>
           <div class="mob-text">
@@ -454,8 +585,8 @@ function captureScreen(){
           </div>
           <div class="mob-time-out" id="mob-time-essential">--:--</div>
         </div>
-        <div class="mob-item" id="mob-item-general">
-          <div class="mob-chk-wrap" onclick="toggleMobilize('general')">
+        <div class="mob-item" id="mob-item-general" onclick="toggleMobilize('general')">
+          <div class="mob-chk-wrap">
             <div class="mob-chk" id="mob-chk-general"></div>
           </div>
           <div class="mob-text">
@@ -480,6 +611,34 @@ function captureScreen(){
           <div class="ee-desc">체크 시 요원 선택 비활성화 · 임무완료 버튼 활성화</div>
         </div>
         <div class="ee-time-out" id="ee-time-out">--:--</div>
+      </div>
+    </div>
+
+    <div class="select-divider">
+      <span>지원반 및 통제단 기능별 임무 선택</span>
+    </div>
+
+    <div class="main-accordion" id="support-branch-accordion">
+      <div class="main-accordion-head" onclick="toggleMainAccordion('support-branch-accordion')">
+        <div class="main-accordion-icon">🚒</div>
+        <div class="main-accordion-info">
+          <div class="main-accordion-title">긴급구조현장지휘대 지원반</div>
+          <div class="main-accordion-desc">지원반장 확인 목록 · 출동단계 · 요원별 임무선택</div>
+        </div>
+        <div class="main-accordion-arrow">›</div>
+      </div>
+      <div class="main-accordion-body">
+    <div class="select-divider">
+      <span>지원반장 확인 목록</span>
+    </div>
+    <div class="role-cards" id="chief-role-area">
+      <div class="role-card" style="border-color:rgba(36,114,163,0.3)" onclick="selectRole('chief')">
+        <div class="role-icon" style="background:#EBF5FB"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="4" width="18" height="21" rx="2" stroke="#2472A3" stroke-width="1.5" fill="none"/><line x1="9" y1="9" x2="19" y2="9" stroke="#2472A3" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="13" x2="19" y2="13" stroke="#2472A3" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="17" x2="15" y2="17" stroke="#2472A3" stroke-width="1.5" stroke-linecap="round"/><path d="M16 19l2 2 4-4" stroke="#2472A3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="role-info">
+          <h3 style="color:#2472A3">지원반장 확인 목록</h3>
+          <p>지원반장 총괄 확인</p>
+        </div>
+        <div class="role-arrow">›</div>
       </div>
     </div>
     <div class="select-divider">
@@ -517,8 +676,25 @@ function captureScreen(){
       <span>요원 선택</span>
     </div>
     <div class="role-cards" id="role-select-cards">
+      <div class="role-card" id="role-select-toggle-card" style="border-color:rgba(86,101,115,0.25)" onclick="toggleRoleSelectCard()">
+        <div class="role-icon" style="background:#F2F3F4">👥</div>
+        <div class="role-info">
+          <h3 style="color:#566573">요원별 임무 선택</h3>
+          <p>클릭하여 담당 요원 선택</p>
+        </div>
+        <div class="role-arrow" id="role-select-arrow">›</div>
+      </div>
+      <div id="role-select-list" style="display:none;flex-direction:column;gap:10px">
       <div class="role-card cmd" onclick="selectRole('cmd')">
-        <div class="role-icon">🎖️</div>
+        <div class="role-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 원 -->
+  <circle cx="14" cy="12" r="7" fill="#C0392B" opacity="0.15"/>
+  <!-- 별 모양 -->
+  <polygon points="14,4 15.8,9.5 21.5,9.5 17,13 18.8,18.5 14,15 9.2,18.5 11,13 6.5,9.5 12.2,9.5" fill="#C0392B"/>
+  <!-- 하단 지휘봉 라인 -->
+  <rect x="13" y="19" width="2" height="5" rx="1" fill="#C0392B"/>
+  <rect x="10" y="23" width="8" height="1.5" rx="0.75" fill="#C0392B"/>
+</svg></div>
         <div class="role-info">
           <h3>현장지휘요원</h3>
           <p>현장 지휘 총괄 · 명령사항 기록 및 전달<br>상황판 설치 · 대응활동 계획수립</p>
@@ -526,7 +702,7 @@ function captureScreen(){
         <div class="role-arrow">›</div>
       </div>
       <div class="role-card res" onclick="selectRole('res')">
-        <div class="role-icon">🏕️</div>
+        <div class="role-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L3 18h18L12 3z" fill="#E67E22"/><path d="M10 18v-5h4v5h-4z" fill="#D35400"/><path d="M2 18h20" stroke="#BDC3C7" stroke-width="1.5"/></svg></div>
         <div class="role-info">
           <h3>자원지원요원</h3>
           <p>자원대기소 운영 · 소방력 파악 및 배치<br>소방용수 확보 · 필요장비 지원</p>
@@ -534,19 +710,95 @@ function captureScreen(){
         <div class="role-arrow">›</div>
       </div>
       <div class="role-card com" onclick="selectRole('com')">
-        <div class="role-icon">📡</div>
+        <div class="role-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="2" fill="#7D3C98"/><path d="M8.5 8.5a5 5 0 017 7" stroke="#7D3C98" stroke-width="2" stroke-linecap="round"/><path d="M5.5 5.5a9 9 0 0113 13" stroke="#7D3C98" stroke-width="2" stroke-linecap="round" opacity="0.5"/><line x1="12" y1="14" x2="12" y2="20" stroke="#7D3C98" stroke-width="2"/><line x1="9" y1="20" x2="15" y2="20" stroke="#7D3C98" stroke-width="2"/></svg></div>
         <div class="role-info">
           <h3>통신지원요원</h3>
           <p>통신체계 확보 · 비상동원 발령<br>유관기관 연락 · 상황전파</p>
         </div>
         <div class="role-arrow">›</div>
       </div>
+      <div class="role-card" style="border-color:rgba(230,126,34,0.3)" onclick="selectRole('safe')">
+        <div class="role-icon" style="background:#FEF5E7"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 3L5 7v7c0 5 4 9.5 9 10.5C19 23.5 23 19 23 14V7L14 3z" fill="#E67E22" opacity="0.2" stroke="#E67E22" stroke-width="1.5"/><path d="M10 14l3 3 5-5" stroke="#E67E22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="role-info">
+          <h3 style="color:#E67E22">안전관리요원</h3>
+          <p>현장 안전관리 및 통제<br>차량배치 · 방면안전관리</p>
+        </div>
+        <div class="role-arrow">›</div>
+      </div>
+      <div class="role-card" style="border-color:rgba(26,82,118,0.3)" onclick="selectRole('invest')">
+        <div class="role-icon" style="background:#EBF5FB"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="6" stroke="#1A5276" stroke-width="1.5" fill="none"/><line x1="17.5" y1="17.5" x2="22" y2="22" stroke="#1A5276" stroke-width="2" stroke-linecap="round"/><line x1="10" y1="13" x2="16" y2="13" stroke="#1A5276" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="10" x2="13" y2="16" stroke="#1A5276" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="role-info">
+          <h3 style="color:#1A5276">상황조사요원</h3>
+          <p>현장 상황 조사 및 분석<br>피해규모 파악 · 영상 기록</p>
+        </div>
+        <div class="role-arrow">›</div>
+      </div>
+      <div class="role-card" style="border-color:rgba(30,132,73,0.3)" onclick="selectRole('decon')">
+        <div class="role-icon" style="background:#E9F7EF"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 4c0 0-7 6-7 12a7 7 0 0014 0C21 10 14 4 14 4z" fill="#1E8449" opacity="0.2" stroke="#1E8449" stroke-width="1.5"/><path d="M11 17c1 1.5 4 1.5 5 0" stroke="#1E8449" stroke-width="1.5" stroke-linecap="round"/><circle cx="14" cy="13" r="1.5" fill="#1E8449"/></svg></div>
+        <div class="role-info">
+          <h3 style="color:#1E8449">오염통제요원</h3>
+          <p>오염 확인 및 확산 방지<br>유관기관 통보 · 현장통제</p>
+        </div>
+        <div class="role-arrow">›</div>
+      </div>
+      <div class="role-card" style="border-color:rgba(125,60,152,0.3)" onclick="selectRole('ems')">
+        <div class="role-icon" style="background:#F5EEF8"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="8" width="18" height="13" rx="2" stroke="#7D3C98" stroke-width="1.5" fill="none"/><line x1="14" y1="11" x2="14" y2="18" stroke="#7D3C98" stroke-width="2" stroke-linecap="round"/><line x1="10.5" y1="14.5" x2="17.5" y2="14.5" stroke="#7D3C98" stroke-width="2" stroke-linecap="round"/><path d="M10 8V6a4 4 0 018 0v2" stroke="#7D3C98" stroke-width="1.5"/></svg></div>
+        <div class="role-info">
+          <h3 style="color:#7D3C98">구급지휘요원</h3>
+          <p>구급 지휘 및 임시의료소 운영<br>환자분류 · 이송 지휘</p>
+        </div>
+        <div class="role-arrow">›</div>
+      </div>
+      </div>
     </div>
+      </div>
+    </div>
+
+    <div class="control-accordion" id="control-dan-accordion">
+      <div class="main-accordion-head" onclick="toggleMainAccordion('control-dan-accordion')">
+        <div class="main-accordion-icon">🧭</div>
+        <div class="main-accordion-info">
+          <div class="main-accordion-title">긴급구조통제단</div>
+          <div class="main-accordion-desc">대응계획부 · 현장지휘부 · 자원지원부 기능별 체크리스트</div>
+        </div>
+        <div class="main-accordion-arrow">›</div>
+      </div>
+      <div class="control-body">
+        <div class="role-cards" style="padding-top:12px">
+          <div class="role-card" style="border-color:rgba(36,114,163,0.3)" onclick="selectRole('controlPlan')">
+            <div class="role-icon" style="background:#EBF5FB">📊</div>
+            <div class="role-info">
+              <h3 style="color:#2472A3">대응계획부</h3>
+              <p>상황분석 · 작전계획 · 공보·대중정보</p>
+            </div>
+            <div class="role-arrow">›</div>
+          </div>
+          <div class="role-card" style="border-color:rgba(230,126,34,0.3)" onclick="selectRole('controlField')">
+            <div class="role-icon" style="background:#FEF5E7">🚒</div>
+            <div class="role-info">
+              <h3 style="color:#E67E22">현장지휘부</h3>
+              <p>구조·진압 · 현장통제 · 안전관리</p>
+            </div>
+            <div class="role-arrow">›</div>
+          </div>
+          <div class="role-card" style="border-color:rgba(125,60,152,0.3)" onclick="selectRole('controlResource')">
+            <div class="role-icon" style="background:#F5EEF8">📦</div>
+            <div class="role-info">
+              <h3 style="color:#7D3C98">자원지원부</h3>
+              <p>물품·급식지원 · 긴급복구 · 오염방제</p>
+            </div>
+            <div class="role-arrow">›</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="select-footer">각 요원별 임무를 빠짐없이 확인하세요</div>
     <div class="select-action-bar">
       <div class="select-action-status" id="select-action-status">소속·계급·성명 입력 후 활동 종료 또는 출동 전 종료 시 활성화</div>
       <button class="select-btn-complete" id="select-btn-complete" disabled onclick="completeFromSelect()">임무 완료</button>
     </div>
+    <div style="text-align:center;font-size:10px;color:#BBBBBB;padding-bottom:16px;letter-spacing:0.3px;">제작 : 구리소방서 소방교 김대운</div>
   </div>
 </div>
 
@@ -586,8 +838,8 @@ function captureScreen(){
       <h2 style="font-size:16px;font-weight:700">완료된 임무 확인</h2>
     </div>
     <div class="summary-box">
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:2px" id="rv-role-name"></div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px" id="rv-member-info"></div>
+      <div style="font-size:13px;color:#6c757d;margin-bottom:2px" id="rv-role-name"></div>
+      <div style="font-size:12px;color:#6c757d;margin-bottom:6px" id="rv-member-info"></div>
       <div class="time-big" id="rv-time">--:--:--</div>
       <div class="time-sub" id="rv-date"></div>
       <div class="rv-score" id="rv-score"></div>
@@ -619,9 +871,50 @@ function captureScreen(){
 </div>
 
 <script>
+
+// ── 메인 접이식 묶음 / 긴급구조통제단 체크리스트
+function toggleMainAccordion(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  if(el.className.indexOf('open') >= 0){
+    el.className = el.className.replace(/\s*open/g,'');
+  }else{
+    el.className += ' open';
+  }
+}
+function toggleControlDept(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  if(el.className.indexOf('open') >= 0){
+    el.className = el.className.replace(/\s*open/g,'');
+  }else{
+    el.className += ' open';
+  }
+}
+function toggleCtrlItem(el){
+  if(!el) return;
+  if(el.className.indexOf('checked') >= 0){
+    el.className = el.className.replace(/\s*checked/g,'');
+  }else{
+    el.className += ' checked';
+  }
+}
+
 // ══════════════════════════════════════════
 // ★ Google Sheets 웹훅 URL (배포 후 여기에 입력)
 // ══════════════════════════════════════════
+// ── Array.from polyfill (구형 브라우저 호환)
+if(!Array.from){
+  Array.from = function(obj){
+    var arr = [];
+    if(obj && obj.forEach){
+      obj.forEach(function(v){ arr.push(v); });
+    } else if(obj && obj.length !== undefined){
+      for(var i=0;i<obj.length;i++) arr.push(obj[i]);
+    }
+    return arr;
+  };
+}
 var WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwUs76tJHC8srq1T6I61n1qU-VmXMKX9g7LmIPkwwioxms581t_sfo_O0l4ZjasA4KC/exec';
 
 // ══════════════════════════════════════════
@@ -651,7 +944,7 @@ var ROLES = {
         { kw:'자원확인', kc:'kw-green', main:'자원 확인',
           subs:['출동력(선착) 확인','추가 소방력 파악','대응단계 확인','유관기관 확인'] }
       ]},
-      { phase:'임무수행단계', ph:'ph-green', items:[
+      { phase:'임무수행단계', ph:'ph-orange', items:[
         { kw:'주요임무',   kc:'kw-green',  main:'현장지휘대장 보좌',
           subs:['명령사항 기록','명령사항 전달 완료'] },
         { kw:'현장지휘소', kc:'kw-orange', main:'현장지휘소 설치',
@@ -661,7 +954,7 @@ var ROLES = {
         { kw:'대응활동',   kc:'kw-red',    main:'대응활동 계획 수립 및 실행',
           subs:['대응활동 계획수립','부책 작성','P119 활용','상황판단 회의 준비','통제단 인계 준비','보고자료 작성','언론브리핑 준비'] }
       ]},
-      { phase:'종료', ph:'ph-gray', items:[
+      { phase:'임무 종료', ph:'ph-gray', items:[
         { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
           subs:[] }
       ]}
@@ -680,7 +973,7 @@ var ROLES = {
         { kw:'자원확인', kc:'kw-green', main:'자원 확인',
           subs:['출동력(선착) 확인','추가 소방력 파악','대응단계 확인','유관기관 확인'] }
       ]},
-      { phase:'임무수행단계', ph:'ph-green', items:[
+      { phase:'임무수행단계', ph:'ph-orange', items:[
         { kw:'자원대기소', kc:'kw-green', main:'자원대기소 운영',
           subs:['자원대기소 운영 완료','교대조 편성','휴식조 편성'] },
         { kw:'소방력', kc:'kw-orange', main:'소방력 파악 및 배치',
@@ -696,7 +989,7 @@ var ROLES = {
         { kw:'회복지원', kc:'kw-gray', main:'회복 지원',
           subs:['회복차량 배치','식사·간식 제공'] }
       ]},
-      { phase:'종료', ph:'ph-gray', items:[
+      { phase:'임무 종료', ph:'ph-gray', items:[
         { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
           subs:[] }
       ]}
@@ -715,7 +1008,7 @@ var ROLES = {
         { kw:'자원확인', kc:'kw-green', main:'자원 확인',
           subs:['출동력(선착) 확인','추가 소방력 파악','대응단계 확인','유관기관 확인'] }
       ]},
-      { phase:'임무수행단계', ph:'ph-green', items:[
+      { phase:'임무수행단계', ph:'ph-orange', items:[
         { kw:'통신체계', kc:'kw-purple', main:'통신체계 확보',
           subs:['예비채널 확보','무전망 분리(지휘/작전/지원)','작전망 확인(통신망 단일화)','무전채널 공지(지원기관)'] },
         { kw:'비상동원', kc:'kw-red', main:'비상동원',
@@ -725,8 +1018,265 @@ var ROLES = {
         { kw:'상황전파', kc:'kw-green', main:'상황 전파',
           subs:['P119 활용 상황전파','상황실 연락체계 구축'] }
       ]},
-      { phase:'종료', ph:'ph-gray', items:[
+      { phase:'임무 종료', ph:'ph-gray', items:[
         { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 안전관리요원 ─── */
+  safe:{
+    name:'안전관리요원',
+    subtitle:'현장 안전관리 및 통제',
+    barColor:'#E67E22',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue', main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악','기타 정보 수집'] },
+        { kw:'자원확인', kc:'kw-blue', main:'소방력 및 자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 확인','대응단계 파악','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'현장안전', kc:'kw-orange', main:'현장 안전 관리',
+          subs:['위험구역 진출입 관리','탈출로 확보','안전관련 정보수집'] },
+        { kw:'현장통제', kc:'kw-orange', main:'현장 통제',
+          subs:['Fire/Police Line 설치','진입차량 통제','1차 통제선 설정','2차 통제선 설정'] },
+        { kw:'차량배치', kc:'kw-orange', main:'차량 배치 관리',
+          subs:['1선 진입','2선 대기','꼬리물기 금지','필요시 차량 대기 장소 지정'] },
+        { kw:'방면안전관리', kc:'kw-orange', main:'방면 안전관리',
+          subs:['방면지휘관 보좌','안전·인력관리','교대조 운영'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 상황조사요원 ─── */
+  invest:{
+    name:'상황조사요원',
+    subtitle:'현장 상황 조사 및 분석',
+    barColor:'#1A5276',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue', main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악','기타 정보 수집'] },
+        { kw:'자원확인', kc:'kw-blue', main:'소방력 및 자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 확인','대응단계 파악','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'현장확인', kc:'kw-blue', main:'현장 확인',
+          subs:['전체 현장 확인','수신반 확인','관계인 정보 수집'] },
+        { kw:'상황분석', kc:'kw-blue', main:'상황 분석',
+          subs:['피해규모 파악','인명피해 확인','위험요인 식별','구조필요 지역 식별','환경모니터링','사진·영상 기록'] },
+        { kw:'재평가', kc:'kw-blue', main:'재평가',
+          subs:['상황변화에 따라 전략·대응계획 유지·조정'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 오염통제요원 ─── */
+  decon:{
+    name:'오염통제요원',
+    subtitle:'오염 확인 및 확산 방지',
+    barColor:'#1E8449',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue', main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악','기타 정보 수집'] },
+        { kw:'자원확인', kc:'kw-blue', main:'소방력 및 자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 확인','대응단계 파악','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'오염확인', kc:'kw-green', main:'오염 상황 확인',
+          subs:['유해화학물질 확인','폐기물 확인','오염물질 확인'] },
+        { kw:'현장통제', kc:'kw-green', main:'현장 통제',
+          subs:['Fire/Police Line 설치','출입통제'] },
+        { kw:'확산방지', kc:'kw-green', main:'오염 확산 방지',
+          subs:['흡착포 활용','제독제 사용','소방용수 활용'] },
+        { kw:'유관기관', kc:'kw-green', main:'유관기관 통보(필요시)',
+          subs:['시청(오염통제·중장비)','보건소','한국전력공사','도시가스','경찰','헬기','군'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 구급지휘요원 ─── */
+  ems:{
+    name:'구급지휘요원',
+    subtitle:'구급 지휘 및 임시의료소 운영',
+    barColor:'#7D3C98',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'대응계획', kc:'kw-purple', main:'대응 계획 수립',
+          subs:['우선순위 결정'] },
+        { kw:'통신체계', kc:'kw-purple', main:'통신체계 확보',
+          subs:['MCS 운영'] },
+        { kw:'상황평가', kc:'kw-purple', main:'상황 평가',
+          subs:['정확한 사고 위치 파악','구체적인 사고유형 확인','사상자 규모(현재 → 앞으로 예측되는 수)','장애요인 확인','날씨 확인','위험요소 파악'] },
+        { kw:'핵심목표', kc:'kw-purple', main:'핵심 목표 파악',
+          subs:['해결해야 할 문제 파악(우선순위)','자력대피자 확인','환자분류','응급처치','이송','임시의료소 설치·운영','통제'] },
+        { kw:'자원요청', kc:'kw-purple', main:'자원 요청',
+          subs:['구급대','신속대응반','진압대','구조대','DMAT','경찰','진단버스','수요예측물품'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'운영지원', kc:'kw-purple', main:'운영 지원',
+          subs:['임시의료소 지원'] },
+        { kw:'위치선정', kc:'kw-purple', main:'위치 선정 및 전파',
+          subs:['통제선 확인','환자 및 구급차 동선 확인','날씨 확인','위험요소 구분','임시영안소 위치 선정 및 전파','임시의료소 위치 전파','환자집결지 위치 전파','구급차 집결지 위치 전파'] },
+        { kw:'임무지정', kc:'kw-purple', main:'임무 지정',
+          subs:['분류반','처치반','이송반','이동반'] },
+        { kw:'재평가', kc:'kw-purple', main:'재평가',
+          subs:['[분류] m-MASS','[분류] START','[초기대응] 분류','[초기대응] 처치 중심(긴급환자)','[후기대응] 이송 중심(긴급→비응급)'],
+          subGroups:[
+            {label:'분류', items:['m-MASS','START']},
+            {label:'초기대응', items:['분류','처치 중심(긴급환자)']},
+            {label:'후기대응', items:['이송 중심(긴급→비응급)']}
+          ] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 긴급구조통제단: 대응계획부 ─── */
+  controlPlan:{
+    name:'대응계획부',
+    subtitle:'상황분석 · 작전계획 · 공보·대중정보',
+    barColor:'#2472A3',
+    phases:[
+      { phase:'상황 분석·보고', ph:'ph-blue', items:[
+        { kw:'상황관리', kc:'kw-blue', main:'재난상황 분석 및 보고',
+          subs:['재난 상황 정보 수집·분석','상황보고서 작성 및 전파','피해 현황 최신화','상황판 운영 및 정보 표시','최초보고·최종보고 작성','지원기관 상황 공유'] }
+      ]},
+      { phase:'작전계획 수립', ph:'ph-orange', items:[
+        { kw:'작전계획', kc:'kw-orange', main:'대응목표 설정 및 임무 배정',
+          subs:['대응 목표 설정','우선순위 결정','자원 및 임무 배정','대응계획 수정·재조정','상황판단회의 운영'] }
+      ]},
+      { phase:'공보·대중정보 전파', ph:'ph-purple', items:[
+        { kw:'공보', kc:'kw-purple', main:'비상경고 및 대중정보 제공',
+          subs:['비상경고 메시지 작성','재난문자·방송 요청','언론 브리핑 및 보도자료 배포','대중정보센터 운영','주민 행동요령 전파','언론 대응 및 정보 통제'] }
+      ]},
+      { phase:'기관 연락·상급보고', ph:'ph-gray', items:[
+        { kw:'연락지원', kc:'kw-gray', main:'지원기관 연락 및 상급보고',
+          subs:['지원기관 연락관 운영','관계기관 소집·파견','상급기관 보고'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'통제단 대응계획부 임무 종료',
+          subs:['상황보고 및 기록 정리','인계·공유 사항 확인','대응계획부 철수 완료'] }
+      ]}
+    ]
+  },
+
+  /* ─── 긴급구조통제단: 현장지휘부 ─── */
+  controlField:{
+    name:'현장지휘부',
+    subtitle:'구조·진압 · 현장통제 · 안전관리',
+    barColor:'#E67E22',
+    phases:[
+      { phase:'구조·진압 활동', ph:'ph-orange', items:[
+        { kw:'구조진압', kc:'kw-orange', main:'위험진압 및 인명구조 활동',
+          subs:['위험진압 수행','수색·탐색 실시','인명구조 활동','주민 긴급대피 결정','교통·출입 통제 요청'] }
+      ]},
+      { phase:'현장지휘·상황보고', ph:'ph-blue', items:[
+        { kw:'현장지휘', kc:'kw-blue', main:'현장상황 취합 및 지휘 조정',
+          subs:['현장 상황 취합·보고','대응 목표 조정','자원 재배치','긴급대피 명령','현장 통신체계 유지'] }
+      ]},
+      { phase:'현장 안전관리', ph:'ph-green', items:[
+        { kw:'안전관리', kc:'kw-green', main:'현장 대응자 안전관리',
+          subs:['붕괴·유해물질 위험 점검','안전구역 설정','현장 대응자 안전관리','자원대기소 운영','대응 인력 교대·휴식 관리'] }
+      ]},
+      { phase:'특수대응·응급의료 연계', ph:'ph-purple', items:[
+        { kw:'특수대응', kc:'kw-purple', main:'특수위험 초동조치 및 지원',
+          subs:['긴급 오염방제 지원','방사능 탐지','가스 차단 초동조치','비상조명·전력 지원 협조'] },
+        { kw:'응급의료', kc:'kw-purple', main:'응급의료 활동 연계',
+          subs:['임시의료소 운영','현장응급의료소 협조','사상자 현황 공유','이송 지원'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'통제단 현장지휘부 임무 종료',
+          subs:['현장 안전상태 최종 확인','현장대응 자원 철수 확인','현장지휘부 철수 완료'] }
+      ]}
+    ]
+  },
+
+  /* ─── 긴급구조통제단: 자원지원부 ─── */
+  controlResource:{
+    name:'자원지원부',
+    subtitle:'물품·급식지원 · 긴급복구 · 오염방제',
+    barColor:'#7D3C98',
+    phases:[
+      { phase:'물품·급식 지원', ph:'ph-orange', items:[
+        { kw:'물품급식', kc:'kw-orange', main:'현장 물품·급식 지원',
+          subs:['현장 급식 지원','식수·용수 확보','필요 물품 공급','위생·세척 지원'] }
+      ]},
+      { phase:'자원집결·장비관리', ph:'ph-purple', items:[
+        { kw:'자원운영', kc:'kw-purple', main:'자원집결지 및 장비 관리',
+          subs:['자원집결지 운영','장비 관리','자원 동원·배정','자원 현황 관리','지원기관 협조 조정'] }
+      ]},
+      { phase:'긴급복구 지원', ph:'ph-blue', items:[
+        { kw:'긴급복구', kc:'kw-blue', main:'긴급구조활동 장애요소 제거',
+          subs:['중장비 지원','출동로 확보','장애물 제거','비상전력 공급 협조','가스·전기 안전 지원','긴급 안전진단 지원'] }
+      ]},
+      { phase:'오염방제·회복지원', ph:'ph-green', items:[
+        { kw:'오염방제', kc:'kw-green', main:'오염방제 및 환경 대응 지원',
+          subs:['오염원 확인','오염 확산 차단','방역·정화 지원','유해화학물질 처리 지원','환경오염 대응 지원','감염병 통제 지원'] },
+        { kw:'회복지원', kc:'kw-green', main:'이재민 및 대응인력 회복 지원',
+          subs:['이재민 지원 협조','대응인력 회복 지원','장기 대응 지원체계 운영'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'통제단 자원지원부 임무 종료',
+          subs:['자원·장비 회수 확인','지원기관 협조사항 정리','자원지원부 철수 완료'] }
+      ]}
+    ]
+  },
+
+  /* ─── 지원반장 확인 목록 ─── */
+  chief:{
+    name:'지원반장 확인 목록',
+    subtitle:'출동 전 지원반장 최종 확인 사항',
+    barColor:'#2472A3',
+    phases:[
+      { phase:'비상소집', ph:'ph-blue', items:[
+        { kw:'인원파악', kc:'kw-blue', main:'긴급지원반 인원 파악(총 13명)',
+          subs:['필수요원 5명(1시간 이내 응소)','필수요원 외 8명'] }
+      ]},
+      { phase:'지원준비', ph:'ph-blue', items:[
+        { kw:'물품적재', kc:'kw-blue', main:'긴급지원반 필요물품 적재(화물차 또는 생활안전차)',
+          subs:['천막 2개','테이블 2개','의자 8개','긴급지원반 소모품 박스','긴급지원반 조끼 및 헬멧 보관함','상황판 및 상황판 거치대','긴급지원반 백팩','PS-LTE 가방(17개)(사무실 보관·통제단 담당자 자리)','식수 및 이온음료(긴급구조통제단 창고 보관)'] }
+      ]},
+      { phase:'임무수행', ph:'ph-orange', items:[
+        { kw:'지휘소', kc:'kw-orange', main:'현장지휘소 운영 (필수인원 2명·팀원)',
+          subs:['현장지휘소 설치','천막','테이블','의자','상황판','노트북','상황판 작성','일반현황','시간대별조치상황','작전도','시스템 운용','노트북 운용(P119 현장출동지원시스템)','연락망 구축','필요 지원기관 연락망 구축(지원기관 연락관)'],
+          subGroups:[
+            {label:'현장지휘소 설치', items:['천막','테이블','의자','상황판','노트북']},
+            {label:'상황판 작성', items:['일반현황','시간대별조치상황','작전도']},
+            {label:'시스템 운용', items:['노트북 운용(P119 현장출동지원시스템)']},
+            {label:'연락망 구축', items:['필요 지원기관 연락망 구축(지원기관 연락관)']}
+          ] },
+        { kw:'민간인통제', kc:'kw-orange', main:'민간인 통제 (필수인원 1명, 차량통제와 병행)',
+          subs:['1, 2통제선 설치','민간인 통제선 내 접근 통제'] },
+        { kw:'차량통제', kc:'kw-orange', main:'차량 통제',
+          subs:['차량 통제 인원 배치'] },
+        { kw:'자원집결지', kc:'kw-orange', main:'자원집결지 운영 (필수인원 1명·팀장)',
+          subs:['타·시도 소방력 현장 배치(필요시 중계급수체계 형성 지원)'] },
+        { kw:'자원대기소', kc:'kw-orange', main:'자원대기소 운영 (필수인원 1명)',
+          subs:['지원기관 연락관 운영(지원기관 도착·무전기 교육·배부)','소방력 교대조 편성 운영(휴식 및 물품 지원)'] },
+        { kw:'오염통제', kc:'kw-orange', main:'오염통제',
+          subs:['재난현장 위험물질 누출이나 누출 위험 여부 확인','지원기관에 긴급오염통제 활동 지원 요청'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'확인완료', kc:'kw-gray', main:'지원반장 확인 완료',
           subs:[] }
       ]}
     ]
@@ -742,73 +1292,143 @@ document.addEventListener('DOMContentLoaded', function(){
   // 앱 실행 시 localStorage 완전 초기화 (항상 새로 시작)
   clearSavedState();
 
-  // ── 핸드폰 뒤로가기 버튼 처리
-  var backPressedOnce = false;
-  var backToastTimer = null;
+  // 뒤로가기: 아래 스크립트에서 처리
 
-  function getActiveScreen(){
-    var s = document.querySelector('.screen.active');
-    return s ? s.id : '';
+  // ── 핸드폰 자체 뒤로가기 처리 (화면 스택 방식)
+  // 화면 전환은 실제 페이지 이동이 아니므로, 화면 전환마다 history state를 직접 쌓고
+  // popstate 발생 시 브라우저 종료 대신 앱 내부 화면만 전환한다.
+  window.guriHistoryReady = false;
+  window.guriSuppressHistoryPush = false;
+  window.guriHistorySeq = 0;
+  window.guriLastPopTime = 0;
+  window.guriBackToastTimer = null;
+
+  function guriBaseUrl(){ return location.pathname + location.search; }
+  function guriScreenState(screen){
+    window.guriHistorySeq += 1;
+    return {
+      guriAppBack:true,
+      screen:screen,
+      role:(typeof currentRole !== 'undefined' ? currentRole : null),
+      seq:window.guriHistorySeq
+    };
   }
-
-  function showBackToast(){
+  window.guriPushScreenState = function(screen){
+    if(!window.guriHistoryReady || window.guriSuppressHistoryPush) return;
+    try{
+      history.pushState(guriScreenState(screen), '', guriBaseUrl() + '#guri-' + screen + '-' + window.guriHistorySeq);
+    }catch(e){}
+  };
+  function guriInitHistory(){
+    try{
+      history.replaceState({guriAppBack:true, screen:'root', role:null, seq:0}, '', guriBaseUrl() + '#guri-root');
+      history.pushState(guriScreenState('select'), '', guriBaseUrl() + '#guri-select-' + window.guriHistorySeq);
+    }catch(e){}
+    window.guriHistoryReady = true;
+  }
+  function guriShowFirstToast(){
     var toast = document.getElementById('back-toast');
     if(!toast) return;
+    toast.textContent = '첫 화면입니다';
     toast.classList.add('show');
-    clearTimeout(backToastTimer);
-    backToastTimer = setTimeout(function(){
-      toast.classList.remove('show');
-      backPressedOnce = false;
-    }, 3000);
+    clearTimeout(window.guriBackToastTimer);
+    window.guriBackToastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1600);
+  }
+  function guriShowSelectByBack(){
+    window.guriSuppressHistoryPush = true;
+    try{ saveState(); }catch(e){}
+    try{ showScreen('select'); }catch(e){}
+    try{ restoreSelectScreen(); }catch(e){}
+    window.guriSuppressHistoryPush = false;
+  }
+  function guriShowListByBack(){
+    window.guriSuppressHistoryPush = true;
+    try{
+      if(currentRole && currentRole !== 'none' && ROLES && ROLES[currentRole]){
+        var rd = ROLES[currentRole];
+        var title = document.getElementById('role-title');
+        var subtitle = document.getElementById('role-subtitle');
+        var fill = document.getElementById('prog-fill');
+        if(title) title.textContent = rd.name;
+        if(subtitle) subtitle.textContent = rd.subtitle;
+        if(fill) fill.style.background = rd.barColor;
+        buildChecklist(rd);
+      }
+      showScreen('list');
+      if(typeof restoreChecklist === 'function') restoreChecklist();
+      if(typeof updateProgress === 'function') updateProgress();
+    }catch(e){}
+    window.guriSuppressHistoryPush = false;
   }
 
-  // 항상 히스토리 스택 2개 유지: 더미 + 현재
-  // 뒤로가기 누르면 더미가 팝되고 popstate 발생
-  function setupHistory(){
-    history.replaceState({page:'app'}, '');
-    history.pushState({page:'dummy'}, '');
-    history.back(); // dummy 제거해서 실제론 replaceState만 남음
-  }
-
-  // 진입 시 guard 히스토리 추가
-  history.replaceState({page:'app'}, '');
-  history.pushState({page:'guard'}, '');
+  // 초기 history 구성은 기존 화면 초기화가 끝난 뒤 실행
+  setTimeout(guriInitHistory, 0);
 
   window.addEventListener('popstate', function(e){
-    var active = getActiveScreen();
-
-    if(active === 'screen-list'){
-      goBack();
-      history.pushState({page:'guard'}, '');
-      return;
+    // Android Chrome/WebView에서 popstate가 순간 중복 발생하는 경우 방지
+    var now = (Date.now ? Date.now() : (new Date()).getTime());
+    if(now - window.guriLastPopTime < 120){
+      if(e && e.stopImmediatePropagation) e.stopImmediatePropagation();
+      return false;
     }
+    window.guriLastPopTime = now;
 
+    if(e && e.stopImmediatePropagation) e.stopImmediatePropagation();
+    if(e && e.preventDefault) e.preventDefault();
+
+    var activeEl = document.querySelector('.screen.active');
+    var active = activeEl ? activeEl.id : 'screen-select';
+
+    // 결과화면 2: 마지막 임무완료를 누른 체크리스트 화면으로 복귀
+    // 결과화면 1: 첫 화면으로 복귀
     if(active === 'screen-review'){
-      showList();
-      history.pushState({page:'guard'}, '');
-      return;
+      if(currentRole && currentRole !== 'none'){
+        guriShowListByBack();
+      }else{
+        guriShowSelectByBack();
+      }
+      return false;
     }
 
-    // 첫화면
-    if(backPressedOnce){
-      // 두 번째 → 종료
-      clearTimeout(backToastTimer);
-      var toast2 = document.getElementById('back-toast');
-      if(toast2) toast2.classList.remove('show');
-      backPressedOnce = false;
-      // PWA: window.close, 브라우저: 히스토리 뒤로
-      if(window.history.length <= 2){
-        window.close();
-      } else {
-        history.go(-(history.length));
-      }
-    } else {
-      // 첫 번째 → 토스트 표시 후 guard 다시 추가
-      backPressedOnce = true;
-      showBackToast();
-      history.pushState({page:'guard'}, '');
+    // 체크리스트 화면: 앱 종료 대신 첫 화면으로 복귀
+    if(active === 'screen-list'){
+      guriShowSelectByBack();
+      return false;
     }
-  });
+
+    // 첫 화면: 앱 종료 방지
+    guriShowSelectByBack();
+    guriShowFirstToast();
+    try{
+      history.pushState(guriScreenState('select'), '', guriBaseUrl() + '#guri-select-' + window.guriHistorySeq);
+    }catch(err){}
+    return false;
+  }, true);
+
+  // 구형 안드로이드 터치 이벤트 보완 (onclick 미동작 시 touchend로 대체)
+  function addTouchFallback(selector, fn){
+    var els = document.querySelectorAll(selector);
+    for(var i=0; i<els.length; i++){
+      (function(el){
+        var touchMoved = false;
+        el.addEventListener('touchstart', function(e){ touchMoved = false; }, {passive:true});
+        el.addEventListener('touchmove', function(e){ touchMoved = true; }, {passive:true});
+        el.addEventListener('touchend', function(e){
+          if(!touchMoved){
+            e.preventDefault();
+            fn(el, e);
+          }
+          touchMoved = false;
+        });
+      })(els[i]);
+    }
+  }
+
+  // 비상소집 전체 영역 터치 보완
+  addTouchFallback('#mob-item-essential', function(){ toggleMobilize('essential'); });
+  addTouchFallback('#mob-item-general', function(){ toggleMobilize('general'); });
+  // 현장 출동 전 종료 터치 보완
+  addTouchFallback('#early-end-item', function(){ toggleEarlyEnd(); });
 
   // 소속·계급·성명 변경 실시간 감지 (select 드롭다운 포함)
   setInterval(function(){
@@ -942,7 +1562,7 @@ function updateDepartParent(){
   var parentTick = document.getElementById('depart-parent-tick');
   var allChecked = (departChecked.size === SUP_ITEMS.length && SUP_ITEMS.length > 0);
   if(parentEl) allChecked ? parentEl.classList.add('checked') : parentEl.classList.remove('checked');
-  if(parentCircle) parentCircle.style.cssText = allChecked ? 'background:var(--green);border-color:var(--green)' : '';
+  if(parentCircle) parentCircle.style.cssText = allChecked ? 'background:#1E8449;border-color:#1E8449' : '';
   if(parentTick) parentTick.style.opacity = allChecked ? '1' : '0';
 }
 
@@ -953,14 +1573,14 @@ function toggleDepart(idx){
     departChecked.add(idx);
   }
   var el = document.querySelector('[data-di="' + idx + '"]');
-  if(el) el.classList.toggle('checked', departChecked.has(idx));
+  if(el){ if(departChecked.has(idx)){ el.classList.add('checked'); } else { el.classList.remove('checked'); } }
   // 부모 자동 체크/해제
   var parentEl = document.getElementById('depart-parent');
   var parentCircle = document.getElementById('depart-parent-circle');
   var parentTick = document.getElementById('depart-parent-tick');
   var allChecked = (departChecked.size === SUP_ITEMS.length);
   if(parentEl) allChecked ? parentEl.classList.add('checked') : parentEl.classList.remove('checked');
-  if(parentCircle) parentCircle.style.cssText = allChecked ? 'background:var(--green);border-color:var(--green)' : '';
+  if(parentCircle) parentCircle.style.cssText = allChecked ? 'background:#1E8449;border-color:#1E8449' : '';
   if(parentTick) parentTick.style.opacity = allChecked ? '1' : '0';
   updateSelectBtn();
   updateProgress();
@@ -981,11 +1601,20 @@ function toggleDepartParent(){
   } else {
     SUP_ITEMS.forEach(function(_, i){ departChecked.add(i); });
     if(parentEl) parentEl.classList.add('checked');
-    if(parentCircle) parentCircle.style.cssText = 'background:var(--green);border-color:var(--green)';
+    if(parentCircle) parentCircle.style.cssText = 'background:#1E8449;border-color:#1E8449';
     if(parentTick) parentTick.style.opacity = '1';
     document.querySelectorAll('[data-di]').forEach(function(el){ el.classList.add('checked'); });
   }
   updateSelectBtn();
+}
+
+var roleSelectOpen = false;
+function toggleRoleSelectCard(){
+  roleSelectOpen = !roleSelectOpen;
+  var list = document.getElementById('role-select-list');
+  var arrow = document.getElementById('role-select-arrow');
+  if(list) list.style.display = roleSelectOpen ? 'flex' : 'none';
+  if(arrow) arrow.textContent = roleSelectOpen ? '∨' : '›';
 }
 
 var departCardOpen = false;
@@ -1003,8 +1632,11 @@ function toggleEarlyEnd(){
   var item = document.getElementById('early-end-item');
   var timeOut = document.getElementById('ee-time-out');
   var roleSelectCards = document.getElementById('role-select-cards');
+  var chiefArea = document.getElementById('chief-role-area');
   var departArea = document.getElementById('depart-role-area');
   var departSubWrap = document.getElementById('depart-sub-wrap');
+  var supportAccordion = document.getElementById('support-branch-accordion');
+  var controlAccordion = document.getElementById('control-dan-accordion');
 
   // 요원 체크리스트에 항목이 체크된 경우 현장 출동 전 종료 불가
   if(!earlyEndTime && checkedIds.size > 0){ return; }
@@ -1016,8 +1648,11 @@ function toggleEarlyEnd(){
     item.classList.remove('checked');
     timeOut.textContent = '--:--';
     if(roleSelectCards) roleSelectCards.classList.remove('disabled');
+    if(chiefArea) chiefArea.classList.remove('disabled');
     if(departArea) departArea.classList.remove('disabled');
     if(departSubWrap){ departSubWrap.style.pointerEvents=''; departSubWrap.style.opacity=''; }
+    if(supportAccordion) supportAccordion.classList.remove('disabled');
+    if(controlAccordion) controlAccordion.classList.remove('disabled');
     enableActivityEnd();
   } else {
     // 체크 - 활동 종료 시간이 이미 있으면 불가
@@ -1046,6 +1681,9 @@ function toggleEarlyEnd(){
     if(departSubWrap){ departSubWrap.style.pointerEvents='none'; departSubWrap.style.opacity='0.35'; }
     // 요원선택 비활성화
     if(roleSelectCards) roleSelectCards.classList.add('disabled');
+    if(chiefArea) chiefArea.classList.add('disabled');
+    if(supportAccordion) supportAccordion.classList.add('disabled');
+    if(controlAccordion) controlAccordion.classList.add('disabled');
     disableActivityEnd();
   }
   updateSelectBtn();
@@ -1143,6 +1781,9 @@ function showScreen(id){
   window.scrollTo(0, 0);
   // 첫 화면(select)에서는 앱 헤더 숨김 (자체 히어로 헤더가 있음)
   document.querySelector('.app-header').style.display = (id === 'select') ? 'none' : 'flex';
+  if(window.guriPushScreenState && window.guriHistoryReady && !window.guriSuppressHistoryPush){
+    window.guriPushScreenState(id);
+  }
   if(id === 'select'){
     buildDepartItems();
     restoreSelectScreen();
@@ -1189,11 +1830,12 @@ function resetForRole(){
   withdrawalSids = [];
 }
 
-function reset(){ checkedIds.clear(); completedTime = null; parentToSubs = {}; activityEndTime = null; withdrawalSids = []; earlyEndTime = null; departCardOpen=false; var dw=document.getElementById('depart-sub-wrap'); if(dw){ dw.style.display='none'; dw.style.pointerEvents=''; dw.style.opacity=''; } var da2=document.getElementById('depart-role-area'); if(da2) da2.classList.remove('disabled'); var da=document.getElementById('depart-arrow'); if(da) da.textContent='›';
+function reset(){ checkedIds.clear(); completedTime = null; parentToSubs = {}; activityEndTime = null; withdrawalSids = []; earlyEndTime = null; departCardOpen=false; roleSelectOpen=false; var dw=document.getElementById('depart-sub-wrap'); if(dw){ dw.style.display='none'; dw.style.pointerEvents=''; dw.style.opacity=''; } var da2=document.getElementById('depart-role-area'); if(da2) da2.classList.remove('disabled'); var da=document.getElementById('depart-arrow'); if(da) da.textContent='›'; var rsl=document.getElementById('role-select-list'); if(rsl) rsl.style.display='none'; var rsa=document.getElementById('role-select-arrow'); if(rsa) rsa.textContent='›';
   // 출동단계 부모 체크 초기화
+  var ch=document.getElementById('chief-role-area'); if(ch) ch.classList.remove('disabled');
   var dp=document.getElementById('depart-parent'); if(dp) dp.classList.remove('checked');
   var dpc=document.getElementById('depart-parent-circle'); if(dpc) dpc.style.cssText='';
-  var dpt=document.getElementById('depart-parent-tick'); if(dpt) dpt.style.opacity='0'; var rc=document.getElementById('role-select-cards'); if(rc) rc.classList.remove('disabled'); var ee=document.getElementById('early-end-item'); if(ee) ee.classList.remove('checked'); var eet=document.getElementById('ee-time-out'); if(eet) eet.textContent='--:--';
+  var dpt=document.getElementById('depart-parent-tick'); if(dpt) dpt.style.opacity='0'; var rc=document.getElementById('role-select-cards'); if(rc) rc.classList.remove('disabled'); var sa=document.getElementById('support-branch-accordion'); if(sa) sa.classList.remove('disabled'); var cta=document.getElementById('control-dan-accordion'); if(cta) cta.classList.remove('disabled'); var ee=document.getElementById('early-end-item'); if(ee) ee.classList.remove('checked'); var eet=document.getElementById('ee-time-out'); if(eet) eet.textContent='--:--';
   // 비상소집 초기화
   mobilizeTime = { essential: null, general: null };
   ['essential','general'].forEach(function(type){
@@ -1281,12 +1923,12 @@ function buildChecklist(rd){
       ic++;
       totalCount++;
       var subIds = [];
-      var isWithdrawalParent = (item.main === '지원반 철수 완료');
+      var isWithdrawalParent = (item.main === '지원반 철수 완료' || item.main === '지원반장 확인 완료' || item.main.indexOf('임무 종료') >= 0);
       if(isWithdrawalParent){ withdrawalSids.push(pid); }
 
       /* 부모 행 */
       var div = document.createElement('div');
-      div.className = 'chk-item';
+      div.className = 'chk-item' + (item.indent ? ' chk-item-indent' : '');
       div.setAttribute('data-id', pid);
       if(isWithdrawalParent){
         div.innerHTML =
@@ -1304,11 +1946,35 @@ function buildChecklist(rd){
             '<div class="chk-main">' + item.main + '</div>' +
           '</div>';
       }
-      (function(p, isW){ div.onclick = function(){ toggleParent(p, isW); }; })(pid, isWithdrawalParent);
+      if(item.allComplete){
+        div.className += ' all-complete-item';
+        (function(p){ div.onclick = function(){ toggleAllComplete(p); }; })(pid);
+      } else {
+        (function(p, isW){ div.onclick = function(){ toggleParent(p, isW); }; })(pid, isWithdrawalParent);
+      }
       wrap.appendChild(div);
 
       /* 세부 행 */
-      item.subs.forEach(function(sub){
+      // subGroups가 있으면 그룹 레이블과 함께 subs 렌더링
+      var subsList = item.subs;
+      if(item.subGroups && item.subGroups.length > 0){
+        // subGroups를 flat하게 subs로 변환 (그룹 레이블 포함)
+        subsList = [];
+        item.subGroups.forEach(function(grp){
+          subsList.push('__group__' + grp.label); // 그룹 레이블 마커
+          grp.items.forEach(function(it){ subsList.push(it); });
+        });
+      }
+      subsList.forEach(function(sub){
+        // 그룹 레이블이면 체크항목 아닌 레이블로 렌더링
+        if(typeof sub === 'string' && sub.indexOf('__group__') === 0){
+          var grpLabel = sub.replace('__group__','');
+          var gl = document.createElement('div');
+          gl.className = 'sub-group-label';
+          gl.textContent = grpLabel;
+          wrap.appendChild(gl);
+          return;
+        }
         var sid = 'chk-' + ic;
         ic++;
         totalCount++;
@@ -1349,6 +2015,27 @@ function buildChecklist(rd){
   body.appendChild(spacer);
 
   updateProgress();
+}
+
+// 전체 완료 체크: 현재 화면의 모든 체크항목을 일괄 체크/해제
+function toggleAllComplete(pid){
+  var allItems = Array.from(document.querySelectorAll('#checklist-body [data-id]'));
+  if(allItems.length === 0) return;
+  var allChecked = allItems.every(function(el){ return checkedIds.has(el.getAttribute('data-id')); });
+  if(allChecked){
+    checkedIds.clear();
+    allItems.forEach(function(el){ el.classList.remove('checked'); });
+    activityEndTime = null;
+    document.querySelectorAll('[id^="sub-end-"]').forEach(function(el){ el.innerHTML = ''; });
+  } else {
+    allItems.forEach(function(el){
+      var id = el.getAttribute('data-id');
+      checkedIds.add(id);
+      el.classList.add('checked');
+    });
+  }
+  updateProgress();
+  saveState();
 }
 
 // ══════════════════════════════════════════
@@ -1398,6 +2085,10 @@ function toggleSub(sid, pid, isWithdrawal){
   var el = document.querySelector('[data-id="' + sid + '"]');
   if(!el) return;
   var badge = document.getElementById('sub-end-' + sid);
+  var parentIsWithdrawal = false;
+  for(var wi=0; wi<withdrawalSids.length; wi++){
+    if(withdrawalSids[wi] === pid){ parentIsWithdrawal = true; break; }
+  }
 
   if(checkedIds.has(sid)){
     /* 해제 → 부모도 해제 */
@@ -1406,8 +2097,13 @@ function toggleSub(sid, pid, isWithdrawal){
     checkedIds.delete(pid);
     var pe = document.querySelector('[data-id="' + pid + '"]');
     if(pe) pe.classList.remove('checked');
-    // 종료항목 해제 시 activityEndTime 초기화
-    if(isWithdrawal){ activityEndTime = null; if(badge) badge.textContent = ''; }
+    // 종료항목 하위 체크 해제 시 활동 종료 시간 초기화
+    if(isWithdrawal || parentIsWithdrawal){
+      activityEndTime = null;
+      if(badge) badge.textContent = '';
+      var pb0 = document.getElementById('sub-end-' + pid);
+      if(pb0) pb0.innerHTML = '';
+    }
   } else {
     /* 체크 → 모든 세부 완료면 부모 자동 체크 */
     checkedIds.add(sid);
@@ -1423,6 +2119,13 @@ function toggleSub(sid, pid, isWithdrawal){
       checkedIds.add(pid);
       var pe2 = document.querySelector('[data-id="' + pid + '"]');
       if(pe2) pe2.classList.add('checked');
+      // 종료항목 하위항목을 모두 체크해서 부모가 자동 체크된 경우에도 임무완료 활성화
+      if(parentIsWithdrawal){
+        var now2 = new Date();
+        activityEndTime = pad(now2.getHours()) + ':' + pad(now2.getMinutes());
+        var pb = document.getElementById('sub-end-' + pid);
+        if(pb) pb.innerHTML = '<span class="end-label">활동 종료</span>' + activityEndTime;
+      }
     }
   }
   updateProgress();
@@ -1444,7 +2147,10 @@ function updateProgress(){
   // 소속·계급·성명 필수 확인
   var infoOk = checkMemberInfo();
 
-  var endOk = !!(activityEndTime || earlyEndTime);
+  var roleEndOk = hasCurrentRoleEndChecked();
+  if(roleEndOk && !activityEndTime && !earlyEndTime){ activityEndTime = getNowHHMM(); }
+  if(!roleEndOk && !earlyEndTime){ activityEndTime = null; }
+  var endOk = !!(earlyEndTime || roleEndOk);
   var allDone = (n === totalCount && totalCount > 0);
 
   if(infoOk && (endOk || allDone)){
@@ -1455,7 +2161,7 @@ function updateProgress(){
       st.textContent = '✅ 종료 시각이 기록되었습니다. 임무완료를 눌러주세요';
     }
     st.classList.add('all-done');
-    bc.textContent = '🎖️ 임무 완료';
+    bc.textContent = '✔ 임무 완료';
   } else {
     bc.disabled = true;  bc.classList.remove('active');
     if(!infoOk){
@@ -1473,8 +2179,9 @@ function updateProgress(){
 // ══════════════════════════════════════════
 function completeTask(){
   recordTime();
-  clearSavedState();
+  saveState();
   showReview();
+  // 결과화면에서 뒤로가기 시 지원반·통제단 체크상태가 유지되도록 저장상태를 보존합니다.
 }
 
 function recordTime(){
@@ -1485,6 +2192,158 @@ function recordTime(){
     ['일','월','화','수','목','금','토'][now.getDay()] + '요일)';
 }
 function pad(n){ return String(n).padStart(2,'0'); }
+
+
+// ══════════════════════════════════════════
+// 통합 결과화면 생성 보조 함수
+// ══════════════════════════════════════════
+function getRoleCheckedMapForReview(){
+  var map = {};
+  try{
+    var state = loadState() || {};
+    if(state.roleChecked){
+      Object.keys(state.roleChecked).forEach(function(r){
+        if(state.roleChecked[r] && state.roleChecked[r].length > 0){
+          map[r] = state.roleChecked[r].slice();
+        }
+      });
+    }
+  }catch(e){}
+  if(currentRole && currentRole !== 'none' && checkedIds && checkedIds.size > 0){
+    map[currentRole] = Array.from(checkedIds);
+  }
+  return map;
+}
+
+function countRoleItems(rd){
+  var c = 0;
+  if(!rd || !rd.phases) return 0;
+  rd.phases.forEach(function(ph){
+    ph.items.forEach(function(item){
+      c++;
+      if(item.subGroups && item.subGroups.length > 0){
+        item.subGroups.forEach(function(grp){ c += (grp.items || []).length; });
+      } else {
+        c += (item.subs || []).length;
+      }
+    });
+  });
+  return c;
+}
+
+function getCheckedCountFromArray(arr){
+  return arr ? arr.length : 0;
+}
+
+function makeReviewRow(done, text, indent, bold){
+  var row = document.createElement('div');
+  row.className = 'review-item';
+  if(indent) row.style.paddingLeft = '24px';
+  row.innerHTML =
+    '<div class="rv-dot '+(done?'rv-done':'rv-miss')+'" '+(indent?'style="width:14px;height:14px;font-size:8px"':'')+'>'+(done?'✓':'–')+'</div>'+ 
+    '<div class="'+(done?'rv-text-done':'rv-text-miss')+'" '+(bold?'style="font-weight:500"':'')+'>'+text+'</div>';
+  return row;
+}
+
+function appendRoleReviewCards(container, roleKey, checkedArr, openByDefault){
+  var rd = ROLES[roleKey];
+  if(!rd || !checkedArr || checkedArr.length === 0) return;
+  var checkedMap = {};
+  checkedArr.forEach(function(id){ checkedMap[id] = true; });
+
+  var details = document.createElement('details');
+  details.className = 'review-accordion';
+  if(openByDefault) details.open = true;
+
+  var summary = document.createElement('summary');
+  summary.innerHTML = '<span>'+rd.name+'</span><span class="review-small-summary">'+checkedArr.length+' / '+countRoleItems(rd)+' 완료</span>';
+  details.appendChild(summary);
+
+  var accBody = document.createElement('div');
+  accBody.className = 'review-accordion-body';
+  var ic = 0;
+
+  rd.phases.forEach(function(ph){
+    var card = document.createElement('div');
+    card.className = 'review-card';
+    var h3 = document.createElement('h3');
+    h3.textContent = '📍 ' + ph.phase;
+    card.appendChild(h3);
+
+    ph.items.forEach(function(item){
+      var pid = 'chk-' + ic; ic++;
+      card.appendChild(makeReviewRow(!!checkedMap[pid], '['+item.kw+'] '+item.main, false, true));
+
+      var subsList = item.subs || [];
+      if(item.subGroups && item.subGroups.length > 0){
+        subsList = [];
+        item.subGroups.forEach(function(grp){
+          subsList.push('__group__' + grp.label);
+          grp.items.forEach(function(it){ subsList.push(it); });
+        });
+      }
+
+      subsList.forEach(function(sub){
+        if(typeof sub === 'string' && sub.indexOf('__group__') === 0){
+          var gl = document.createElement('div');
+          gl.className = 'sub-group-label';
+          gl.textContent = sub.replace('__group__','');
+          card.appendChild(gl);
+          return;
+        }
+        var sid = 'chk-' + ic; ic++;
+        card.appendChild(makeReviewRow(!!checkedMap[sid], sub, true, false));
+      });
+    });
+    accBody.appendChild(card);
+  });
+
+  details.appendChild(accBody);
+  container.appendChild(details);
+}
+
+function appendDepartReviewCard(container){
+  if(!departChecked || departChecked.size === 0) return;
+  var details = document.createElement('details');
+  details.className = 'review-accordion';
+  details.open = true;
+  var summary = document.createElement('summary');
+  summary.innerHTML = '<span>출동단계</span><span class="review-small-summary">'+departChecked.size+' / '+SUP_ITEMS.length+' 완료</span>';
+  details.appendChild(summary);
+  var accBody = document.createElement('div');
+  accBody.className = 'review-accordion-body';
+  var card = document.createElement('div');
+  card.className = 'review-card';
+  var h3 = document.createElement('h3');
+  h3.textContent = '📍 출동단계';
+  card.appendChild(h3);
+  var allDeptChecked = (departChecked.size === SUP_ITEMS.length);
+  card.appendChild(makeReviewRow(allDeptChecked, '[지원준비] 지원 장비 준비', false, true));
+  SUP_ITEMS.forEach(function(item, idx){
+    card.appendChild(makeReviewRow(departChecked.has(idx), item, true, false));
+  });
+  accBody.appendChild(card);
+  details.appendChild(accBody);
+  container.appendChild(details);
+}
+
+function renderAggregatedReviewBody(body){
+  body.innerHTML = '';
+  appendDepartReviewCard(body);
+  var roleMap = getRoleCheckedMapForReview();
+  var keys = ['chief','cmd','res','com','safe','invest','decon','ems','controlPlan','controlField','controlResource'];
+  var printed = 0;
+  keys.forEach(function(key){
+    if(roleMap[key] && roleMap[key].length > 0){
+      appendRoleReviewCards(body, key, roleMap[key], key === currentRole || printed === 0);
+      printed++;
+    }
+  });
+  if(printed === 0 && departChecked.size === 0){
+    body.innerHTML = '<div class="review-card"><h3>체크된 임무 없음</h3><div class="review-item"><div class="rv-dot rv-miss">–</div><div class="rv-text-miss">체크된 항목이 없습니다.</div></div></div>';
+  }
+  return printed;
+}
 
 // ══════════════════════════════════════════
 // REVIEW SCREEN
@@ -1589,70 +2448,17 @@ function showReview(){
   }
 
   var body = document.getElementById('review-body');
-  body.innerHTML = '';
-  var ic = 0;
-
-  // ── 출동단계 카드 (첫화면 체크 현황)
-  var departCard = document.createElement('div');
-  departCard.className = 'review-card';
-  var departH3 = document.createElement('h3');
-  departH3.textContent = '📍 출동단계';
-  departCard.appendChild(departH3);
-
-  // 지원준비 부모 행
-  var allDeptChecked = (departChecked.size === SUP_ITEMS.length);
-  var dRow = document.createElement('div');
-  dRow.className = 'review-item';
-  dRow.innerHTML =
-    '<div class="rv-dot '+(allDeptChecked?'rv-done':'rv-miss')+'">'+(allDeptChecked?'✓':'–')+'</div>'+
-    '<div class="'+(allDeptChecked?'rv-text-done':'rv-text-miss')+'" style="font-weight:500">[지원준비] 지원 장비 준비</div>';
-  departCard.appendChild(dRow);
-
-  // 세부 항목 12개
-  SUP_ITEMS.forEach(function(item, idx){
-    var done = departChecked.has(idx);
-    var sr = document.createElement('div');
-    sr.className = 'review-item';
-    sr.style.paddingLeft = '24px';
-    sr.innerHTML =
-      '<div class="rv-dot '+(done?'rv-done':'rv-miss')+'" style="width:14px;height:14px;font-size:8px">'+(done?'✓':'–')+'</div>'+
-      '<div class="'+(done?'rv-text-done':'rv-text-miss')+'">'+item+'</div>';
-    departCard.appendChild(sr);
+  var roleMapForScore = getRoleCheckedMapForReview();
+  var totalCheckedForScore = departChecked.size;
+  var totalPossibleForScore = departChecked.size > 0 ? SUP_ITEMS.length : 0;
+  Object.keys(roleMapForScore).forEach(function(rk){
+    if(ROLES[rk]){
+      totalCheckedForScore += roleMapForScore[rk].length;
+      totalPossibleForScore += countRoleItems(ROLES[rk]);
+    }
   });
-  body.appendChild(departCard);
-
-  rd.phases.forEach(function(ph){
-    var card = document.createElement('div');
-    card.className = 'review-card';
-    var h3 = document.createElement('h3');
-    h3.textContent = '📍 ' + ph.phase;
-    card.appendChild(h3);
-
-    ph.items.forEach(function(item){
-      var pid  = 'chk-' + ic; ic++;
-      var done = checkedIds.has(pid);
-      var row  = document.createElement('div');
-      row.className = 'review-item';
-      row.innerHTML =
-        '<div class="rv-dot '+(done?'rv-done':'rv-miss')+'">'+(done?'✓':'–')+'</div>'+
-        '<div class="'+(done?'rv-text-done':'rv-text-miss')+'" style="font-weight:500">['+item.kw+'] '+item.main+'</div>';
-      card.appendChild(row);
-
-      item.subs.forEach(function(sub){
-        var sid  = 'chk-' + ic; ic++;
-        var sdone = checkedIds.has(sid);
-        var sr   = document.createElement('div');
-        sr.className = 'review-item';
-        sr.style.paddingLeft = '24px';
-        sr.innerHTML =
-          '<div class="rv-dot '+(sdone?'rv-done':'rv-miss')+'" style="width:14px;height:14px;font-size:8px">'+(sdone?'✓':'–')+'</div>'+
-          '<div class="'+(sdone?'rv-text-done':'rv-text-miss')+'">'+sub+'</div>';
-        card.appendChild(sr);
-      });
-    });
-
-    body.appendChild(card);
-  });
+  document.getElementById('rv-score').textContent = '체크 완료: ' + totalCheckedForScore + ' / ' + totalPossibleForScore + ' 항목';
+  renderAggregatedReviewBody(body);
 
   showScreen('review');
   // Google Sheets 전송
@@ -1662,6 +2468,34 @@ function showReview(){
 // ══════════════════════════════════════════
 // GOOGLE SHEETS 전송
 // ══════════════════════════════════════════
+
+function sendPayloadCompat(url, payload, onOk, onFail){
+  try{
+    var body = JSON.stringify(payload);
+    if(window.fetch){
+      window.fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: body
+      }).then(function(){ if(onOk) onOk(); }).catch(function(){ if(onFail) onFail(); });
+      return;
+    }
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function(){
+      if(xhr.readyState === 4){
+        if(onOk) onOk();
+      }
+    };
+    xhr.onerror = function(){ if(onFail) onFail(); };
+    xhr.send(body);
+  }catch(e){
+    if(onFail) onFail();
+  }
+}
+
 function sendToSheet(){
   if(!WEBHOOK_URL || WEBHOOK_URL === 'YOUR_WEBHOOK_URL_HERE') return;
   // 현장 출동 전 종료(요원 미선택)인 경우 전송 시도하지 않음
@@ -1703,14 +2537,9 @@ function sendToSheet(){
   var statusEl = document.getElementById('send-status');
   if(statusEl) { statusEl.textContent = '📤 기록 전송 중...'; statusEl.className = 'send-status sending'; }
 
-  fetch(WEBHOOK_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  }).then(function(){
+  sendPayloadCompat(WEBHOOK_URL, payload, function(){
     if(statusEl){ statusEl.textContent = '✅ 기록이 저장되었습니다'; statusEl.className = 'send-status ok'; }
-  }).catch(function(){
+  }, function(){
     if(statusEl){ statusEl.textContent = ''; statusEl.className = 'send-status'; }
   });
 }
@@ -1831,22 +2660,46 @@ function captureScreen(){
 // ══════════════════════════════════════════
 var SAVE_KEY = 'guri_checklist_state';
 
+// 현재 역할/부서의 종료 체크 여부만 기준으로 임무완료 활성화 상태를 판단합니다.
+function hasCurrentRoleEndChecked(){
+  if(!currentRole || !checkedIds) return false;
+  for(var i=0;i<withdrawalSids.length;i++){
+    if(checkedIds.has(withdrawalSids[i])) return true;
+  }
+  return false;
+}
+
+function getNowHHMM(){
+  var d = new Date();
+  return pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
 function saveState(){
   try {
-    // checkedIds를 role별로 저장
+    // checkedIds와 종료시각을 role별로 저장
     var roleChecked = {};
-    if(currentRole){
-      roleChecked[currentRole] = Array.from(checkedIds);
-    }
-    // 기존 저장된 다른 role 체크 내용도 유지
+    var roleEndTime = {};
+
+    // 기존 저장된 다른 role 체크/종료시각 유지
     try {
       var prev = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
       if(prev.roleChecked){
-        Object.keys(prev.roleChecked).forEach(function(r){
-          if(r !== currentRole) roleChecked[r] = prev.roleChecked[r];
-        });
+        Object.keys(prev.roleChecked).forEach(function(r){ roleChecked[r] = prev.roleChecked[r]; });
+      }
+      if(prev.roleEndTime){
+        Object.keys(prev.roleEndTime).forEach(function(r){ roleEndTime[r] = prev.roleEndTime[r]; });
       }
     } catch(e2){}
+
+    if(currentRole){
+      roleChecked[currentRole] = Array.from(checkedIds);
+      if(hasCurrentRoleEndChecked()){
+        roleEndTime[currentRole] = activityEndTime || roleEndTime[currentRole] || getNowHHMM();
+      } else {
+        delete roleEndTime[currentRole];
+      }
+    }
+
     var state = {
       memberUnit:    (document.getElementById('member-unit')||{}).value || '',
       memberRank:    (document.getElementById('member-rank') ? document.getElementById('member-rank').value : '') || '',
@@ -1854,6 +2707,7 @@ function saveState(){
       mobilizeTime:  mobilizeTime,
       earlyEndTime:  earlyEndTime,
       activityEndTime: activityEndTime,
+      roleEndTime:   roleEndTime,
       departChecked: Array.from(departChecked),
       checkedIds:    Array.from(checkedIds),
       roleChecked:   roleChecked,
@@ -1915,8 +2769,14 @@ function restoreSelectScreen(){
     // 출동단계·요원선택 비활성화
     var da = document.getElementById('depart-role-area');
     if(da) da.classList.add('disabled');
+    var ca = document.getElementById('chief-role-area');
+    if(ca) ca.classList.add('disabled');
     var rc = document.getElementById('role-select-cards');
     if(rc) rc.classList.add('disabled');
+    var sa = document.getElementById('support-branch-accordion');
+    if(sa) sa.classList.add('disabled');
+    var cta = document.getElementById('control-dan-accordion');
+    if(cta) cta.classList.add('disabled');
   }
 
   // 출동단계
@@ -1929,7 +2789,7 @@ function restoreSelectScreen(){
     var parentTick = document.getElementById('depart-parent-tick');
     var allDept = (departChecked.size === SUP_ITEMS.length);
     if(parentEl) allDept ? parentEl.classList.add('checked') : parentEl.classList.remove('checked');
-    if(parentCircle) parentCircle.style.cssText = allDept ? 'background:var(--green);border-color:var(--green)' : '';
+    if(parentCircle) parentCircle.style.cssText = allDept ? 'background:#1E8449;border-color:#1E8449' : '';
     if(parentTick) parentTick.style.opacity = allDept ? '1' : '0';
   }
 
@@ -1966,26 +2826,165 @@ function restoreChecklist(){
     }
   });
 
-  // 활동종료 복원
-  if(state.activityEndTime && !earlyEndTime){
-    activityEndTime = state.activityEndTime;
+  // 활동종료 복원: 현재 역할/부서에 종료 체크가 있는 경우에만 활성화
+  var roleHasEnd = hasCurrentRoleEndChecked();
+  if(roleHasEnd && !earlyEndTime){
+    var roleEnd = (state.roleEndTime && currentRole && state.roleEndTime[currentRole]) ? state.roleEndTime[currentRole] : (state.activityEndTime || getNowHHMM());
+    activityEndTime = roleEnd;
     withdrawalSids.forEach(function(sid){
       if(checkedIds.has(sid)){
         var badge = document.getElementById('sub-end-'+sid);
         if(badge) badge.innerHTML='<span class="end-label">활동 종료</span>'+activityEndTime;
       }
     });
-    withdrawalSids.forEach(function(pid){
-      if(checkedIds.has(pid)){
-        var badge2 = document.getElementById('sub-end-'+pid);
-        if(badge2) badge2.innerHTML='<span class="end-label">활동 종료</span>'+activityEndTime;
-      }
-    });
+  } else if(!earlyEndTime){
+    activityEndTime = null;
+    document.querySelectorAll('[id^="sub-end-"]').forEach(function(el){ el.innerHTML = ''; });
   }
   updateProgress();
 }
 
 </script>
+
+<script>
+// ─────────────────────────────────────
+// V35: 휴대폰 자체 뒤로가기 전용 화면 이력 관리자
+// 목적: 결과화면2 → 마지막 체크리스트 화면 → 첫 화면 순서 보장
+// 기존 popstate 로직은 guri-original-popstate-disabled로 비활성화하고, 이 로직만 사용
+// ─────────────────────────────────────
+(function(){
+  return; // disabled: use single back-guard popstate logic from stable V3
+  var initialized = false;
+  var suppressHistoryPush = false;
+  var seq = 0;
+  var toastTimer = null;
+
+  function currentActiveScreen(){
+    var el = document.querySelector('.screen.active');
+    return el ? el.id.replace('screen-', '') : 'select';
+  }
+
+  function stateUrl(screen){
+    return location.pathname + location.search + '#guri-' + screen + '-' + (++seq);
+  }
+
+  function pushScreenState(screen){
+    if(!initialized) return;
+    try{
+      history.pushState({guriScreen:true, screen:screen, seq:seq}, '', stateUrl(screen));
+    }catch(e){}
+  }
+
+  function replaceRootState(){
+    try{
+      history.replaceState({guriScreen:true, screen:'root', seq:0}, '', location.pathname + location.search + '#guri-root');
+    }catch(e){}
+  }
+
+  function showToast(){
+    var toast = document.getElementById('back-toast');
+    if(!toast) return;
+    toast.textContent = '첫 화면입니다';
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1600);
+  }
+
+  function closeDepartIfOpen(){
+    if(typeof departCardOpen !== 'undefined' && departCardOpen){
+      var dw = document.getElementById('depart-sub-wrap');
+      var da = document.getElementById('depart-arrow');
+      if(dw) dw.style.display = 'none';
+      if(da) da.textContent = '›';
+      departCardOpen = false;
+      return true;
+    }
+    return false;
+  }
+
+  function moveToSelect(){
+    suppressHistoryPush = true;
+    try{ saveState(); }catch(e){}
+    try{ showScreen('select'); }catch(e){}
+    try{ restoreSelectScreen(); }catch(e){}
+    suppressHistoryPush = false;
+  }
+
+  function moveToList(){
+    suppressHistoryPush = true;
+    try{ showScreen('list'); }catch(e){}
+    try{ restoreChecklist(); }catch(e){}
+    try{ updateProgress(); }catch(e){}
+    suppressHistoryPush = false;
+  }
+
+  function patchShowScreen(){
+    if(typeof window.showScreen !== 'function' || window.__guriShowScreenPatched) return;
+    var originalShowScreen = window.showScreen;
+    window.showScreen = function(id){
+      originalShowScreen(id);
+      if(initialized && !suppressHistoryPush){
+        pushScreenState(id);
+      }
+    };
+    window.__guriShowScreenPatched = true;
+  }
+
+  function handlePopState(e){
+    if(e && e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+    var target = e && e.state && e.state.guriScreen ? e.state.screen : 'select';
+    var active = currentActiveScreen();
+
+    // 결과화면2/결과화면1에서 휴대폰 뒤로가기: 마지막 화면으로 복귀
+    if(active === 'review'){
+      if(earlyEndTime && (!currentRole || currentRole === 'none')){
+        moveToSelect();
+        pushScreenState('select');
+      }else{
+        moveToList();
+        pushScreenState('list');
+      }
+      return false;
+    }
+
+    // 체크리스트 화면에서 휴대폰 뒤로가기: 첫 화면으로 복귀
+    if(active === 'list'){
+      if(closeDepartIfOpen()){
+        pushScreenState('list');
+        return false;
+      }
+      moveToSelect();
+      pushScreenState('select');
+      return false;
+    }
+
+    // 첫 화면에서는 앱 종료 방지
+    if(closeDepartIfOpen()){
+      pushScreenState('select');
+      return false;
+    }
+    showToast();
+    pushScreenState('select');
+    return false;
+  }
+
+  function init(){
+    patchShowScreen();
+    replaceRootState();
+    initialized = true;
+    pushScreenState('select');
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  }else{
+    init();
+  }
+  window.addEventListener('popstate', handlePopState, true);
+})();
+</script>
+
 <div class="back-toast" id="back-toast">한 번 더 뒤로 누르시면 종료됩니다.</div>
 
 <script>
@@ -2018,5 +3017,6 @@ if('serviceWorker' in navigator){
   });
 }
 </script>
+
 </body>
 </html>
