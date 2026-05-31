@@ -320,8 +320,121 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .review-accordion .review-card:last-child{border-bottom:none}
 .review-small-summary{font-size:11px;font-weight:600;color:#6c757d;margin-left:auto;white-space:nowrap}
 
+/* ── Firebase 실시간 현황판 ── */
+.fb-dashboard{margin:12px 16px;background:white;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.08);border:1.5px solid rgba(36,114,163,0.18)}
+.fb-dashboard-head{background:#2472A3;color:white;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fb-dashboard-title{font-size:13px;font-weight:800}
+.fb-dashboard-status{font-size:10px;opacity:.9;white-space:nowrap}
+.fb-dashboard-body{padding:12px 14px}
+.fb-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:6px;gap:8px}
+.fb-row strong{font-size:13px;color:#2472A3}
+.fb-small{font-size:11px;color:#6c757d;line-height:1.5}
+.fb-progress-bg{height:7px;background:#EAECEE;border-radius:999px;overflow:hidden;margin:8px 0 10px}
+.fb-progress-fill{height:100%;background:#2472A3;border-radius:999px;width:0%;transition:width .3s}
+.fb-btns{display:flex;gap:8px;margin-top:10px}
+.fb-btn{flex:1;border:1.5px solid #2472A3;background:white;color:#2472A3;border-radius:10px;padding:9px 8px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
+.fb-btn:active{background:#EBF5FB}
+.fb-btn.danger{border-color:#C0392B;color:#C0392B}
+.fb-btn.danger:active{background:#FEF5F4}
+.fb-modal-backdrop{position:fixed;left:0;right:0;top:0;bottom:0;background:rgba(0,0,0,0.38);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
+.fb-modal-backdrop.show{display:flex}
+.fb-modal{width:100%;max-width:320px;background:white;border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,0.28);overflow:hidden;text-align:center}
+.fb-modal-body{padding:24px 18px 18px}
+.fb-modal-icon{font-size:34px;margin-bottom:8px}
+.fb-modal-msg{font-size:16px;font-weight:800;color:#1a1a1a;line-height:1.5}
+.fb-modal-actions{padding:0 18px 18px;display:flex;gap:10px;align-items:center;justify-content:center}
+.fb-modal-confirm{flex:1;width:auto;border:none;border-radius:12px;background:#C0392B;color:white;font-size:14px;font-weight:800;font-family:inherit;padding:12px;cursor:pointer;min-height:46px}
+.fb-modal-cancel{flex:1;width:auto;border:1.5px solid #CCC;background:white;color:#566573;border-radius:12px;padding:12px;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;min-height:46px}
+.fb-modal-cancel:active{background:#F2F3F4}
+.fb-modal-confirm:active{transform:scale(0.98)}
+.fb-list{margin-top:8px;max-height:120px;overflow:auto;border-top:1px solid #F0F0F0;padding-top:8px}
+.fb-item{font-size:11px;color:#555;padding:4px 0;border-bottom:1px dotted #EEE}
+
+/* ── V41 재난현황 + 접이식 실시간 현황판 ── */
+.fb-dashboard{border-color:rgba(36,114,163,0.22)}
+.fb-dashboard-body{padding:12px 14px 14px}
+.fb-summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0 8px}
+.fb-summary-card{background:#F8FAFC;border:1px solid #E9EEF3;border-radius:12px;padding:10px 11px}
+.fb-summary-card .label{font-size:10px;color:#6c757d;font-weight:700;margin-bottom:3px;line-height:1.25}
+.fb-summary-card .value{font-size:14px;font-weight:800;color:#2472A3}
+.fb-card-progress-bg{height:7px;background:#EAECEE;border-radius:999px;overflow:hidden;margin-top:8px;width:100%}
+.fb-card-progress-fill{height:100%;background:#2472A3;border-radius:999px;width:0%;transition:width .3s}
+
+.fb-acc{margin-top:10px;border:1px solid rgba(0,0,0,0.08);border-radius:13px;overflow:hidden;background:white}
+.fb-acc summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:13px 14px;font-size:13px;font-weight:900;background:#fff;border-bottom:1px solid #F0F0F0}
+.fb-acc summary::-webkit-details-marker{display:none}
+
+.fb-fixed-summary{display:flex;align-items:center;gap:10px;padding:13px 14px;font-size:13px;font-weight:900;background:#fff;border-bottom:1px solid #F0F0F0}
+.fb-fixed .fb-acc-body{display:block}
+
+.fb-acc summary::after{content:'›';margin-left:auto;font-size:21px;color:#BBB;transition:transform .18s}
+.fb-acc[open] summary::after{transform:rotate(90deg);color:#2472A3}
+.fb-acc-desc{font-size:10px;font-weight:600;color:#6c757d;margin-left:auto;white-space:nowrap}
+.fb-acc-body{padding:10px 12px;background:#FCFCFC}
+.fb-disaster-grid{display:grid;grid-template-columns:1fr;gap:9px}
+.fb-disaster-section{background:white;border:1px solid #EEF1F4;border-radius:12px;padding:10px 11px}
+.fb-disaster-title{font-size:12px;font-weight:900;margin-bottom:7px;color:#1a1a1a;display:flex;align-items:center;gap:5px}
+.fb-disaster-kv{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.fb-disaster-kv div{background:#F8F9FA;border-radius:8px;padding:7px 8px;font-size:11px;color:#555}
+.fb-disaster-kv strong{display:block;font-size:13px;color:#1A5276;margin-top:2px}
+.fb-disaster-kv .fb-kv-wide{grid-column:1 / -1}
+.fb-disaster-meta{font-size:10px;color:#6c757d;line-height:1.5;margin-top:8px;text-align:right}
+.fb-edit-panel{display:none;background:#F8FAFC;border:1px dashed #B7C9D9;border-radius:12px;padding:10px;margin-top:10px}
+.fb-edit-panel.show{display:block}
+.fb-edit-title{font-size:11px;font-weight:900;color:#2472A3;margin-bottom:8px}
+.fb-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.fb-edit-field{display:flex;flex-direction:column;gap:3px}
+.fb-edit-field label{font-size:10px;font-weight:700;color:#555}
+.fb-edit-field input{border:1px solid #DDE4EA;border-radius:8px;padding:8px 9px;font-size:12px;font-family:inherit;background:white;outline:none}
+.fb-edit-field input:focus{border-color:#2472A3;box-shadow:0 0 0 2px rgba(36,114,163,0.12)}
+.fb-edit-wide{grid-column:1 / -1}
+.fb-role-row{background:white;border:1px solid #EEF1F4;border-radius:11px;padding:9px 10px;margin-bottom:7px}
+.fb-role-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.fb-role-name{font-size:12px;font-weight:900;color:#1a1a1a;flex:1}
+.fb-role-pill{font-size:10px;font-weight:800;padding:3px 7px;border-radius:999px;white-space:nowrap}
+.fb-role-pill.done{background:#D5F5E3;color:#1E8449}.fb-role-pill.doing{background:#FEF5E7;color:#A04000}.fb-role-pill.empty{background:#EAECEE;color:#777}
+.fb-mini-bar{height:5px;background:#EAECEE;border-radius:999px;overflow:hidden;margin-bottom:5px}
+.fb-mini-fill{height:100%;background:#2472A3;border-radius:999px;width:0%}
+.fb-role-sub{font-size:10px;color:#6c757d;line-height:1.45}
+.fb-role-members{font-size:10px;color:#555;margin-top:4px;line-height:1.5}
+.fb-role-members span{display:inline-block;background:#F4F6F7;border-radius:999px;padding:2px 7px;margin:2px 3px 0 0}
+
+.fb-readonly-note{font-size:11px;color:#6c757d;line-height:1.45;padding:2px 2px 10px}
+.fb-role-detail{background:white;border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);margin:10px 0;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.fb-role-detail>summary{list-style:none;cursor:pointer;padding:13px 14px;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:8px;background:white;border-bottom:1px solid #F0F0F0}
+.fb-role-detail>summary::-webkit-details-marker{display:none}
+.fb-role-detail>summary::after{content:'›';font-size:20px;color:#CCC;transition:transform .18s}
+.fb-role-detail[open]>summary::after{transform:rotate(90deg);color:#2472A3}
+.fb-role-detail.control-role[open]>summary::after{color:#7D3C98}
+.fb-role-summary-text{font-size:11px;font-weight:700;color:#6c757d;margin-left:auto;white-space:nowrap}
+.fb-readonly-body{background:#FCFCFC;padding-bottom:8px}
+.fb-ro-phase{margin:10px 10px 0;border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);background:white}
+.fb-ro-phase-label{display:flex;align-items:center;gap:8px;padding:9px 13px;font-size:13px;font-weight:800;color:white;background:#2472A3}
+.fb-ro-phase.ph-orange .fb-ro-phase-label,.fb-ro-phase.ph-red .fb-ro-phase-label,.fb-ro-phase.ph-green .fb-ro-phase-label,.fb-ro-phase.ph-purple .fb-ro-phase-label{background:#E67F22}
+.fb-ro-phase.ph-blue .fb-ro-phase-label{background:#2472A3}
+.fb-ro-phase.ph-gray .fb-ro-phase-label{background:#566573}
+.fb-ro-item{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border-bottom:0.5px solid #F0F0F0;background:white}
+.fb-ro-item:last-child{border-bottom:none}
+.fb-ro-item.sub{padding-left:32px;background:#fff}
+.fb-ro-item.done{background:#F4FDF8}
+.fb-ro-main{flex:1;min-width:0}
+.fb-ro-main .kw{margin-bottom:3px}
+.fb-ro-title{font-size:12.5px;line-height:1.45;color:#1a1a1a;font-weight:600}
+.fb-ro-item.sub .fb-ro-title{font-size:12px;font-weight:500;color:#333}
+.fb-ro-status{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:3px;max-width:48%}
+.fb-ro-badge{font-size:10px;font-weight:800;border-radius:999px;padding:3px 8px;white-space:nowrap;background:#EAECEE;color:#777}
+.fb-ro-badge.done{background:#D5F5E3;color:#1E8449}
+.fb-ro-names{font-size:10px;color:#555;line-height:1.35;text-align:right;max-width:170px;word-break:keep-all}
+.fb-sub-group-label{font-size:11px;font-weight:800;color:#7D3C98;padding:7px 14px 3px 32px;background:#FCFCFC}
+.fb-muted-empty{font-size:12px;color:#888;padding:12px;background:white;border-radius:10px;border:1px dashed #DDD}
+
+@media (min-width:720px){.fb-disaster-grid{grid-template-columns:1fr 1fr 1fr}.fb-summary-grid{grid-template-columns:repeat(3,1fr)}}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 
 // ─────────────────────────────────────
@@ -397,6 +510,78 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
     };
   }
 })();
+
+
+// ── 개인별 체크상태 분리 저장 패치 ──
+(function(){
+  if(window.__personalCheckStoragePatched) return;
+  window.__personalCheckStoragePatched = true;
+
+  var rawSet = localStorage.setItem.bind(localStorage);
+  var rawGet = localStorage.getItem.bind(localStorage);
+  var rawRemove = localStorage.removeItem.bind(localStorage);
+
+  function currentMemberKeyForStorage(){
+    try{
+      var unit = (document.getElementById('member-unit') || {}).value || '미입력';
+      var rank = (document.getElementById('member-rank') || {}).value || '';
+      var name = (document.getElementById('member-name') || {}).value || '';
+      var device = (typeof getDeviceId === 'function') ? getDeviceId() : 'device';
+      return [unit, rank, name || ('응소확인_' + String(device).slice(-6))].join('_');
+    }catch(e){
+      return '미입력_응소확인';
+    }
+  }
+
+  function shouldPersonalizeKey(key){
+    key = String(key || '');
+    if(key.indexOf('firebase') >= 0 || key.indexOf('disaster') >= 0 || key.indexOf('session') >= 0) return false;
+    return (
+      key.indexOf('checked') >= 0 ||
+      key.indexOf('checkState') >= 0 ||
+      key.indexOf('roleState') >= 0 ||
+      key.indexOf('depart') >= 0 ||
+      key.indexOf('control') >= 0 ||
+      key.indexOf('mobilize') >= 0 ||
+      key.indexOf('earlyEnd') >= 0 ||
+      key.indexOf('activityEnd') >= 0
+    );
+  }
+
+  function personalKey(key){
+    if(!shouldPersonalizeKey(key)) return key;
+    if(String(key).indexOf('personal::') === 0) return key;
+    return 'personal::' + currentMemberKeyForStorage() + '::' + key;
+  }
+
+  localStorage.setItem = function(key, value){
+    return rawSet(personalKey(key), value);
+  };
+  localStorage.getItem = function(key){
+    var pk = personalKey(key);
+    var v = rawGet(pk);
+    if(v !== null) return v;
+    if(shouldPersonalizeKey(key)) return null;
+    return rawGet(key);
+  };
+  localStorage.removeItem = function(key){
+    rawRemove(personalKey(key));
+    return rawRemove(key);
+  };
+
+  window.clearPersonalCheckState = function(){
+    try{
+      var prefix = 'personal::' + currentMemberKeyForStorage() + '::';
+      var keys = [];
+      for(var i=0;i<localStorage.length;i++){
+        var k = localStorage.key(i);
+        if(k && k.indexOf(prefix) === 0) keys.push(k);
+      }
+      keys.forEach(function(k){ rawRemove(k); });
+    }catch(e){}
+  };
+})();
+
 
 // ── 결과화면 캡처
 function captureScreen(){
@@ -1495,6 +1680,7 @@ function toggleMobilize(type){
     out.textContent = t;
     if(otherItem) otherItem.classList.add('disabled');
   }
+  if(typeof saveFirebaseState==='function'){ setTimeout(saveFirebaseState,0); }
 }
 
 function resetMobilize(){
@@ -1508,6 +1694,7 @@ function resetMobilize(){
     if(item) item.classList.remove('disabled');
   });
   activityEndTime = null;
+  if(typeof saveFirebaseState==='function'){ setTimeout(saveFirebaseState,0); }
 }
 
 var currentRole = null;
@@ -2844,6 +3031,1139 @@ function restoreChecklist(){
   updateProgress();
 }
 
+</script>
+
+
+<script>
+// ─────────────────────────────────────
+// V40 Firebase 전용 실시간 연동
+// - Google Sheets 미사용
+// - 기존 화면 유지
+// - 사용자별 체크결과 저장 + 지원반장 현황판 + Excel 다운로드 + 재난종료 초기화
+// ─────────────────────────────────────
+(function(){
+  var firebaseConfig = {
+    apiKey: "AIzaSyBUYalzy4UaQY0qQOhCzUdGENeZtwUzoj8",
+    authDomain: "gurichecklist.firebaseapp.com",
+    databaseURL: "https://gurichecklist-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "gurichecklist",
+    storageBucket: "gurichecklist.firebasestorage.app",
+    messagingSenderId: "98338457593",
+    appId: "1:98338457593:web:79d363b66380006f26df28"
+  };
+
+  var FB = {
+    ready:false,
+    db:null,
+    sessionId:null,
+    rows:[],
+    lastSnapshot:null
+  };
+  window.GURI_FIREBASE = FB;
+
+  function pad2(n){ return String(n).padStart ? String(n).padStart(2,'0') : (n<10?'0':'')+n; }
+  function todaySessionId(){
+    var d = new Date();
+    return d.getFullYear()+pad2(d.getMonth()+1)+pad2(d.getDate())+'_guri_checklist';
+  }
+  function safeKey(s){
+    s = (s || '미입력').toString().trim() || '미입력';
+    return s.replace(/[.#$\/[\]]/g,'_').replace(/\s+/g,'_').slice(0,80);
+  }
+  function getSessionId(){
+    try{
+      var k='guri_fb_session_id';
+      var v=localStorage.getItem(k);
+      if(!v){ v=todaySessionId(); localStorage.setItem(k,v); }
+      return v;
+    }catch(e){ return todaySessionId(); }
+  }
+  function getMemberInfo(){
+    var unit=(document.getElementById('member-unit')||{}).value || '';
+    var rank=(document.getElementById('member-rank')||{}).value || '';
+    var name=(document.getElementById('member-name')||{}).value || '';
+    return {unit:unit, rank:rank, name:name};
+  }
+  function getMemberKey(){
+    var m=getMemberInfo();
+    var key=[m.unit,m.rank,m.name].filter(Boolean).join('_');
+    if(!key) key='미입력_'+Math.random().toString(36).slice(2,8);
+    return safeKey(key);
+  }
+  function isValidMemberRecord(record, key){
+    var m=(record && record.member) || {};
+    if(!m.name || !String(m.name).trim()) return false;
+    if(String(key||'').indexOf('미입력_') === 0) return false;
+    return true;
+  }
+  function activeMembers(members){
+    var filtered={};
+    Object.keys(members||{}).forEach(function(k){
+      if(isValidMemberRecord(members[k], k)) filtered[k]=members[k];
+    });
+    return filtered;
+  }
+  function roleName(role){
+    try{ if(window.ROLES && ROLES[role] && ROLES[role].name) return ROLES[role].name; }catch(e){}
+    var map={chief:'지원반장 확인 목록',cmd:'현장지휘요원',res:'자원지원요원',com:'통신지원요원',safe:'안전관리요원',invest:'상황조사요원',decon:'오염통제요원',ems:'구급지휘요원',controlPlan:'대응계획부',controlField:'현장지휘부',controlResource:'자원지원부',none:'현장 출동 전 종료'};
+    return map[role] || role || '미선택';
+  }
+  function countRoleTotal(role){
+    try{
+      if(!window.ROLES || !ROLES[role] || !ROLES[role].phases) return 0;
+      var c=0;
+      ROLES[role].phases.forEach(function(ph){
+        ph.items.forEach(function(item){
+          c++;
+          if(item.subGroups && item.subGroups.length){
+            item.subGroups.forEach(function(g){ c += (g.items||[]).length; });
+          }else{
+            c += (item.subs||[]).length;
+          }
+        });
+      });
+      return c;
+    }catch(e){ return 0; }
+  }
+  function computeLocalSummary(state){
+    var roleChecked=(state && state.roleChecked) || {};
+    var roleSummary={};
+    var done=0,total=0;
+    Object.keys(roleChecked).forEach(function(r){
+      var d=(roleChecked[r]||[]).length;
+      var t=countRoleTotal(r);
+      roleSummary[r]={name:roleName(r),done:d,total:t};
+      done += d; total += t;
+    });
+    var departDone = (state && state.departChecked) ? state.departChecked.length : 0;
+    var departTotal = (window.SUP_ITEMS && SUP_ITEMS.length) ? SUP_ITEMS.length : 12;
+    if(departDone>0){
+      roleSummary.depart={name:'출동단계',done:departDone,total:departTotal};
+      done += departDone; total += departTotal;
+    }
+    if(state && state.earlyEndTime){
+      roleSummary.earlyEnd={name:'현장 출동 전 종료',done:1,total:1};
+      done += 1; total += 1;
+    }
+    return {done:done,total:total,roleSummary:roleSummary};
+  }
+  function collectState(){
+    var state={};
+    try{ state = (typeof loadState==='function' && loadState()) || {}; }catch(e){}
+    var m=getMemberInfo();
+    var sum=computeLocalSummary(state);
+    return {
+      member:m,
+      currentRole:(window.currentRole || state.currentRole || ''),
+      mobilizeTime:(window.mobilizeTime || state.mobilizeTime || {}),
+      earlyEndTime:(window.earlyEndTime || state.earlyEndTime || null),
+      activityEndTime:(window.activityEndTime || state.activityEndTime || null),
+      roleChecked:state.roleChecked || {},
+      departChecked:state.departChecked || [],
+      roleSummary:sum.roleSummary,
+      done:sum.done,
+      total:sum.total,
+      percent:sum.total ? Math.round(sum.done/sum.total*100) : 0,
+      updatedAt:new Date().toISOString(),
+      updatedAtText:new Date().toLocaleString('ko-KR')
+    };
+  }
+  function setStatus(txt){
+    var el=document.getElementById('fb-status');
+    if(el) el.textContent=txt;
+  }
+  function initFirebase(){
+    try{
+      if(!window.firebase){ setStatus('Firebase SDK 로드 실패'); return; }
+      if(!firebase.apps.length){ firebase.initializeApp(firebaseConfig); }
+      FB.db=firebase.database();
+      FB.ready=true;
+      FB.sessionId=getSessionId();
+      setStatus('연결 준비 완료');
+      listenSession();
+    }catch(e){
+      console.log('Firebase init error', e);
+      setStatus('연결 오류');
+    }
+  }
+  function saveFirebaseState(){
+    if(!FB.ready || !FB.db) return;
+    try{
+      var data=collectState();
+      var key=getMemberKey();
+      FB.db.ref('sessions/'+FB.sessionId+'/members/'+key).set(data)
+        .then(function(){ setStatus('저장됨 '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})); })
+        .catch(function(err){ console.log('Firebase write error',err); setStatus('저장 실패'); });
+      FB.db.ref('sessions/'+FB.sessionId+'/meta').update({
+        title:'긴급지원반 및 긴급구조통제단 임무 체크리스트',
+        sessionId:FB.sessionId,
+        updatedAt:new Date().toISOString()
+      });
+    }catch(e){ console.log('saveFirebaseState error',e); }
+  }
+  window.saveFirebaseState = saveFirebaseState;
+
+  function listenSession(){
+    if(!FB.ready || !FB.db) return;
+    FB.db.ref('sessions/'+FB.sessionId+'/members').on('value', function(snapshot){
+      FB.lastSnapshot=snapshot.val() || {};
+      renderDashboard(FB.lastSnapshot);
+    }, function(err){ console.log('listen error',err); setStatus('읽기 실패'); });
+    FB.db.ref('sessions/'+FB.sessionId+'/disasterStatus').on('value', function(snapshot){
+      FB.disasterStatus=snapshot.val() || {};
+      renderDisasterStatus(FB.disasterStatus || {});
+    }, function(err){ console.log('disaster listen error',err); });
+  }
+  var FB_GROUPS = [
+    {id:'support', title:'긴급구조현장지휘대 지원반', icon:'🚒', target:'fb-support-group', roles:[
+      ['chief','지원반장 확인 목록'], ['depart','출동단계'], ['cmd','현장지휘요원'], ['res','자원지원요원'], ['com','통신지원요원'], ['safe','안전관리요원'], ['invest','상황조사요원'], ['decon','오염통제요원'], ['ems','구급지휘요원']
+    ]},
+    {id:'control', title:'긴급구조통제단', icon:'🧭', target:'fb-control-group', roles:[
+      ['controlPlan','대응계획부'], ['controlField','현장지휘부'], ['controlResource','자원지원부']
+    ]}
+  ];
+  function roleBucketPercent(bucket){
+    return bucket.total ? Math.round((bucket.done||0)/(bucket.total||1)*100) : 0;
+  }
+  function roleStatusText(bucket){
+    if(!bucket.total) return {cls:'empty', text:'미배정'};
+    var pct=roleBucketPercent(bucket);
+    if(pct>=100) return {cls:'done', text:'완료'};
+    return {cls:'doing', text:pct+'%'};
+  }
+  function aggregateRoles(members){
+    var map={};
+    FB_GROUPS.forEach(function(g){ g.roles.forEach(function(r){ map[r[0]]={key:r[0],name:r[1],done:0,total:0,members:[]}; }); });
+    Object.keys(members||{}).forEach(function(k){
+      var m=members[k]||{};
+      if(!isValidMemberRecord(m,k)) return;
+      var member=m.member||{};
+      var name=member.name || k;
+      var summaries=m.roleSummary||{};
+      var used=false;
+      Object.keys(summaries).forEach(function(r){
+        if(!map[r]) return;
+        used=true;
+        var s=summaries[r]||{};
+        var d=Number(s.done||0), t=Number(s.total||0);
+        map[r].done += d; map[r].total += t;
+        map[r].members.push({name:name, percent:t?Math.round(d/t*100):(m.percent||0), time:m.updatedAtText||''});
+      });
+      if(!used && m.currentRole && map[m.currentRole]){
+        var d2=Number(m.done||0), t2=Number(m.total||0);
+        map[m.currentRole].done += d2; map[m.currentRole].total += t2;
+        map[m.currentRole].members.push({name:name, percent:m.percent||0, time:m.updatedAtText||''});
+      }
+    });
+    return map;
+  }
+  function itemNamesFor(role, itemId, members){
+    var names=[];
+    Object.keys(members||{}).forEach(function(k){
+      var m=members[k]||{};
+      if(!isValidMemberRecord(m,k)) return;
+      var member=m.member||{};
+      var name=member.name || k;
+      var checked=((m.roleChecked||{})[role]) || [];
+      for(var i=0;i<checked.length;i++){
+        if(String(checked[i]) === String(itemId)){ names.push(name); break; }
+      }
+    });
+    return names;
+  }
+  function departNamesFor(idx, members){
+    var names=[];
+    Object.keys(members||{}).forEach(function(k){
+      var m=members[k]||{};
+      if(!isValidMemberRecord(m,k)) return;
+      var member=m.member||{};
+      var name=member.name || k;
+      var arr=m.departChecked || [];
+      for(var i=0;i<arr.length;i++){
+        if(Number(arr[i]) === Number(idx)){ names.push(name); break; }
+      }
+    });
+    return names;
+  }
+  function statusHtml(names){
+    names = names || [];
+    if(names.length){
+      var label = names.length === 1 ? '완료' : ('완료 '+names.length+'명');
+      var shown = names.slice(0,3).map(function(n){ return escapeHtml(n); }).join(', ');
+      if(names.length > 3) shown += ' 외 '+(names.length-3)+'명';
+      return '<div class="fb-ro-status"><span class="fb-ro-badge done">'+label+'</span><div class="fb-ro-names">'+shown+'</div></div>';
+    }
+    return '<div class="fb-ro-status"><span class="fb-ro-badge">미완료</span></div>';
+  }
+  function renderReadOnlyItem(opts){
+    var names=opts.names||[];
+    var cls='fb-ro-item'+(opts.sub?' sub':'')+(names.length?' done':'');
+    var kw = opts.kw ? '<div><span class="kw '+escapeHtml(opts.kc||'kw-gray')+'">'+escapeHtml(opts.kw)+'</span></div>' : '';
+    return '<div class="'+cls+'"><div class="fb-ro-main">'+kw+'<div class="fb-ro-title">'+escapeHtml(opts.title)+'</div></div>'+statusHtml(names)+'</div>';
+  }
+  function renderRoleChecklistStatus(role, members, isControl){
+    if(role === 'depart') return renderDepartChecklistStatus(members);
+    var rd = (window.ROLES && ROLES[role]) ? ROLES[role] : null;
+    if(!rd) return '<div class="fb-muted-empty">표시할 체크리스트가 없습니다.</div>';
+    var html=[];
+    var ic=0, total=0, done=0;
+    rd.phases.forEach(function(ph){
+      var phase=[];
+      (ph.items||[]).forEach(function(item){
+        var pid='chk-'+ic; ic++; total++;
+        var pNames=itemNamesFor(role, pid, members);
+        if(pNames.length) done++;
+        phase.push(renderReadOnlyItem({title:item.main, kw:item.kw, kc:item.kc, names:pNames}));
+        var subsList=item.subs || [];
+        if(item.subGroups && item.subGroups.length){
+          subsList=[];
+          item.subGroups.forEach(function(grp){
+            subsList.push({__group:true,label:grp.label});
+            (grp.items||[]).forEach(function(it){ subsList.push(it); });
+          });
+        }
+        subsList.forEach(function(sub){
+          if(sub && sub.__group){ phase.push('<div class="fb-sub-group-label">'+escapeHtml(sub.label)+'</div>'); return; }
+          var sid='chk-'+ic; ic++; total++;
+          var sNames=itemNamesFor(role, sid, members);
+          if(sNames.length) done++;
+          phase.push(renderReadOnlyItem({title:sub, sub:true, names:sNames}));
+        });
+      });
+      html.push('<div class="fb-ro-phase '+escapeHtml(ph.ph||'')+'"><div class="fb-ro-phase-label">📍 '+escapeHtml(ph.phase||'단계')+'</div>'+phase.join('')+'</div>');
+    });
+    var displayTotal = getConfiguredTotalCount() || total;
+    var pct=displayTotal ? Math.round(done/displayTotal*100) : 0;
+    return {body:'<div class="fb-readonly-body">'+html.join('')+'</div>', done:done, total:total, pct:pct};
+  }
+  function renderDepartChecklistStatus(members){
+    var items=(window.SUP_ITEMS && SUP_ITEMS.length) ? SUP_ITEMS : (window.SUP || []);
+    if(!items || !items.length){ items=['천막','테이블','의자','소모품박스','조끼','헬멧','상황판','이젤','긴급지원반 백팩','PS-LTE 가방','식수(이온음료 포함)','기타']; }
+    var done=0,total=items.length;
+    var phase=[];
+    var allNames=[];
+    Object.keys(members||{}).forEach(function(k){
+      var m=members[k]||{};
+      var arr=m.departChecked||[];
+      if(arr.length >= items.length){ allNames.push((m.member&&m.member.name)||k); }
+    });
+    phase.push(renderReadOnlyItem({title:'지원 장비 준비', kw:'지원준비', kc:'kw-blue', names:allNames}));
+    items.forEach(function(item, idx){
+      var names=departNamesFor(idx, members);
+      if(names.length) done++;
+      phase.push(renderReadOnlyItem({title:item, sub:true, names:names}));
+    });
+    var displayTotal = getConfiguredTotalCount() || total;
+    var pct=displayTotal ? Math.round(done/displayTotal*100) : 0;
+    return {body:'<div class="fb-readonly-body"><div class="fb-ro-phase ph-blue"><div class="fb-ro-phase-label">📍 출동단계</div>'+phase.join('')+'</div></div>', done:done, total:total, pct:pct};
+  }
+  function roleHeaderSummary(result){
+    if(!result || !result.total) return '미완료';
+    return result.done+' / '+result.total+' 완료 · '+result.pct+'%';
+  }
+  function renderGroupBlocks(members){
+    members=activeMembers(members||{});
+    FB_GROUPS.forEach(function(g){
+      var el=document.getElementById(g.target);
+      if(!el) return;
+      var html=['<div class="fb-readonly-note">상단 체크리스트에서 누군가 체크한 항목은 이 현황판에 자동 표시됩니다. 이 영역은 확인 전용입니다.</div>'];
+      for(var i=0;i<g.roles.length;i++){
+        var r=g.roles[i];
+        var result=renderRoleChecklistStatus(r[0], members||{}, g.id==='control');
+        html.push('<details class="fb-role-detail '+(g.id==='control'?'control-role':'')+'">'+
+          '<summary>'+escapeHtml(r[1])+' <span class="fb-role-summary-text">'+roleHeaderSummary(result)+'</span></summary>'+
+          (result.body || '<div class="fb-muted-empty">표시할 항목이 없습니다.</div>')+
+        '</details>');
+      }
+      el.innerHTML=html.join('');
+      el.style.display='block';
+    });
+  }
+  function defaultDisasterStatus(){
+    return {
+      rescueRequired:'-',
+      rescueDone:'-',
+      rescueOngoing:'-',
+      rescueTransport:'-',
+      rescueTriage:'-',
+      resourcePersonnel:'-',
+      resourceVehicles:'-',
+      resourceEquipment:'-',
+      resourceAgencies:'-',
+      damagePeople:'-',
+      damageProperty:'-',
+      damageBuildings:'-',
+      damageVehicles:'-',
+      damageNote:'-',
+      updatedBy:'미입력',
+      updatedAtText:'미저장'
+    };
+  }
+  function renderDisasterStatus(data){
+    data=data||{};
+    var d=defaultDisasterStatus();
+    Object.keys(data).forEach(function(k){ d[k]=data[k]; });
+    function put(id, val){ var el=document.getElementById(id); if(el) el.textContent=(val===''||val==null)?'-':val; }
+    put('ds-rescue-required', d.rescueRequired); put('ds-rescue-done', d.rescueDone); put('ds-rescue-transport', d.rescueTransport); put('ds-rescue-triage', d.rescueTriage);
+    put('ds-resource-personnel', d.resourcePersonnel); put('ds-resource-vehicles', d.resourceVehicles); put('ds-resource-equipment', d.resourceEquipment); put('ds-resource-agencies', d.resourceAgencies);
+    put('ds-damage-people', d.damagePeople); put('ds-damage-property', d.damageProperty || ((d.damageBuildings && d.damageBuildings !== '-') || (d.damageVehicles && d.damageVehicles !== '-') ? ['건물 '+(d.damageBuildings||'-'), '차량 '+(d.damageVehicles||'-')].join(' / ') : '-')); put('ds-damage-note', d.damageNote);
+    var meta=document.getElementById('ds-meta');
+    if(meta) meta.textContent='최종 수정: '+((d.updatedBy||'미입력')+' · '+(d.updatedAtText||'미저장'));
+    ['rescueRequired','rescueDone','rescueTransport','rescueTriage','resourcePersonnel','resourceVehicles','resourceEquipment','resourceAgencies','damagePeople','damageProperty','damageNote'].forEach(function(k){
+      var el=document.getElementById('input-'+k); if(el) el.value=(d[k]==='-'?'':(d[k]||''));
+    });
+  }
+  function toggleDisasterEdit(){
+    var el=document.getElementById('fb-disaster-edit'); if(!el) return;
+    if(el.className.indexOf('show')>=0) el.className=el.className.replace(/\s*show/g,'');
+    else el.className += ' show';
+  }
+  function saveDisasterStatus(){
+    if(!FB.ready || !FB.db){ alert('Firebase 연결을 확인해 주세요.'); return; }
+    function val(k){ var el=document.getElementById('input-'+k); return el ? el.value.trim() : ''; }
+    var m=getMemberInfo();
+    var data={
+      rescueRequired:val('rescueRequired')||'-', rescueDone:val('rescueDone')||'-', rescueTransport:val('rescueTransport')||'-', rescueTriage:val('rescueTriage')||'-',
+      resourcePersonnel:val('resourcePersonnel')||'-', resourceVehicles:val('resourceVehicles')||'-', resourceEquipment:val('resourceEquipment')||'-', resourceAgencies:val('resourceAgencies')||'-',
+      damagePeople:val('damagePeople')||'-', damageProperty:val('damageProperty')||'-', damageNote:val('damageNote')||'',
+      updatedBy:[m.unit,m.rank,m.name].filter(Boolean).join(' ') || '미입력',
+      updatedAt:new Date().toISOString(), updatedAtText:new Date().toLocaleString('ko-KR')
+    };
+    FB.db.ref('sessions/'+FB.sessionId+'/disasterStatus').set(data).then(function(){
+      setStatus('재난현황 저장됨 '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}));
+      var panel=document.getElementById('fb-disaster-edit'); if(panel) panel.className=panel.className.replace(/\s*show/g,'');
+    }).catch(function(e){ console.log(e); alert('재난현황 저장 실패'); });
+  }
+  window.toggleDisasterEdit=toggleDisasterEdit;
+  window.saveDisasterStatus=saveDisasterStatus;
+  function showDisasterEndModal(){
+    var el=document.getElementById('fb-end-modal');
+    if(el) el.className += ' show';
+  }
+  function hideDisasterEndModal(){
+    var el=document.getElementById('fb-end-modal');
+    if(el) el.className=el.className.replace(/\s*show/g,'');
+  }
+  function resetLocalChecklistState(){
+    try{ if(typeof clearSavedState==='function') clearSavedState(); }catch(e){}
+    try{ localStorage.removeItem('guri_checklist_state'); }catch(e){}
+    try{ localStorage.removeItem('guri_fb_session_id'); }catch(e){}
+  }
+  function confirmDisasterEnd(){
+    hideDisasterEndModal();
+      try{ renderDisasterStatus({}); if(FB && FB.db){ FB.db.ref('sessions/'+FB.sessionId+'/disasterStatus').set(defaultDisasterStatus()); } }catch(e){}
+    if(!FB.ready || !FB.db){ alert('Firebase 연결을 확인해 주세요.'); return; }
+    var targetSession=FB.sessionId || getSessionId();
+    FB.db.ref('sessions/'+targetSession).remove().then(function(){
+      resetLocalChecklistState();
+      FB.lastSnapshot={};
+      FB.disasterStatus={};
+      renderDashboard({});
+      renderDisasterStatus({});
+      setStatus('재난활동 종료 · 초기화 완료');
+      setTimeout(function(){ location.reload(); }, 500);
+    }).catch(function(e){ console.log(e); alert('재난활동 종료 처리 실패'); });
+  }
+
+  function splitMemberLabelForExcel(label){
+    var out = {unit:'-', rank:'-', name:'-'};
+    if(!label) return out;
+    var parts = String(label).split('_').filter(function(x){ return x !== ''; });
+    if(parts.length >= 3){
+      out.unit = parts[0] || '-';
+      out.rank = parts[1] || '-';
+      out.name = parts.slice(2).join('_') || '-';
+    }else if(parts.length === 2){
+      out.unit = parts[0] || '-';
+      out.name = parts[1] || '-';
+    }else if(parts.length === 1){
+      out.name = parts[0] || '-';
+    }
+    return out;
+  }
+
+  function buildAllChecklistTitlesForExcel(){
+    var list = [];
+    try{
+      if(window.ROLES){
+        Object.keys(ROLES).forEach(function(role){
+          var rd = ROLES[role];
+          if(!rd || !rd.phases) return;
+          rd.phases.forEach(function(ph){
+            (ph.items||[]).forEach(function(item){
+              var title = item.main || item.title || item.text || item.label || '';
+              if(title) list.push(title);
+              if(item.subGroups && item.subGroups.length){
+                item.subGroups.forEach(function(grp){
+                  (grp.items||[]).forEach(function(sub){
+                    var st = (typeof sub === 'string') ? sub : (sub.main || sub.title || sub.text || sub.label || '');
+                    if(st) list.push(st);
+                  });
+                });
+              }else if(item.subs && item.subs.length){
+                item.subs.forEach(function(sub){
+                  var st = (typeof sub === 'string') ? sub : (sub.main || sub.title || sub.text || sub.label || '');
+                  if(st) list.push(st);
+                });
+              }
+            });
+          });
+        });
+      }
+      if(window.DEPART_ITEMS && DEPART_ITEMS.length){
+        DEPART_ITEMS.forEach(function(t){ if(t) list.push(t); });
+      }
+    }catch(e){}
+    return list;
+  }
+
+  function buildItemTitleMapForExcel(){
+    var map = {};
+    try{
+      var seq = [];
+      if(window.ROLES){
+        Object.keys(ROLES).forEach(function(role){
+          var rd = ROLES[role];
+          if(!rd || !rd.phases) return;
+          rd.phases.forEach(function(ph, pi){
+            (ph.items||[]).forEach(function(item, ii){
+              var title = item.main || item.title || item.text || item.label || '';
+              if(title){
+                seq.push(title);
+                [role+'_'+pi+'_'+ii, role+'_'+ii, role+'_'+title, title].forEach(function(k){ if(k) map[k]=title; });
+              }
+              if(item.subGroups && item.subGroups.length){
+                item.subGroups.forEach(function(grp, gi){
+                  (grp.items||[]).forEach(function(sub, si){
+                    var st = (typeof sub === 'string') ? sub : (sub.main || sub.title || sub.text || sub.label || '');
+                    if(st){
+                      seq.push(st);
+                      [role+'_'+pi+'_'+ii+'_g'+gi+'_s'+si, role+'_'+title+'_'+st, st].forEach(function(k){ if(k) map[k]=st; });
+                    }
+                  });
+                });
+              }
+              if(item.subs && item.subs.length){
+                item.subs.forEach(function(sub, si){
+                  var st = (typeof sub === 'string') ? sub : (sub.main || sub.title || sub.text || sub.label || '');
+                  if(st){
+                    seq.push(st);
+                    [role+'_'+pi+'_'+ii+'_s'+si, role+'_'+title+'_'+st, st].forEach(function(k){ if(k) map[k]=st; });
+                  }
+                });
+              }
+            });
+          });
+        });
+      }
+      if(window.DEPART_ITEMS && DEPART_ITEMS.length){
+        DEPART_ITEMS.forEach(function(t, i){
+          seq.push(t);
+          map['depart_'+i]=t; map['depart_'+t]=t; map[t]=t;
+        });
+      }
+      seq.forEach(function(t, i){
+        map[String(i)] = t;
+        map['item_'+i] = t;
+        map['checked_'+i] = t;
+      });
+    }catch(e){}
+    return map;
+  }
+
+
+  function getCheckedItemTitleForExcel(itemKey, v){
+    if(v && typeof v === 'object'){
+      if(v.title) return v.title;
+      if(v.text) return v.text;
+      if(v.label) return v.label;
+      if(v.name) return v.name;
+      if(v.main) return v.main;
+    }
+    var map = buildItemTitleMapForExcel();
+    if(map[itemKey]) return map[itemKey];
+    var cleaned = String(itemKey || '-')
+      .replace(/^checked_/, '')
+      .replace(/^depart_/, '출동단계 ')
+      .replace(/^ctrl_/, '통제단 ')
+      .replace(/^role_/, '')
+      .replace(/_/g, ' ')
+      .trim();
+    return cleaned || '-';
+  }
+
+  function isCheckedValueForExcel(v){
+    if(v === true) return true;
+    if(!v || typeof v !== 'object') return false;
+    return !!(v.checked || v.done || v.value === true || v.status === '완료' || v.completed === true || v.title || v.text || v.label || v.main);
+  }
+
+  function getCheckedObjectForExcel(m){
+    var c = m.checked || m.checks || m.items || m.checkedItems || m.completedItems || {};
+    if((!c || (typeof c === 'object' && !Array.isArray(c) && Object.keys(c).length === 0)) && m.roles){
+      c = {};
+      Object.keys(m.roles || {}).forEach(function(role){
+        var rd = m.roles[role] || {};
+        var checked = rd.checked || rd.items || rd.checks || {};
+        if(Array.isArray(checked)){
+          checked.forEach(function(v, i){ c[role+'_'+i] = v; });
+        }else{
+          Object.keys(checked || {}).forEach(function(k){ c[role+'_'+k] = checked[k]; });
+        }
+      });
+    }
+    return c || {};
+  }
+
+
+  function countCheckedItemsForExcel(m){
+    var checked = getCheckedObjectForExcel(m);
+    var count = 0;
+    if(Array.isArray(checked)){
+      checked.forEach(function(v){ if(isCheckedValueForExcel(v)) count++; });
+    }else{
+      Object.keys(checked || {}).forEach(function(k){ if(isCheckedValueForExcel(checked[k])) count++; });
+    }
+    return count;
+  }
+
+  function normalizeNameForExcel(s){
+    return String(s || '').replace(/^완료\s*/,'').replace(/\s+/g,'').trim();
+  }
+
+  function buildMemberLookupForExcel(members){
+    var lookup = {};
+    Object.keys(members || {}).forEach(function(k){
+      var m = members[k] || {};
+      var label = m.label || m.memberLabel || k;
+      var parsed = splitMemberLabelForExcel(label);
+      var row = {
+        unit: m.unit || parsed.unit || '-',
+        rank: m.rank || parsed.rank || '-',
+        name: m.name || parsed.name || label || '-'
+      };
+
+      [k, label, row.name, row.unit + '_' + row.rank + '_' + row.name].forEach(function(key){
+        var nk = normalizeNameForExcel(key);
+        if(nk) lookup[nk] = row;
+      });
+    });
+    return lookup;
+  }
+
+  function parseMemberNamePartsForExcel(raw, members){
+    var out = {unit:'-', rank:'-', name:'-'};
+    if(!raw) return out;
+    raw = String(raw).replace(/^완료\s*/,'').trim();
+
+    var lookup = buildMemberLookupForExcel(members || window.lastFirebaseMembers || window.fbMembers || {});
+    var direct = lookup[normalizeNameForExcel(raw)];
+    if(direct) return direct;
+
+    var parts = raw.split('_').filter(function(x){ return x !== ''; });
+    if(parts.length >= 3){
+      out.unit = parts[0] || '-';
+      out.rank = parts[1] || '-';
+      out.name = parts.slice(2).join('_') || '-';
+    }else{
+      out.name = raw || '-';
+      var byName = lookup[normalizeNameForExcel(out.name)];
+      if(byName) return byName;
+    }
+    return out;
+  }
+
+
+  function extractRealtimeDashboardRowsForExcel(){
+    var rows = [];
+    try{
+      var items = document.querySelectorAll('.fb-ro-item.done');
+      items.forEach(function(item){
+        var titleEl = item.querySelector('.fb-ro-title');
+        var itemName = titleEl ? (titleEl.textContent || '').trim() : '-';
+
+        var rawNames = [];
+        var namesEl = item.querySelector('.fb-ro-names');
+        if(namesEl && (namesEl.textContent || '').trim()){
+          rawNames = (namesEl.textContent || '')
+            .split(/[,·\n]/)
+            .map(function(x){ return x.trim(); })
+            .filter(Boolean);
+        }
+
+        if(!rawNames.length){
+          var badgeEl = item.querySelector('.fb-ro-badge.done');
+          if(badgeEl && (badgeEl.textContent || '').trim()){
+            var b = (badgeEl.textContent || '').replace('완료','').trim();
+            if(b) rawNames = [b];
+          }
+        }
+
+        rawNames.forEach(function(raw){
+          var p = parseMemberNamePartsForExcel(raw, window.lastFirebaseMembers || window.fbMembers || {});
+          rows.push({
+            '소속': p.unit,
+            '계급': p.rank,
+            '성명': p.name,
+            '항목명': itemName || '-'
+          });
+        });
+      });
+    }catch(e){}
+    return rows;
+  }
+
+  function flattenRealtimeRowsForExcel(members){
+    var rows = extractRealtimeDashboardRowsForExcel();
+    if(rows && rows.length) return rows;
+
+    /* 화면 추출 실패 시 Firebase 저장값으로 보조 생성 */
+    rows = [];
+    var keys = Object.keys(members || {});
+    keys.forEach(function(k){
+      var m = members[k] || {};
+      var label = m.label || m.memberLabel || k;
+      var parsed = splitMemberLabelForExcel(label);
+      var checked = getCheckedObjectForExcel(m);
+
+      if(Array.isArray(checked)){
+        checked.forEach(function(v, idx){
+          if(!isCheckedValueForExcel(v)) return;
+          rows.push({
+            '소속': m.unit || parsed.unit || '-',
+            '계급': m.rank || parsed.rank || '-',
+            '성명': m.name || parsed.name || '-',
+            '항목명': getCheckedItemTitleForExcel(idx, v)
+          });
+        });
+      }else{
+        Object.keys(checked || {}).forEach(function(itemKey){
+          var v = checked[itemKey];
+          if(!isCheckedValueForExcel(v)) return;
+          rows.push({
+            '소속': m.unit || parsed.unit || '-',
+            '계급': m.rank || parsed.rank || '-',
+            '성명': m.name || parsed.name || '-',
+            '항목명': getCheckedItemTitleForExcel(itemKey, v)
+          });
+        });
+      }
+    });
+    return rows;
+  }
+
+
+  function buildMobilizeRowsForExcel(members){
+    var rows = [];
+    Object.keys(members || {}).forEach(function(k){
+      var m = members[k] || {};
+      var mt = m.mobilizeTime || {};
+      if(!mt.essential && !mt.general) return;
+
+      var label = m.label || m.memberLabel || k;
+      var parsed = splitMemberLabelForExcel(label);
+      rows.push({
+        '소속': m.unit || parsed.unit || '-',
+        '계급': m.rank || parsed.rank || '-',
+        '성명': m.name || parsed.name || label || '-',
+        '필수요원 응소': mt.essential || '-',
+        '일반요원 응소': mt.general || '-',
+        '활동종료': formatTimeHHmmForExcel(m.completedAt || m.activityEndTime || new Date()),
+        '활동시간': getActivityDurationText(Object.assign({}, m, {activityEndTime: (m.completedAt || m.activityEndTime || new Date())}))
+      });
+    });
+    return rows;
+  }
+
+  function getTextByIdForExcel(id){
+    var el = document.getElementById(id);
+    if(!el) return '-';
+    var t = (el.textContent || el.innerText || '').trim();
+    return t || '-';
+  }
+
+  function buildDisasterRowsForExcel(){
+    var d = window.lastDisasterStatus || {};
+    return [
+      {'구분':'인명구조현황','항목':'구조대상자','내용':d.rescueRequired || getTextByIdForExcel('ds-rescue-required')},
+      {'구분':'인명구조현황','항목':'구조완료','내용':d.rescueDone || getTextByIdForExcel('ds-rescue-done')},
+      {'구분':'인명구조현황','항목':'이송현황','내용':d.rescueTransport || getTextByIdForExcel('ds-rescue-transport')},
+      {'구분':'인명구조현황','항목':'분류현황','내용':d.rescueTriage || getTextByIdForExcel('ds-rescue-triage')},
+      {'구분':'자원관리현황','항목':'동원인원','내용':d.resourcePersonnel || getTextByIdForExcel('ds-resource-personnel')},
+      {'구분':'자원관리현황','항목':'동원차량','내용':d.resourceVehicles || getTextByIdForExcel('ds-resource-vehicles')},
+      {'구분':'자원관리현황','항목':'주요장비','내용':d.resourceEquipment || getTextByIdForExcel('ds-resource-equipment')},
+      {'구분':'자원관리현황','항목':'유관기관','내용':d.resourceAgencies || getTextByIdForExcel('ds-resource-agencies')},
+      {'구분':'피해현황','항목':'인명피해','내용':d.damagePeople || getTextByIdForExcel('ds-damage-people')},
+      {'구분':'피해현황','항목':'재산피해','내용':d.damageProperty || getTextByIdForExcel('ds-damage-property')},
+      {'구분':'피해현황','항목':'기타피해','내용':d.damageNote || getTextByIdForExcel('ds-damage-note')}
+    ];
+  }
+
+  function getDisplayedSummaryRowsForExcel(){
+    var totalCountEl = document.getElementById('fb-total-count');
+    var pctEl = document.getElementById('fb-total-percent');
+    var memberEl = document.getElementById('fb-member-count');
+    return [
+      {'항목':'완료 현황','값': totalCountEl ? (totalCountEl.textContent || '').trim() : '-'},
+      {'항목':'전체 진행률','값': pctEl ? (pctEl.textContent || '').trim() : '-'},
+      {'항목':'지원반 및 통제단 활동 인원','값': memberEl ? (memberEl.textContent || '').replace(/\s+/g,' ').trim() : '-'},
+      {'항목':'엑셀 생성시각','값': new Date().toLocaleString()}
+    ];
+  }
+
+  function buildSummaryRowsForExcel(members){
+    return getDisplayedSummaryRowsForExcel();
+  }
+
+
+  function exportRealtimeExcel(){
+    try{
+      var members = window.lastFirebaseMembers || window.fbMembers || {};
+      var wb = XLSX.utils.book_new();
+
+      var wsSummary = XLSX.utils.json_to_sheet(buildSummaryRowsForExcel(members));
+      XLSX.utils.book_append_sheet(wb, wsSummary, '요약');
+
+      var wsDisaster = XLSX.utils.json_to_sheet(buildDisasterRowsForExcel());
+      XLSX.utils.book_append_sheet(wb, wsDisaster, '재난현황');
+
+      var wsMobilize = XLSX.utils.json_to_sheet(buildMobilizeRowsForExcel(members));
+      XLSX.utils.book_append_sheet(wb, wsMobilize, '소집인원');
+
+      var wsDetail = XLSX.utils.json_to_sheet(flattenRealtimeRowsForExcel(members));
+      XLSX.utils.book_append_sheet(wb, wsDetail, '활동내역');
+
+      [wsSummary, wsDisaster, wsMobilize, wsDetail].forEach(function(ws){
+        if(ws['!ref']){
+          var range = XLSX.utils.decode_range(ws['!ref']);
+          var widths = [];
+          for(var C=range.s.c; C<=range.e.c; ++C){ widths.push({wch:22}); }
+          ws['!cols'] = widths;
+        }
+      });
+
+      var fname = '긴급지원반_실시간현황_' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '.xlsx';
+      XLSX.writeFile(wb, fname);
+    }catch(e){
+      alert('엑셀 다운로드 중 오류가 발생했습니다: ' + e.message);
+    }
+  }
+
+
+  
+  function resetDisasterStatusOnFreshLoad(){
+    try{
+      if(!window.lastDisasterStatus || Object.keys(window.lastDisasterStatus||{}).length === 0){
+        renderDisasterStatus({});
+      }
+    }catch(e){}
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(resetDisasterStatusOnFreshLoad, 300); });
+  }else{
+    setTimeout(resetDisasterStatusOnFreshLoad, 300);
+  }
+
+  window.showDisasterEndModal=showDisasterEndModal;
+  window.hideDisasterEndModal=hideDisasterEndModal;
+  window.confirmDisasterEnd=confirmDisasterEnd;
+  window.exportRealtimeExcel=exportRealtimeExcel;
+
+  function getConfiguredTotalCount(){
+    var total = 0;
+    try{
+      if(window.ROLES){
+        Object.keys(ROLES).forEach(function(role){
+          var rd = ROLES[role];
+          if(!rd || !rd.phases) return;
+          rd.phases.forEach(function(ph){
+            (ph.items||[]).forEach(function(item){
+              total++;
+              if(item.subGroups && item.subGroups.length){
+                item.subGroups.forEach(function(grp){
+                  (grp.items||[]).forEach(function(){ total++; });
+                });
+              }else if(item.subs && item.subs.length){
+                item.subs.forEach(function(){ total++; });
+              }
+            });
+          });
+        });
+      }
+      var departCount = 0;
+      if(window.DEPART_ITEMS && DEPART_ITEMS.length) departCount = DEPART_ITEMS.length;
+      else if(window.departItems && departItems.length) departCount = departItems.length;
+      else {
+        var domDepart = document.querySelectorAll('#depart-items .depart-item, #depart-items .chk-item, #depart-items .sub-item');
+        departCount = domDepart ? domDepart.length : 0;
+      }
+      if(!departCount) departCount = 12;
+      total += departCount;
+    }catch(e){}
+    return total || 0;
+  }
+
+  
+  function getExcelDownloadTimeText(){ return formatTimeHHmmForExcel(new Date()); }
+
+function parseDateForExcel(v){
+    if(!v) return null;
+    if(v instanceof Date) return isNaN(v.getTime()) ? null : v;
+    var s = String(v).trim();
+    if(!s || s === '-') return null;
+
+    var d = new Date(s);
+    if(!isNaN(d.getTime())) return d;
+
+    try{
+      var now = new Date();
+      var y = now.getFullYear(), mo = now.getMonth()+1, da = now.getDate();
+
+      var mDate = s.match(/(\d{4})[.\-\/]\s*(\d{1,2})[.\-\/]\s*(\d{1,2})/);
+      if(mDate){ y = Number(mDate[1]); mo = Number(mDate[2]); da = Number(mDate[3]); }
+
+      var mTime = s.match(/(오전|오후)?\s*(\d{1,2})\s*[:시]\s*(\d{1,2})?/);
+      if(mTime){
+        var h = Number(mTime[2] || 0), mi = Number(mTime[3] || 0);
+        if(mTime[1] === '오후' && h < 12) h += 12;
+        if(mTime[1] === '오전' && h === 12) h = 0;
+        return new Date(y, mo-1, da, h, mi, 0);
+      }
+    }catch(e){}
+    return null;
+  }
+
+  
+  function formatTimeHHmmForExcel(v){
+    try{
+      var d = parseDateForExcel(v) || new Date();
+      var h = String(d.getHours()).padStart(2, '0');
+      var m = String(d.getMinutes()).padStart(2, '0');
+      return h + ':' + m;
+    }catch(e){
+      var now = new Date();
+      return String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    }
+  }
+
+  function formatDurationMs(ms){
+    if(!ms || ms < 0) return '-';
+    var totalMin = Math.max(1, Math.floor(ms / 60000));
+    var h = Math.floor(totalMin / 60);
+    var m = totalMin % 60;
+    if(h && m) return h + '시간 ' + m + '분';
+    if(h) return h + '시간';
+    return m + '분';
+  }
+
+  function getActivityDurationText(m){
+    try{
+      m = m || {};
+      var mt = m.mobilizeTime || m.mobilize || m.mobilization || {};
+      var starts = [
+        mt.essential,
+        mt.general,
+        m.essentialTime,
+        m.generalTime,
+        m.mobEssentialTime,
+        m.mobGeneralTime,
+        m.startedAt,
+        m.startTime
+      ].map(parseDateForExcel).filter(Boolean);
+
+      if(!starts.length) return '-';
+      var start = starts.sort(function(a,b){ return a.getTime() - b.getTime(); })[0];
+
+      var ends = [
+        m.completedAt,
+        m.activityEndTime,
+        m.endedAt,
+        m.endTime,
+        m.finishedAt
+      ].map(parseDateForExcel).filter(Boolean);
+
+      var end = ends.length ? ends.sort(function(a,b){ return b.getTime() - a.getTime(); })[0] : new Date();
+
+      return formatDurationMs(end.getTime() - start.getTime());
+    }catch(e){
+      return '-';
+    }
+  }
+
+
+  
+  function enforcePersonalChecklistView(){
+    try{
+      // 실시간 현황은 유지하고, 상단 체크리스트 영역은 현재 사용자 localStorage 기준으로만 보이게 한다.
+      // Firebase 다른 사용자 데이터가 상단 체크박스 DOM에 직접 반영되는 것을 방지하기 위한 후처리.
+      if(typeof loadState === 'function'){ loadState(); }
+      if(typeof updateProgress === 'function'){ updateProgress(); }
+      if(typeof updateDepartProgress === 'function'){ updateDepartProgress(); }
+      if(typeof updateSelectComplete === 'function'){ updateSelectComplete(); }
+    }catch(e){}
+  }
+
+function renderDashboard(members){
+    setTimeout(enforcePersonalChecklistView, 0);
+    window.lastFirebaseMembers = members || {};
+    members=activeMembers(members||{});
+    var keys=Object.keys(members||{});
+    var total=0, done=0;
+    keys.forEach(function(k){
+      var m=members[k] || {};
+      total += Number(m.total||0); done += Number(m.done||0);
+    });
+    var displayTotal = getConfiguredTotalCount() || total;
+    var pct=displayTotal ? Math.round(done/displayTotal*100) : 0;
+    var pctEl=document.getElementById('fb-total-percent');
+    var cntEl=document.getElementById('fb-total-count');
+    var bar=document.getElementById('fb-progress-fill');
+    var mem=document.getElementById('fb-member-count');
+if(pctEl) pctEl.textContent=pct+'%';
+    if(cntEl) cntEl.textContent=done+' / '+displayTotal+' 완료';
+    if(bar) bar.style.width=pct+'%';
+    var activeCount=0, essentialCount=0, generalCount=0;
+    Object.keys(members||{}).forEach(function(k){
+      var mm=members[k]||{};
+      var mt=mm.mobilizeTime||mm.mobilize||mm.mobilization||{};
+      var essentialOn=!!(mt.essential || mm.essential || mm.mobEssential || mm.isEssential);
+      var generalOn=!!(mt.general || mm.general || mm.mobGeneral || mm.isGeneral);
+      if(essentialOn || generalOn){
+        activeCount++;
+        if(essentialOn) essentialCount++;
+        if(generalOn) generalCount++;
+      }
+    });
+    if(mem) mem.innerHTML=activeCount+'명<br><span style="font-size:10px;font-weight:700;color:#6c757d">(필수 '+essentialCount+' / 일반 '+generalCount+')</span>';
+renderGroupBlocks(members);
+    buildRows(members);
+  }
+  function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function buildRows(members){
+    members=activeMembers(members||{});
+    var rows=[];
+    Object.keys(members||{}).forEach(function(k){
+      var m=members[k]||{};
+      var member=m.member||{};
+      var summaries=m.roleSummary||{};
+      Object.keys(summaries).forEach(function(r){
+        var s=summaries[r]||{};
+        rows.push({
+          세션ID:FB.sessionId,
+          소속:member.unit||'', 계급:member.rank||'', 성명:member.name||'',
+          구분:s.name||roleName(r), 완료수:s.done||0, 전체수:s.total||0,
+          완료율:(s.total?Math.round((s.done||0)/(s.total||1)*100):0)+'%',
+          필수요원소집:(m.mobilizeTime&&m.mobilizeTime.essential)||'',
+          일반요원소집:(m.mobilizeTime&&m.mobilizeTime.general)||'',
+          활동종료:m.activityEndTime||m.earlyEndTime||'',
+          최종저장:m.updatedAtText||''
+        });
+      });
+      if(!Object.keys(summaries).length){
+        rows.push({세션ID:FB.sessionId,소속:member.unit||'',계급:member.rank||'',성명:member.name||'',구분:roleName(m.currentRole),완료수:m.done||0,전체수:m.total||0,완료율:(m.percent||0)+'%',필수요원소집:(m.mobilizeTime&&m.mobilizeTime.essential)||'',일반요원소집:(m.mobilizeTime&&m.mobilizeTime.general)||'',활동종료:m.activityEndTime||m.earlyEndTime||'',최종저장:m.updatedAtText||''});
+      }
+    });
+    FB.rows=rows;
+  }
+  function downloadCSV(){
+    if(!FB.rows || !FB.rows.length){ alert('다운로드할 데이터가 없습니다. 먼저 체크 후 저장해 주세요.'); return; }
+    var headers=Object.keys(FB.rows[0]);
+    var csv='\ufeff'+headers.join(',')+'\n'+FB.rows.map(function(row){
+      return headers.map(function(h){ return '"'+String(row[h] == null ? '' : row[h]).replace(/"/g,'""')+'"'; }).join(',');
+    }).join('\n');
+    var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='긴급지원반_실시간체크결과_'+FB.sessionId+'.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); },1000);
+  }
+  function downloadExcel(){
+    if(!FB.rows || !FB.rows.length){ alert('다운로드할 데이터가 없습니다. 먼저 체크 후 저장해 주세요.'); return; }
+    if(!window.XLSX){ downloadCSV(); return; }
+    var ws=XLSX.utils.json_to_sheet(FB.rows);
+    var wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '체크결과');
+    XLSX.writeFile(wb, '긴급지원반_실시간체크결과_'+FB.sessionId+'.xlsx');
+  }
+  window.downloadFirebaseCSV=downloadCSV;
+  window.downloadFirebaseExcel=downloadExcel;
+
+  function addDashboard(){
+    if(document.getElementById('fb-dashboard')) return;
+    var anchor=document.querySelector('.select-footer') || document.querySelector('.select-action-bar');
+    if(!anchor) return;
+    var box=document.createElement('div');
+    box.className='fb-dashboard';
+    box.id='fb-dashboard';
+    box.innerHTML=''+
+      '<div class="fb-dashboard-head"><div class="fb-dashboard-title">📡 실시간 현황</div><div class="fb-dashboard-status" id="fb-status">연결 대기</div></div>'+ 
+      '<div class="fb-dashboard-body">'+
+        
+        '<div class="fb-summary-grid">'+
+          '<div class="fb-summary-card"><div class="label">완료 현황</div><div class="value" id="fb-total-count">0 / 0 완료</div></div>'+ 
+          '<div class="fb-summary-card"><div class="label">전체 진행률</div><div class="value" id="fb-total-percent">0%</div><div class="fb-card-progress-bg"><div class="fb-card-progress-fill" id="fb-progress-fill"></div></div></div>'+ 
+          '<div class="fb-summary-card"><div class="label">지원반 및 통제단<br>활동 인원</div><div class="value" id="fb-member-count">0명</div></div>'+ 
+        '</div>'+ 
+        '<div class="fb-acc fb-fixed">'+ 
+          '<div class="fb-fixed-summary">📊 재난현황 <span class="fb-acc-desc">전원 열람 · 담당자 수정</span></div>'+ 
+          '<div class="fb-acc-body">'+
+            '<div class="fb-disaster-grid">'+
+              '<div class="fb-disaster-section"><div class="fb-disaster-title">👤 인명구조현황</div><div class="fb-disaster-kv"><div>구조대상자<strong id="ds-rescue-required">-</strong></div><div>구조완료<strong id="ds-rescue-done">-</strong></div><div>이송현황<strong id="ds-rescue-transport">-</strong></div><div>분류현황<strong id="ds-rescue-triage">-</strong></div></div></div>'+ 
+              '<div class="fb-disaster-section"><div class="fb-disaster-title">🚒 자원관리현황</div><div class="fb-disaster-kv"><div>동원인원<strong id="ds-resource-personnel">-</strong></div><div>동원차량<strong id="ds-resource-vehicles">-</strong></div><div>주요장비<strong id="ds-resource-equipment">-</strong></div><div>유관기관<strong id="ds-resource-agencies">-</strong></div></div></div>'+ 
+              '<div class="fb-disaster-section"><div class="fb-disaster-title">🏢 피해현황</div><div class="fb-disaster-kv"><div>인명피해<strong id="ds-damage-people">-</strong></div><div>재산피해<strong id="ds-damage-property">-</strong></div><div class="fb-kv-wide">기타피해<strong id="ds-damage-note">-</strong></div></div></div>'+ 
+            '</div>'+ 
+            '<div class="fb-disaster-meta" id="ds-meta">최종 수정: 미저장</div>'+ 
+            '<div class="fb-btns"><button class="fb-btn" onclick="toggleDisasterEdit()">재난현황 수정</button></div>'+ 
+            '<div class="fb-edit-panel" id="fb-disaster-edit">'+
+              '<div class="fb-edit-title">재난현황 입력 · 수정 권장 담당: 지원반장/현장지휘부/대응계획부</div>'+ 
+              '<div class="fb-edit-grid">'+
+                '<div class="fb-edit-field"><label>구조대상자</label><input id="input-rescueRequired" placeholder="예: 5명"></div>'+ 
+                '<div class="fb-edit-field"><label>구조완료</label><input id="input-rescueDone" placeholder="예: 3명"></div>'+ 
+                '<div class="fb-edit-field"><label>이송현황</label><input id="input-rescueTransport" placeholder="예: 병원 이송 2명"></div><div class="fb-edit-field"><label>분류현황</label><input id="input-rescueTriage" placeholder="예: 중상1 경상2"></div>'+ 
+                '<div class="fb-edit-field"><label>동원인원</label><input id="input-resourcePersonnel" placeholder="예: 45명"></div>'+ 
+                '<div class="fb-edit-field"><label>동원차량</label><input id="input-resourceVehicles" placeholder="예: 12대"></div>'+ 
+                '<div class="fb-edit-field"><label>주요장비</label><input id="input-resourceEquipment" placeholder="예: 드론1, 구조차1"></div>'+ 
+                '<div class="fb-edit-field"><label>유관기관</label><input id="input-resourceAgencies" placeholder="예: 경찰, 시청"></div>'+ 
+                '<div class="fb-edit-field"><label>인명피해</label><input id="input-damagePeople" placeholder="예: 사망0 부상2"></div>'+ 
+                '<div class="fb-edit-field"><label>재산피해</label><input id="input-damageProperty" placeholder="예: 건물 1동, 차량 3대"></div>'+ 
+                '<div class="fb-edit-field"><label>기타피해</label><input id="input-damageNote" placeholder="예: 정전, 도로통제"></div>'+ 
+              '</div>'+ 
+              '<div class="fb-btns"><button class="fb-btn" onclick="saveDisasterStatus()">재난현황 저장</button><button class="fb-btn" onclick="toggleDisasterEdit()">닫기</button></div>'+ 
+            '</div>'+ 
+          '</div>'+ 
+        '</details>'+ 
+        '<details class="fb-acc"><summary>🚒 긴급구조현장지휘대 지원반 <span class="fb-acc-desc"></span></summary><div class="fb-acc-body" id="fb-support-group"></div></details>'+ 
+        '<details class="fb-acc"><summary>🧭 긴급구조통제단 <span class="fb-acc-desc"></span></summary><div class="fb-acc-body" id="fb-control-group"></div></details>'+ 
+        '<div class="fb-btns"><button class="fb-btn" onclick="exportRealtimeExcel()">엑셀 다운로드</button><button class="fb-btn danger" onclick="showDisasterEndModal()">재난종료</button></div>'+ 
+        '<div class="fb-modal-backdrop" id="fb-end-modal"><div class="fb-modal"><div class="fb-modal-body"><div class="fb-modal-icon">⚠️</div><div class="fb-modal-msg">재난활동을 종료합니다.<br>저장된 현황이 초기화됩니다.</div></div><div class="fb-modal-actions"><button class="fb-modal-cancel" onclick="hideDisasterEndModal()">취소</button><button class="fb-modal-confirm" onclick="confirmDisasterEnd()">확인</button></div></div></div>'+ 
+      '</div>';
+    anchor.parentNode.insertBefore(box, anchor);
+    var sid=document.getElementById('fb-session-id'); if(sid) sid.textContent=FB.sessionId || getSessionId();
+    renderDisasterStatus(FB.disasterStatus||{});
+    renderGroupBlocks(FB.lastSnapshot||{});
+  }
+  function wrapSaveState(){
+    if(typeof window.saveState !== 'function') return;
+    if(window.saveState._firebaseWrapped) return;
+    var original=window.saveState;
+    window.saveState=function(){
+      var res=original.apply(this, arguments);
+      setTimeout(saveFirebaseState, 80);
+      return res;
+    };
+    window.saveState._firebaseWrapped=true;
+  }
+  function init(){
+    FB.sessionId=getSessionId();
+    addDashboard();
+    initFirebase();
+    wrapSaveState();
+    setTimeout(saveFirebaseState, 600);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
 </script>
 
 <script>
