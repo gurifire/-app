@@ -430,6 +430,347 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 
 @media (min-width:720px){.fb-disaster-grid{grid-template-columns:1fr 1fr 1fr}.fb-summary-grid{grid-template-columns:repeat(3,1fr)}}
 
+
+/* V45_19: 모바일 세로화면 재난현황 수정창 폭 보정 */
+@media (max-width: 640px){
+  .fb-disaster-edit,
+  #fb-disaster-edit,
+  .fb-edit-panel{
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .fb-edit-grid,
+  .fb-disaster-edit-grid,
+  .fb-edit-fields{
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .fb-edit-field,
+  .fb-edit-field input,
+  .fb-edit-field textarea,
+  .fb-edit-field select{
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .fb-btns{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .fb-btns .fb-btn,
+  .fb-btns button{
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+
+/* V45_20: 재난현황 수정 버튼 폭 복원 + 접이식 목록 스크롤 */
+@media (max-width: 640px){
+  /* 재난현황 카드 하단의 '재난현황 수정' 단독 버튼은 전체 폭 유지 */
+  .fb-acc-body > .fb-btns{
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+  }
+
+  .fb-acc-body > .fb-btns > .fb-btn,
+  .fb-acc-body > .fb-btns > button{
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* 재난현황 입력창 안의 저장/닫기 버튼은 기존처럼 2개 한 줄 유지 */
+  .fb-disaster-edit .fb-btns,
+  #fb-disaster-edit .fb-btns,
+  .fb-edit-panel .fb-btns{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* 지원반·통제단 접이식 펼침 시 화면이 너무 길어지지 않도록 스크롤 적용 */
+#fb-support-group[open] > .fb-acc-body,
+#fb-control-group[open] > .fb-acc-body{
+  max-height: 520px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 6px;
+}
+
+@media (max-width: 640px){
+  #fb-support-group[open] > .fb-acc-body,
+  #fb-control-group[open] > .fb-acc-body{
+    max-height: 430px;
+  }
+}
+
+
+/* V45_21: 지원반·통제단 펼침 영역 스크롤 강제 적용 */
+#fb-support-group[open],
+#fb-control-group[open]{
+  overflow: hidden !important;
+}
+
+/* details 내부 body 자체 제한 */
+#fb-support-group[open] .fb-acc-body,
+#fb-control-group[open] .fb-acc-body{
+  max-height: 520px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+  padding-right: 6px !important;
+}
+
+/* 실제 완료 항목들이 들어가는 내부 컨테이너가 따로 있을 때도 제한 */
+#fb-support-group[open] .fb-ro-section,
+#fb-control-group[open] .fb-ro-section,
+#fb-support-group[open] .fb-ro-group,
+#fb-control-group[open] .fb-ro-group,
+#fb-support-group[open] .fb-group-blocks,
+#fb-control-group[open] .fb-group-blocks,
+#fb-support-group[open] .fb-role-block,
+#fb-control-group[open] .fb-role-block{
+  max-height: 420px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+}
+
+/* 스크롤이 생겼다는 느낌이 나도록 여백 보정 */
+#fb-support-group[open] .fb-acc-body::-webkit-scrollbar,
+#fb-control-group[open] .fb-acc-body::-webkit-scrollbar,
+#fb-support-group[open] .fb-ro-section::-webkit-scrollbar,
+#fb-control-group[open] .fb-ro-section::-webkit-scrollbar{
+  width: 6px;
+}
+
+@media (max-width: 640px){
+  #fb-support-group[open] .fb-acc-body,
+  #fb-control-group[open] .fb-acc-body{
+    max-height: 360px !important;
+  }
+
+  #fb-support-group[open] .fb-ro-section,
+  #fb-control-group[open] .fb-ro-section,
+  #fb-support-group[open] .fb-ro-group,
+  #fb-control-group[open] .fb-ro-group,
+  #fb-support-group[open] .fb-group-blocks,
+  #fb-control-group[open] .fb-group-blocks,
+  #fb-support-group[open] .fb-role-block,
+  #fb-control-group[open] .fb-role-block{
+    max-height: 320px !important;
+  }
+}
+
+
+/* V45_23: 펼친 항목의 상단 제목은 고정, 하위항목만 내부 스크롤 */
+@media (max-width: 768px){
+  /* 지원반/통제단 전체 펼침 영역이 화면을 과도하게 밀지 않도록 제한 */
+  #fb-support-group[open] > .fb-acc-body,
+  #fb-control-group[open] > .fb-acc-body{
+    max-height: 70vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+
+  /* 각 하위 접이식 항목의 제목줄은 위에 고정 */
+  #fb-support-group details > summary,
+  #fb-control-group details > summary,
+  #fb-support-group .fb-sub-title,
+  #fb-control-group .fb-sub-title,
+  #fb-support-group .fb-phase-title,
+  #fb-control-group .fb-phase-title{
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 5 !important;
+    background: #fff !important;
+  }
+
+  /* 하위항목 카드/목록이 길어질 경우 내부 스크롤 */
+  #fb-support-group details[open],
+  #fb-control-group details[open]{
+    max-height: 360px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+
+  /* 세부 항목 리스트 영역 보정 */
+  #fb-support-group .fb-acc-body details[open],
+  #fb-control-group .fb-acc-body details[open],
+  #fb-support-group .fb-item-list,
+  #fb-control-group .fb-item-list,
+  #fb-support-group .fb-ro-list,
+  #fb-control-group .fb-ro-list,
+  #fb-support-group .fb-check-list,
+  #fb-control-group .fb-check-list{
+    max-height: 320px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+}
+
+/* PC/태블릿에서도 너무 길어지는 경우 보정 */
+@media (min-width: 769px){
+  #fb-support-group details[open],
+  #fb-control-group details[open]{
+    max-height: 520px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  #fb-support-group details > summary,
+  #fb-control-group details > summary{
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #fff;
+  }
+}
+
+
+/* V45_24: 요원별 임무 선택 펼침 영역 전용 내부 스크롤 */
+@media (max-width: 768px){
+  /* '요원별 임무 선택' 카드가 열렸을 때 카드 자체가 너무 길어지지 않도록 제한 */
+  .personnel-select-panel.open,
+  .member-select-panel.open,
+  .role-select-panel.open,
+  .crew-select-panel.open,
+  .agent-select-panel.open,
+  #personnelSelect.open,
+  #memberSelect.open,
+  #roleSelect.open,
+  #crewSelect.open,
+  #agentSelect.open{
+    max-height: 520px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+
+  /* 요원 선택 목록 영역만 스크롤 */
+  .personnel-select-list,
+  .member-select-list,
+  .role-select-list,
+  .crew-select-list,
+  .agent-select-list,
+  .personnel-list,
+  .member-list,
+  .role-list,
+  .crew-list,
+  .agent-list{
+    max-height: 430px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    padding-right: 4px !important;
+  }
+
+  /* 제목 영역은 상단에 고정 */
+  .personnel-select-panel .select-header,
+  .member-select-panel .select-header,
+  .role-select-panel .select-header,
+  .crew-select-panel .select-header,
+  .agent-select-panel .select-header,
+  .personnel-select-panel .section-header,
+  .member-select-panel .section-header,
+  .role-select-panel .section-header,
+  .crew-select-panel .section-header,
+  .agent-select-panel .section-header{
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 20 !important;
+    background: #fff !important;
+  }
+}
+
+
+/* V45_25: 출동단계 카드 전용 내부 스크롤 */
+@media (max-width:768px){
+  .depart-card{
+    max-height:420px !important;
+    overflow:hidden !important;
+  }
+
+  .depart-header{
+    position:sticky !important;
+    top:0 !important;
+    z-index:20 !important;
+  }
+
+  .depart-items{
+    max-height:340px !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+  }
+}
+
+
+/* V45_26: 마지막 결과화면 접이식 카드 내부 스크롤 */
+@media (max-width:768px){
+  #screen-review .review-accordion[open]{
+    max-height:420px !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+  }
+
+  #screen-review .review-accordion[open] > summary{
+    position:sticky !important;
+    top:0 !important;
+    z-index:30 !important;
+    background:#fff !important;
+  }
+
+  #screen-review .review-accordion-body{
+    max-height:340px !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+  }
+}
+
+/* 캡처 중에는 결과화면 스크롤 제한을 해제하여 전체 내용 저장 */
+body.capturing-review #screen-review .review-accordion,
+body.capturing-review #screen-review .review-accordion[open],
+body.capturing-review #screen-review .review-accordion-body{
+  max-height:none !important;
+  overflow:visible !important;
+}
+
+body.capturing-review #screen-review .review-accordion[open] > summary{
+  position:static !important;
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -585,6 +926,7 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 
 // ── 결과화면 캡처
 function captureScreen(){
+  document.body.classList.add('capturing-review');
   var loading = document.getElementById('capture-loading');
   if(loading) loading.textContent = '📸 저장 중...';
 
@@ -659,6 +1001,7 @@ function captureScreen(){
         else d.el.removeAttribute('style');
       });
       btns.forEach(function(b){ b.style.display=''; });
+      document.body.classList.remove('capturing-review');
 
       // PNG 저장
       var now = new Date();
@@ -689,6 +1032,7 @@ function captureScreen(){
         else d.el.removeAttribute('style');
       });
       btns.forEach(function(b){ b.style.display=''; });
+      document.body.classList.remove('capturing-review');
       if(loading) loading.textContent = '❌ 캡처 실패. 다시 시도해주세요.';
     });
   }, 200);
@@ -4116,7 +4460,7 @@ renderGroupBlocks(members);
             '<div class="fb-disaster-meta" id="ds-meta">최종 수정: 미저장</div>'+ 
             '<div class="fb-btns"><button class="fb-btn" onclick="toggleDisasterEdit()">재난현황 수정</button></div>'+ 
             '<div class="fb-edit-panel" id="fb-disaster-edit">'+
-              '<div class="fb-edit-title">재난현황 입력 · 수정 권장 담당: 지원반장/현장지휘부/대응계획부</div>'+ 
+              '<div class="fb-edit-title">담당 요원만 재난현황 입력 · 수정</div>'+ 
               '<div class="fb-edit-grid">'+
                 '<div class="fb-edit-field"><label>구조대상자</label><input id="input-rescueRequired" placeholder="예: 5명"></div>'+ 
                 '<div class="fb-edit-field"><label>구조완료</label><input id="input-rescueDone" placeholder="예: 3명"></div>'+ 
@@ -4336,6 +4680,169 @@ if('serviceWorker' in navigator){
     });
   });
 }
+
+
+// V45_22: 요원/부 선택 화면 진입 전 위치 저장 및 뒤로가기 복원
+(function(){
+  if(window.__restoreReturnScrollPatched) return;
+  window.__restoreReturnScrollPatched = true;
+
+  var KEY = "guri_last_main_scroll_y";
+
+  function saveMainScrollPosition(){
+    try{
+      var y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      sessionStorage.setItem(KEY, String(y));
+    }catch(e){}
+  }
+
+  function restoreMainScrollPosition(){
+    try{
+      var saved = sessionStorage.getItem(KEY);
+      if(saved !== null && saved !== ""){
+        var y = parseInt(saved, 10);
+        if(!isNaN(y)){
+          setTimeout(function(){ window.scrollTo(0, y); }, 0);
+          setTimeout(function(){ window.scrollTo(0, y); }, 120);
+          setTimeout(function(){ window.scrollTo(0, y); }, 300);
+        }
+      }
+    }catch(e){}
+  }
+
+  // 클릭 또는 터치로 요원/부 화면에 들어가기 직전 현재 위치 저장
+  document.addEventListener("click", function(e){
+    try{
+      var el = e.target && e.target.closest ? e.target.closest("button, .role-card, .dept-card, .part-card, .menu-card, .card, [data-role], [data-dept], [onclick]") : null;
+      if(!el) return;
+      var txt = (el.textContent || "") + " " + (el.getAttribute("onclick") || "") + " " + (el.getAttribute("data-role") || "") + " " + (el.getAttribute("data-dept") || "");
+      if(/지원반|통제단|현장지휘부|대응계획부|자원지원부|긴급구조현장지휘대|긴급구조통제단|지원반장|출동단계|요원/.test(txt)){
+        saveMainScrollPosition();
+      }
+    }catch(err){}
+  }, true);
+
+  document.addEventListener("touchstart", function(e){
+    try{
+      var el = e.target && e.target.closest ? e.target.closest("button, .role-card, .dept-card, .part-card, .menu-card, .card, [data-role], [data-dept], [onclick]") : null;
+      if(!el) return;
+      var txt = (el.textContent || "") + " " + (el.getAttribute("onclick") || "") + " " + (el.getAttribute("data-role") || "") + " " + (el.getAttribute("data-dept") || "");
+      if(/지원반|통제단|현장지휘부|대응계획부|자원지원부|긴급구조현장지휘대|긴급구조통제단|지원반장|출동단계|요원/.test(txt)){
+        saveMainScrollPosition();
+      }
+    }catch(err){}
+  }, true);
+
+  // 브라우저/휴대폰 뒤로가기로 첫 화면 복귀 시 저장 위치 복원
+  window.addEventListener("popstate", function(){
+    setTimeout(restoreMainScrollPosition, 80);
+  });
+
+  window.addEventListener("pageshow", function(){
+    setTimeout(restoreMainScrollPosition, 120);
+  });
+
+  // 기존 앱 내부 뒤로가기 함수가 있다면 감싸서 복원
+  ["goBack","backToMain","showMain","showHome","returnHome","closeRole","closeDept"].forEach(function(fn){
+    try{
+      if(typeof window[fn] === "function" && !window[fn].__scrollRestoreWrapped){
+        var original = window[fn];
+        var wrapped = function(){
+          var result = original.apply(this, arguments);
+          setTimeout(restoreMainScrollPosition, 120);
+          return result;
+        };
+        wrapped.__scrollRestoreWrapped = true;
+        window[fn] = wrapped;
+      }
+    }catch(e){}
+  });
+
+  window.guriSaveMainScrollPosition = saveMainScrollPosition;
+  window.guriRestoreMainScrollPosition = restoreMainScrollPosition;
+})();
+
+
+
+// V45_24: '요원별 임무 선택' 카드에만 내부 스크롤 클래스 자동 부여
+(function(){
+  if(window.__personnelSelectScrollPatched) return;
+  window.__personnelSelectScrollPatched = true;
+
+  function findCardFromTitle(el){
+    var cur = el;
+    for(var i=0; i<8 && cur; i++, cur=cur.parentElement){
+      if(!cur) break;
+      var txt = cur.textContent || "";
+      if(txt.indexOf("요원별 임무 선택") >= 0 && (
+        cur.classList.contains("card") ||
+        cur.classList.contains("section") ||
+        cur.classList.contains("panel") ||
+        cur.classList.contains("accordion") ||
+        cur.querySelectorAll("div,button").length > 5
+      )){
+        return cur;
+      }
+    }
+    return null;
+  }
+
+  function applyPersonnelScroll(){
+    try{
+      var all = Array.prototype.slice.call(document.querySelectorAll("body *"));
+      var titleEl = null;
+      for(var i=0;i<all.length;i++){
+        var t = (all[i].textContent || "").trim();
+        if(t.indexOf("요원별 임무 선택") >= 0 && t.length < 80){
+          titleEl = all[i];
+          break;
+        }
+      }
+      if(!titleEl) return;
+
+      var card = findCardFromTitle(titleEl);
+      if(!card) return;
+      card.classList.add("personnel-select-panel");
+
+      // 펼쳐진 상태 판별: 내부에 현장지휘요원 등 하위 요원 카드가 있으면 open 처리
+      var cardText = card.textContent || "";
+      if(/현장지휘요원|자원지원요원|통신지원요원|안전관리요원|상황조사요원|오염통제요원/.test(cardText)){
+        card.classList.add("open");
+
+        // 제목 부분 이후 실제 목록을 감싸는 가장 적절한 내부 컨테이너 탐색
+        var children = Array.prototype.slice.call(card.children || []);
+        var best = null;
+        children.forEach(function(ch){
+          var ct = ch.textContent || "";
+          if(/현장지휘요원|자원지원요원|통신지원요원|안전관리요원|상황조사요원|오염통제요원/.test(ct)){
+            if(!best || ct.length > (best.textContent||"").length) best = ch;
+          }
+        });
+        if(best && best !== card){
+          best.classList.add("personnel-select-list");
+        }
+      }else{
+        card.classList.remove("open");
+      }
+    }catch(e){}
+  }
+
+  document.addEventListener("click", function(){
+    setTimeout(applyPersonnelScroll, 80);
+    setTimeout(applyPersonnelScroll, 250);
+  }, true);
+
+  document.addEventListener("DOMContentLoaded", function(){
+    setTimeout(applyPersonnelScroll, 200);
+  });
+
+  window.addEventListener("pageshow", function(){
+    setTimeout(applyPersonnelScroll, 200);
+  });
+
+  setInterval(applyPersonnelScroll, 1200);
+})();
+
 </script>
 
 </body>
