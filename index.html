@@ -771,6 +771,30 @@ body.capturing-review #screen-review .review-accordion[open] > summary{
   position:static !important;
 }
 
+
+/* V45_28: 비상소집 저장 버튼 */
+.mob-save-btn{
+  width:100%;
+  font-size:13px;
+  font-weight:800;
+  color:white;
+  background:#C0392B;
+  border:none;
+  border-radius:10px;
+  padding:10px 12px;
+  cursor:pointer;
+  font-family:inherit;
+}
+.mob-save-btn:disabled{
+  background:#CCC;
+  color:white;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+.mob-save-btn:not(:disabled):active{
+  transform:scale(0.98);
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -864,13 +888,21 @@ body.capturing-review #screen-review .review-accordion[open] > summary{
 
   function currentMemberKeyForStorage(){
     try{
-      var unit = (document.getElementById('member-unit') || {}).value || '미입력';
-      var rank = (document.getElementById('member-rank') || {}).value || '';
-      var name = (document.getElementById('member-name') || {}).value || '';
-      var device = (typeof getDeviceId === 'function') ? getDeviceId() : 'device';
-      return [unit, rank, name || ('응소확인_' + String(device).slice(-6))].join('_');
+      var device = 'device';
+      if(typeof getStableDeviceId === 'function'){
+        device = getStableDeviceId();
+      }else{
+        var k='guri_stable_device_id';
+        var v=localStorage.getItem(k);
+        if(!v){
+          v='dev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);
+          localStorage.setItem(k,v);
+        }
+        device = v;
+      }
+      return 'device_' + String(device).replace(/[.#$\/[\]\s]/g,'_');
     }catch(e){
-      return '미입력_응소확인';
+      return 'device_local_only';
     }
   }
 
@@ -878,6 +910,7 @@ body.capturing-review #screen-review .review-accordion[open] > summary{
     key = String(key || '');
     if(key.indexOf('firebase') >= 0 || key.indexOf('disaster') >= 0 || key.indexOf('session') >= 0) return false;
     return (
+      key === 'guri_checklist_state' ||
       key.indexOf('checked') >= 0 ||
       key.indexOf('checkState') >= 0 ||
       key.indexOf('roleState') >= 0 ||
@@ -902,6 +935,7 @@ body.capturing-review #screen-review .review-accordion[open] > summary{
     var pk = personalKey(key);
     var v = rawGet(pk);
     if(v !== null) return v;
+    // V45_31: 체크 상태 관련 키는 공용 원본 키로 fallback 금지
     if(shouldPersonalizeKey(key)) return null;
     return rawGet(key);
   };
@@ -1126,7 +1160,7 @@ function captureScreen(){
         </div>
       </div>
       <div class="mob-footer">
-        <button class="mob-reset-btn" onclick="resetMobilize()">↺ 초기화</button>
+        <button class="mob-save-btn" id="mob-save-btn" onclick="saveMobilizeRegistration()" disabled>저장</button>
       </div>
     </div>
     <div class="select-divider">
@@ -1885,6 +1919,7 @@ document.addEventListener('DOMContentLoaded', function(){
       }
       showScreen('list');
       if(typeof restoreChecklist === 'function') restoreChecklist();
+      if(typeof enforcePersonalChecklistView === 'function') enforcePersonalChecklistView();
       if(typeof updateProgress === 'function') updateProgress();
     }catch(e){}
     window.guriSuppressHistoryPush = false;
@@ -2002,6 +2037,49 @@ document.addEventListener('DOMContentLoaded', function(){
 
 // ── 비상소집 상태
 var mobilizeTime = { essential: null, general: null };
+// V45_28: 비상소집 저장 버튼을 누른 경우에만 Firebase 활동인원에 반영
+var mobilizeRegistrationSaved = false;
+
+
+function updateMobilizeSaveButton(){
+  var btn = document.getElementById('mob-save-btn');
+  if(!btn) return;
+
+  var unit  = (document.getElementById('member-unit')||{}).value || '';
+  var rank  = (document.getElementById('member-rank') ? document.getElementById('member-rank').value : '') || '';
+  var mname = (document.getElementById('member-name')||{}).value || '';
+  var mobilizeOk = !!(mobilizeTime.essential || mobilizeTime.general);
+  var ok = !!(unit.trim() && rank && mname.trim() && mobilizeOk);
+
+  // 저장 후 입력값을 지우거나 비상소집 체크를 해제하면 활동인원에서 즉시 제거
+  if(!ok && mobilizeRegistrationSaved){
+    mobilizeRegistrationSaved = false;
+    try{ localStorage.removeItem('guri_mobilize_registration_saved'); }catch(e){}
+    if(typeof saveFirebaseState === 'function') saveFirebaseState(true);
+  }
+
+  btn.disabled = !ok;
+  btn.textContent = mobilizeRegistrationSaved ? '저장 완료' : '저장';
+}
+
+function saveMobilizeRegistration(){
+  var unit  = (document.getElementById('member-unit')||{}).value || '';
+  var rank  = (document.getElementById('member-rank') ? document.getElementById('member-rank').value : '') || '';
+  var mname = (document.getElementById('member-name')||{}).value || '';
+  var mobilizeOk = !!(mobilizeTime.essential || mobilizeTime.general);
+
+  if(!(unit.trim() && rank && mname.trim() && mobilizeOk)){
+    updateMobilizeSaveButton();
+    return;
+  }
+
+  mobilizeRegistrationSaved = true;
+  try{ localStorage.setItem('guri_mobilize_registration_saved', 'Y'); }catch(e){}
+  updateMobilizeSaveButton();
+
+  if(typeof saveState === 'function') saveState();
+  if(typeof saveFirebaseState === 'function') saveFirebaseState(true);
+}
 
 function toggleMobilize(type){
   var other = (type === 'essential') ? 'general' : 'essential';
@@ -2024,10 +2102,12 @@ function toggleMobilize(type){
     out.textContent = t;
     if(otherItem) otherItem.classList.add('disabled');
   }
-  if(typeof saveFirebaseState==='function'){ setTimeout(saveFirebaseState,0); }
+  updateMobilizeSaveButton();
 }
 
 function resetMobilize(){
+  mobilizeRegistrationSaved = false;
+  try{ localStorage.removeItem('guri_mobilize_registration_saved'); }catch(e){}
   ['essential','general'].forEach(function(type){
     mobilizeTime[type] = null;
     var chk = document.getElementById('mob-chk-' + type);
@@ -2038,7 +2118,8 @@ function resetMobilize(){
     if(item) item.classList.remove('disabled');
   });
   activityEndTime = null;
-  if(typeof saveFirebaseState==='function'){ setTimeout(saveFirebaseState,0); }
+  if(typeof saveFirebaseState === 'function') saveFirebaseState(true);
+  updateMobilizeSaveButton();
 }
 
 var currentRole = null;
@@ -2293,6 +2374,7 @@ function updateSelectBtn(){
     }
   }
   // 체크리스트 화면 임무완료 버튼도 동기화
+  updateMobilizeSaveButton();
   updateProgress();
 }
 
@@ -2327,6 +2409,7 @@ function showScreen(id){
       }
     });
     updateSelectBtn();
+    updateMobilizeSaveButton();
   }
   if(id === 'list'){
     // 체크리스트 화면 진입 시에도 입력 필드 변경 감지해서 임무완료 버튼 갱신
@@ -2361,7 +2444,7 @@ function resetForRole(){
   withdrawalSids = [];
 }
 
-function reset(){ checkedIds.clear(); completedTime = null; parentToSubs = {}; activityEndTime = null; withdrawalSids = []; earlyEndTime = null; departCardOpen=false; roleSelectOpen=false; var dw=document.getElementById('depart-sub-wrap'); if(dw){ dw.style.display='none'; dw.style.pointerEvents=''; dw.style.opacity=''; } var da2=document.getElementById('depart-role-area'); if(da2) da2.classList.remove('disabled'); var da=document.getElementById('depart-arrow'); if(da) da.textContent='›'; var rsl=document.getElementById('role-select-list'); if(rsl) rsl.style.display='none'; var rsa=document.getElementById('role-select-arrow'); if(rsa) rsa.textContent='›';
+function reset(){ mobilizeRegistrationSaved = false; try{ localStorage.removeItem('guri_mobilize_registration_saved'); }catch(e){} if(typeof saveFirebaseState === 'function') saveFirebaseState(true); updateMobilizeSaveButton(); checkedIds.clear(); completedTime = null; parentToSubs = {}; activityEndTime = null; withdrawalSids = []; earlyEndTime = null; departCardOpen=false; roleSelectOpen=false; var dw=document.getElementById('depart-sub-wrap'); if(dw){ dw.style.display='none'; dw.style.pointerEvents=''; dw.style.opacity=''; } var da2=document.getElementById('depart-role-area'); if(da2) da2.classList.remove('disabled'); var da=document.getElementById('depart-arrow'); if(da) da.textContent='›'; var rsl=document.getElementById('role-select-list'); if(rsl) rsl.style.display='none'; var rsa=document.getElementById('role-select-arrow'); if(rsa) rsa.textContent='›';
   // 출동단계 부모 체크 초기화
   var ch=document.getElementById('chief-role-area'); if(ch) ch.classList.remove('disabled');
   var dp=document.getElementById('depart-parent'); if(dp) dp.classList.remove('checked');
@@ -2416,6 +2499,8 @@ function selectRole(role){
   buildChecklist(rd);
   showScreen('list');
   restoreChecklist();
+  setTimeout(enforcePersonalChecklistView, 0);
+  setTimeout(enforcePersonalChecklistView, 120);
   // 체크리스트 화면에서도 입력 필드 변경 시 임무완료 버튼 갱신
   ['member-unit','member-rank','member-name'].forEach(function(fid){
     var el = document.getElementById(fid);
@@ -3326,6 +3411,7 @@ function restoreSelectScreen(){
 
   // 임무완료 버튼 상태 갱신
   updateSelectBtn();
+  updateMobilizeSaveButton();
 }
 
 function restoreChecklist(){
@@ -3401,7 +3487,8 @@ function restoreChecklist(){
     db:null,
     sessionId:null,
     rows:[],
-    lastSnapshot:null
+    lastSnapshot:null,
+    deviceMemberKey:null
   };
   window.GURI_FIREBASE = FB;
 
@@ -3409,6 +3496,19 @@ function restoreChecklist(){
   function todaySessionId(){
     // V45_27: 브라우저 접속과 설치앱(PWA)이 항상 같은 Firebase 실시간 방을 보도록 세션ID 고정
     return 'guri_checklist_live';
+  }
+  function getStableDeviceId(){
+    try{
+      var k='guri_stable_device_id';
+      var v=localStorage.getItem(k);
+      if(!v){
+        v='dev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);
+        localStorage.setItem(k,v);
+      }
+      return v;
+    }catch(e){
+      return 'dev_fallback';
+    }
   }
   function safeKey(s){
     s = (s || '미입력').toString().trim() || '미입력';
@@ -3434,6 +3534,7 @@ function restoreChecklist(){
     return safeKey(key);
   }
   function isValidMemberRecord(record, key){
+    if(!record || record.registrationSaved !== true) return false;
     var m=(record && record.member) || {};
     if(!m.name || !String(m.name).trim()) return false;
     if(String(key||'').indexOf('미입력_') === 0) return false;
@@ -3497,6 +3598,7 @@ function restoreChecklist(){
     var sum=computeLocalSummary(state);
     return {
       member:m,
+      registrationSaved: !!mobilizeRegistrationSaved,
       currentRole:(window.currentRole || state.currentRole || ''),
       mobilizeTime:(window.mobilizeTime || state.mobilizeTime || {}),
       earlyEndTime:(window.earlyEndTime || state.earlyEndTime || null),
@@ -3522,6 +3624,7 @@ function restoreChecklist(){
       FB.db=firebase.database();
       FB.ready=true;
       FB.sessionId=getSessionId();
+      try{ FB.deviceMemberKey = localStorage.getItem('guri_fb_device_member_key') || null; }catch(e0){}
       setStatus('연결 준비 완료');
       listenSession();
     }catch(e){
@@ -3529,11 +3632,37 @@ function restoreChecklist(){
       setStatus('연결 오류');
     }
   }
-  function saveFirebaseState(){
+  function saveFirebaseState(force){
     if(!FB.ready || !FB.db) return;
     try{
+      var member=getMemberInfo();
+      var hasRequired=!!(String(member.unit||'').trim() && String(member.rank||'').trim() && String(member.name||'').trim() && (window.mobilizeTime && (mobilizeTime.essential || mobilizeTime.general)));
+      var prevKey=FB.deviceMemberKey || null;
+
+      // 저장 조건 미충족 또는 저장 버튼을 누르기 전이면, 같은 기기 기존 기록 제거
+      if(!mobilizeRegistrationSaved || !hasRequired){
+        if(prevKey){
+          FB.db.ref('sessions/'+FB.sessionId+'/members/'+prevKey).remove();
+          FB.deviceMemberKey=null;
+          try{ localStorage.removeItem('guri_fb_device_member_key'); }catch(e0){}
+          setStatus('활동인원 반영 해제');
+        }
+        return;
+      }
+
       var data=collectState();
+      data.deviceId=getStableDeviceId();
+
       var key=getMemberKey();
+
+      // 같은 기기에서 이름/계급/소속 변경으로 key가 바뀌면 이전 기록 삭제
+      if(prevKey && prevKey !== key){
+        FB.db.ref('sessions/'+FB.sessionId+'/members/'+prevKey).remove();
+      }
+
+      FB.deviceMemberKey=key;
+      try{ localStorage.setItem('guri_fb_device_member_key', key); }catch(e1){}
+
       FB.db.ref('sessions/'+FB.sessionId+'/members/'+key).set(data)
         .then(function(){ setStatus('저장됨 '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})); })
         .catch(function(err){ console.log('Firebase write error',err); setStatus('저장 실패'); });
@@ -4336,27 +4465,96 @@ function parseDateForExcel(v){
 
   
   function enforcePersonalChecklistView(){
-    try{
-      // 실시간 현황은 유지하고, 상단 체크리스트 영역은 현재 사용자 localStorage 기준으로만 보이게 한다.
-      // Firebase 다른 사용자 데이터가 상단 체크박스 DOM에 직접 반영되는 것을 방지하기 위한 후처리.
-      if(typeof loadState === 'function'){ loadState(); }
-      if(typeof updateProgress === 'function'){ updateProgress(); }
-      if(typeof updateDepartProgress === 'function'){ updateDepartProgress(); }
-      if(typeof updateSelectComplete === 'function'){ updateSelectComplete(); }
-    }catch(e){}
+  // V45_31: 상단 지원반 각 요원/통제단 각 부 체크박스는 절대 Firebase 타 사용자 값으로 표시하지 않음.
+  // 현재 기기의 개인 localStorage(guri_checklist_state)와 현재 선택 역할(currentRole) 기준으로만 체크 UI 복원.
+  try{
+    var state = (typeof loadState === 'function' && loadState()) || {};
+    var localIds = [];
+    if(state.roleChecked && currentRole && state.roleChecked[currentRole]){
+      localIds = state.roleChecked[currentRole] || [];
+    }else if(state.currentRole === currentRole && state.checkedIds){
+      localIds = state.checkedIds || [];
+    }
+
+    var localMap = {};
+    localIds.forEach(function(id){ localMap[String(id)] = true; });
+
+    // 체크리스트 화면의 실제 체크 UI만 대상으로 함
+    var scope = document.getElementById('screen-list');
+    if(!scope || !scope.classList.contains('active')) return;
+
+    var items = scope.querySelectorAll('#checklist-body [data-id]');
+    items.forEach(function(el){
+      var id = String(el.getAttribute('data-id') || '');
+      if(localMap[id]){
+        el.classList.add('checked');
+      }else{
+        el.classList.remove('checked');
+      }
+    });
+
+    // 전역 checkedIds도 개인 저장값으로만 재구성
+    if(window.checkedIds && typeof checkedIds.clear === 'function'){
+      checkedIds.clear();
+      localIds.forEach(function(id){ checkedIds.add(id); });
+    }
+
+    if(typeof updateProgress === 'function') updateProgress();
+  }catch(e){}
+}
+
+
+  function computeUniqueLiveCompletion(members){
+    members=activeMembers(members||{});
+    var unique={};
+    var totalMap={};
+
+    function addTotal(role, total){
+      if(!totalMap[role]) totalMap[role]=Number(total||0);
+    }
+    function addDone(role, itemId){
+      if(!role && role !== 0) return;
+      if(itemId === undefined || itemId === null) return;
+      unique[String(role)+'::'+String(itemId)] = true;
+    }
+
+    Object.keys(members||{}).forEach(function(k){
+      var m=members[k]||{};
+      var rc=m.roleChecked || {};
+      Object.keys(rc).forEach(function(role){
+        var total=countRoleTotal(role);
+        if(total>0) addTotal(role,total);
+        (rc[role]||[]).forEach(function(id){ addDone(role,id); });
+      });
+
+      var dep=m.departChecked || [];
+      if(dep.length){
+        var departTotal=(window.SUP_ITEMS && SUP_ITEMS.length) ? SUP_ITEMS.length : 12;
+        addTotal('depart', departTotal);
+        dep.forEach(function(idx){ addDone('depart', idx); });
+      }
+
+      if(m.earlyEndTime){
+        addTotal('earlyEnd', 1);
+        addDone('earlyEnd', 'done');
+      }
+    });
+
+    var done=Object.keys(unique).length;
+    var total=0;
+    Object.keys(totalMap).forEach(function(r){ total += Number(totalMap[r]||0); });
+    return {done:done,total:total,percent: total ? Math.round(done/total*100) : 0};
   }
 
 function renderDashboard(members){
     setTimeout(enforcePersonalChecklistView, 0);
     window.lastFirebaseMembers = members || {};
     members=activeMembers(members||{});
+    var uniqueLive = computeUniqueLiveCompletion(members||{});
     var keys=Object.keys(members||{});
-    var total=0, done=0;
-    keys.forEach(function(k){
-      var m=members[k] || {};
-      total += Number(m.total||0); done += Number(m.done||0);
-    });
-    var displayTotal = getConfiguredTotalCount() || total;
+    var done = uniqueLive.done;
+    var total = uniqueLive.total;
+    var displayTotal = uniqueLive.total || getConfiguredTotalCount() || total;
     var pct=displayTotal ? Math.round(done/displayTotal*100) : 0;
     var pctEl=document.getElementById('fb-total-percent');
     var cntEl=document.getElementById('fb-total-count');
@@ -4380,6 +4578,8 @@ if(pctEl) pctEl.textContent=pct+'%';
     if(mem) mem.innerHTML=activeCount+'명<br><span style="font-size:10px;font-weight:700;color:#6c757d">(필수 '+essentialCount+' / 일반 '+generalCount+')</span>';
 renderGroupBlocks(members);
     buildRows(members);
+    setTimeout(enforcePersonalChecklistView, 80);
+    setTimeout(enforcePersonalChecklistView, 250);
   }
   function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function buildRows(members){
