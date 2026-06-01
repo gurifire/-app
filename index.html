@@ -1403,6 +1403,104 @@ button{
   }
 }
 
+
+/* V45_37: 갤럭시 S25 Ultra Chrome 첫 화면 깨짐 강제 보정
+   - 증상: 첫 화면 빨간 영역에서 텍스트가 한 글자씩 세로로 떨어지고 우측 여백 발생
+   - 대상: 첫 화면 select-hero 영역만
+   - 다른 기능/데이터/Firebase 로직 수정 없음
+*/
+#screen-select,
+#screen-select .select-screen{
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  overflow-x:hidden !important;
+}
+
+#screen-select .select-hero{
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  min-height:100px !important;
+  height:auto !important;
+  display:grid !important;
+  grid-template-columns:64px minmax(0, 1fr) !important;
+  align-items:center !important;
+  column-gap:16px !important;
+  overflow:hidden !important;
+}
+
+#screen-select .select-hero-icon{
+  grid-column:1 !important;
+  width:64px !important;
+  height:64px !important;
+  min-width:64px !important;
+  max-width:64px !important;
+  flex:none !important;
+  align-self:center !important;
+}
+
+#screen-select .select-hero-text{
+  grid-column:2 !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  flex:none !important;
+  display:block !important;
+  writing-mode:horizontal-tb !important;
+  text-orientation:mixed !important;
+  white-space:normal !important;
+  overflow:hidden !important;
+}
+
+#screen-select .select-badge,
+#screen-select .select-hero-text h2,
+#screen-select .select-hero-text p{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  writing-mode:horizontal-tb !important;
+  text-orientation:mixed !important;
+  word-break:keep-all !important;
+  overflow-wrap:normal !important;
+  white-space:normal !important;
+  text-align:left !important;
+}
+
+#screen-select .select-hero-text h2{
+  font-size:clamp(18px, 5.2vw, 22px) !important;
+  line-height:1.32 !important;
+}
+
+/* S25 Ultra 등 고해상도 세로 화면에서 flex 폭 붕괴 방지 */
+@media (orientation:portrait){
+  #screen-select .select-hero{
+    display:grid !important;
+    grid-template-columns:64px minmax(0, 1fr) !important;
+  }
+}
+
+/* 좁은 화면에서는 아이콘만 살짝 축소 */
+@media (max-width:420px) and (orientation:portrait){
+  #screen-select .select-hero{
+    grid-template-columns:56px minmax(0, 1fr) !important;
+    column-gap:12px !important;
+    padding:22px 16px !important;
+  }
+
+  #screen-select .select-hero-icon{
+    width:56px !important;
+    height:56px !important;
+    min-width:56px !important;
+    max-width:56px !important;
+  }
+
+  #screen-select .select-hero-text h2{
+    font-size:18px !important;
+  }
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
