@@ -3407,20 +3407,19 @@ function restoreChecklist(){
 
   function pad2(n){ return String(n).padStart ? String(n).padStart(2,'0') : (n<10?'0':'')+n; }
   function todaySessionId(){
-    var d = new Date();
-    return d.getFullYear()+pad2(d.getMonth()+1)+pad2(d.getDate())+'_guri_checklist';
+    // V45_27: 브라우저 접속과 설치앱(PWA)이 항상 같은 Firebase 실시간 방을 보도록 세션ID 고정
+    return 'guri_checklist_live';
   }
   function safeKey(s){
     s = (s || '미입력').toString().trim() || '미입력';
     return s.replace(/[.#$\/[\]]/g,'_').replace(/\s+/g,'_').slice(0,80);
   }
   function getSessionId(){
+    // V45_27: 기존 설치앱/브라우저에 남아 있던 과거 localStorage 세션값을 사용하지 않음
     try{
-      var k='guri_fb_session_id';
-      var v=localStorage.getItem(k);
-      if(!v){ v=todaySessionId(); localStorage.setItem(k,v); }
-      return v;
-    }catch(e){ return todaySessionId(); }
+      localStorage.removeItem('guri_fb_session_id');
+    }catch(e){}
+    return todaySessionId();
   }
   function getMemberInfo(){
     var unit=(document.getElementById('member-unit')||{}).value || '';
