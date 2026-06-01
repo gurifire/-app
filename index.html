@@ -795,6 +795,614 @@ body.capturing-review #screen-review .review-accordion[open] > summary{
   transform:scale(0.98);
 }
 
+
+/* V45_32: 기종별 화면 깨짐 방지 전역 CSS 보정
+   - 최신/구형 스마트폰, 글자크기 확대, 화면배율 차이 대응
+   - 기능 로직/Firebase/체크상태는 수정하지 않음
+*/
+html,
+body{
+  width:100% !important;
+  max-width:100% !important;
+  overflow-x:hidden !important;
+  -webkit-text-size-adjust:100% !important;
+  text-size-adjust:100% !important;
+}
+
+body{
+  min-width:0 !important;
+}
+
+*,
+*::before,
+*::after{
+  box-sizing:border-box !important;
+  min-width:0;
+}
+
+.screen,
+.select-screen,
+.list-screen,
+.review-screen,
+.select-hero,
+.member-card,
+.mobilize-card,
+.early-end-card,
+.main-accordion,
+.control-accordion,
+.role-cards,
+.role-card,
+.depart-card,
+.fb-dashboard,
+.review-card,
+.summary-box,
+.action-bar{
+  width:auto;
+  max-width:100% !important;
+}
+
+.select-screen,
+.list-screen,
+.review-screen{
+  overflow-x:hidden !important;
+}
+
+/* 플렉스 카드 내부 폭 계산 깨짐 방지 */
+.select-hero-text,
+.role-info,
+.main-accordion-info,
+.header-title,
+.chk-text,
+.ctrl-text,
+.fb-ro-main,
+.fb-role-name{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  max-width:100% !important;
+}
+
+/* 한글이 한 글자씩 세로로 떨어지는 현상 방지 */
+.select-hero-text h2,
+.select-hero-text p,
+.header-title h1,
+.header-title p,
+.role-info h3,
+.role-info p,
+.main-accordion-title,
+.main-accordion-desc,
+.control-dept-title,
+.chk-main,
+.chk-sub,
+.sub-text,
+.ctrl-text,
+.fb-ro-title,
+.fb-role-name,
+.fb-small,
+.fb-disaster-title,
+.fb-edit-title,
+.review-card h3,
+.review-item,
+.rv-time-label,
+.rv-time-val{
+  word-break:keep-all !important;
+  overflow-wrap:break-word !important;
+  white-space:normal !important;
+}
+
+/* 긴 URL/영문/특수문자만 예외적으로 줄바꿈 허용 */
+.fb-ro-names,
+.fb-role-members,
+.fb-disaster-kv div,
+.fb-item{
+  overflow-wrap:anywhere !important;
+}
+
+/* 아이콘/화살표 영역은 줄어들지 않게 고정 */
+.role-icon,
+.main-accordion-icon,
+.select-hero-icon,
+.role-arrow,
+.main-accordion-arrow,
+.control-dept-arrow,
+.logo-badge,
+.chk-circle,
+.sub-circle,
+.ctrl-circle,
+.d-circle,
+.mob-chk-wrap{
+  flex:0 0 auto !important;
+}
+
+/* 앱 헤더가 좁은 화면에서 깨지지 않도록 보정 */
+.app-header{
+  width:100% !important;
+  max-width:100% !important;
+  overflow:hidden !important;
+}
+
+.header-title h1{
+  font-size:clamp(13px, 3.6vw, 15px) !important;
+  line-height:1.35 !important;
+}
+
+/* 첫 화면 히어로 영역 폭 깨짐 방지 */
+.select-hero{
+  width:100% !important;
+  max-width:100% !important;
+  overflow:hidden !important;
+}
+
+.select-hero-text h2{
+  font-size:clamp(18px, 5.4vw, 22px) !important;
+  line-height:1.35 !important;
+  letter-spacing:-0.4px !important;
+}
+
+/* 카드형 메뉴의 폭·줄바꿈 안정화 */
+.role-card,
+.main-accordion-head,
+.control-dept-head{
+  width:100% !important;
+  max-width:100% !important;
+  overflow:hidden !important;
+}
+
+.role-info h3,
+.main-accordion-title{
+  font-size:clamp(15px, 4.2vw, 16px) !important;
+  line-height:1.35 !important;
+}
+
+.role-info p,
+.main-accordion-desc{
+  font-size:clamp(11px, 3.2vw, 12px) !important;
+  line-height:1.5 !important;
+}
+
+/* 입력창·버튼이 화면 밖으로 나가지 않도록 보정 */
+input,
+select,
+textarea,
+button{
+  max-width:100% !important;
+  font-family:inherit;
+}
+
+.member-input,
+.fb-edit-field input,
+.fb-edit-field textarea,
+.fb-edit-field select{
+  min-width:0 !important;
+}
+
+/* 극단적인 글자 확대/좁은 폭에서 카드 간격 축소 */
+@media (max-width:480px){
+  .select-hero{
+    padding:22px 16px !important;
+    gap:12px !important;
+  }
+
+  .select-hero-icon{
+    width:56px !important;
+    height:56px !important;
+    font-size:34px !important;
+  }
+
+  .role-card,
+  .main-accordion-head{
+    padding:14px 14px !important;
+    gap:12px !important;
+  }
+
+  .role-icon,
+  .main-accordion-icon{
+    width:46px !important;
+    height:46px !important;
+    font-size:22px !important;
+  }
+
+  .role-arrow,
+  .main-accordion-arrow{
+    font-size:20px !important;
+  }
+}
+
+/* 매우 좁은 폭 또는 접근성 글자확대 환경 추가 방어 */
+@media (max-width:380px){
+  .select-hero{
+    align-items:flex-start !important;
+  }
+
+  .select-hero-text h2{
+    font-size:17px !important;
+  }
+
+  .role-card,
+  .main-accordion-head{
+    padding:13px 12px !important;
+    gap:10px !important;
+  }
+
+  .role-icon,
+  .main-accordion-icon{
+    width:42px !important;
+    height:42px !important;
+    font-size:20px !important;
+  }
+
+  .role-info h3,
+  .main-accordion-title{
+    font-size:14px !important;
+  }
+
+  .role-info p,
+  .main-accordion-desc{
+    font-size:10.5px !important;
+  }
+}
+
+/* 가로모드·태블릿에서 과도한 확대/좌우 공백 방지 */
+@media (orientation:landscape){
+  html,
+  body{
+    overflow-x:hidden !important;
+  }
+
+  .select-hero,
+  .app-header{
+    max-width:100vw !important;
+  }
+}
+
+
+
+/* V45_34: 요원별 카드 크기 통제단 각 부 카드와 통일 + 가로화면 스크롤 복원
+   - 요원별 임무 선택 하위 카드만 대상
+   - 다른 영역/기능 수정 없음
+*/
+#role-select-list{
+  max-height:430px !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  -webkit-overflow-scrolling:touch !important;
+  overscroll-behavior:contain !important;
+  padding-right:4px !important;
+}
+
+/* 통제단 각 부 카드와 동일한 기본 카드 높이감으로 복원 */
+#role-select-list .role-card{
+  min-height:0 !important;
+  height:auto !important;
+  padding:16px 18px !important;
+  gap:14px !important;
+  align-items:center !important;
+  overflow:hidden !important;
+}
+
+#role-select-list .role-info{
+  min-height:0 !important;
+  display:block !important;
+  overflow:hidden !important;
+}
+
+#role-select-list .role-info h3{
+  margin-bottom:3px !important;
+  line-height:1.35 !important;
+}
+
+#role-select-list .role-info p{
+  line-height:1.5 !important;
+  max-height:none !important;
+  overflow:visible !important;
+}
+
+#role-select-list .role-icon{
+  width:52px !important;
+  height:52px !important;
+  min-width:52px !important;
+}
+
+/* 세로 좁은 화면에서도 통제단 카드와 비슷한 크기 유지 */
+@media (max-width:480px) and (orientation:portrait){
+  #role-select-list .role-card{
+    padding:16px 18px !important;
+    gap:14px !important;
+  }
+
+  #role-select-list .role-icon{
+    width:52px !important;
+    height:52px !important;
+    min-width:52px !important;
+  }
+}
+
+/* 가로화면에서도 요원별 목록 내부 스크롤 유지 */
+@media (orientation:landscape){
+  #role-select-list{
+    max-height:320px !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+  }
+}
+
+
+/* V45_35: 지원반/통제단 카드 크기 통일 + 요원별 목록 스크롤 복원
+   - 대상: 첫 화면의 지원반/통제단 큰 카드, 요원별/부별 선택 카드
+   - 다른 기능/데이터/Firebase 로직 수정 없음
+*/
+
+/* 1) 지원반 큰 박스와 통제단 큰 박스 크기 통일 */
+#support-branch-accordion > .main-accordion-head,
+#control-dan-accordion > .main-accordion-head{
+  min-height:112px !important;
+  height:auto !important;
+  padding:18px 20px !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:16px !important;
+  overflow:hidden !important;
+}
+
+#support-branch-accordion > .main-accordion-head .main-accordion-icon,
+#control-dan-accordion > .main-accordion-head .main-accordion-icon{
+  width:58px !important;
+  height:58px !important;
+  min-width:58px !important;
+  flex:0 0 58px !important;
+  font-size:28px !important;
+}
+
+#support-branch-accordion > .main-accordion-head .main-accordion-info,
+#control-dan-accordion > .main-accordion-head .main-accordion-info{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+}
+
+#support-branch-accordion > .main-accordion-head .main-accordion-title,
+#control-dan-accordion > .main-accordion-head .main-accordion-title{
+  font-size:18px !important;
+  line-height:1.35 !important;
+  margin-bottom:5px !important;
+}
+
+#support-branch-accordion > .main-accordion-head .main-accordion-desc,
+#control-dan-accordion > .main-accordion-head .main-accordion-desc{
+  font-size:13px !important;
+  line-height:1.5 !important;
+  max-height:none !important;
+  overflow:visible !important;
+}
+
+/* 2) 요원별 하위 카드와 통제단 각 부 카드 크기 통일 */
+#role-select-list .role-card,
+#control-dan-accordion .control-body .role-card{
+  min-height:106px !important;
+  height:auto !important;
+  padding:16px 18px !important;
+  gap:14px !important;
+  display:flex !important;
+  align-items:center !important;
+  overflow:hidden !important;
+}
+
+#role-select-list .role-icon,
+#control-dan-accordion .control-body .role-icon{
+  width:56px !important;
+  height:56px !important;
+  min-width:56px !important;
+  flex:0 0 56px !important;
+}
+
+#role-select-list .role-info,
+#control-dan-accordion .control-body .role-info{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  display:block !important;
+  overflow:hidden !important;
+}
+
+#role-select-list .role-info h3,
+#control-dan-accordion .control-body .role-info h3{
+  font-size:16px !important;
+  line-height:1.3 !important;
+  margin-bottom:4px !important;
+}
+
+#role-select-list .role-info p,
+#control-dan-accordion .control-body .role-info p{
+  font-size:12px !important;
+  line-height:1.45 !important;
+  max-height:none !important;
+  overflow:visible !important;
+}
+
+/* 3) 요원별 목록 내부 스크롤 복원 */
+#role-select-list{
+  display:none;
+  max-height:430px !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  -webkit-overflow-scrolling:touch !important;
+  overscroll-behavior:contain !important;
+  padding-right:4px !important;
+}
+
+/* JS에서 display:flex로 열릴 때도 스크롤 유지 */
+#role-select-list[style*="flex"]{
+  max-height:430px !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  -webkit-overflow-scrolling:touch !important;
+  overscroll-behavior:contain !important;
+}
+
+/* 가로 화면에서는 높이를 줄여 내부 스크롤이 반드시 생기도록 */
+@media (orientation:landscape){
+  #role-select-list,
+  #role-select-list[style*="flex"]{
+    max-height:300px !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+  }
+
+  #support-branch-accordion > .main-accordion-head,
+  #control-dan-accordion > .main-accordion-head{
+    min-height:104px !important;
+  }
+
+  #role-select-list .role-card,
+  #control-dan-accordion .control-body .role-card{
+    min-height:98px !important;
+  }
+}
+
+/* 좁은 세로 화면에서도 두 영역 높이 차이 방지 */
+@media (max-width:480px) and (orientation:portrait){
+  #support-branch-accordion > .main-accordion-head,
+  #control-dan-accordion > .main-accordion-head{
+    min-height:112px !important;
+    padding:18px 20px !important;
+    gap:16px !important;
+  }
+
+  #role-select-list .role-card,
+  #control-dan-accordion .control-body .role-card{
+    min-height:106px !important;
+    padding:16px 18px !important;
+    gap:14px !important;
+  }
+}
+
+
+/* V45_36: 지원반장 확인목록 박스 기준으로 카드 크기 축소
+   - 대상: 지원반/통제단 큰 박스, 요원별/부별 하위 박스
+   - V45_35의 스크롤 복원은 유지
+   - 다른 기능/데이터/Firebase 로직 수정 없음
+*/
+
+/* 1) 지원반 큰 박스와 통제단 큰 박스: 지원반장 확인목록 카드 높이감으로 축소 */
+#support-branch-accordion > .main-accordion-head,
+#control-dan-accordion > .main-accordion-head{
+  min-height:88px !important;
+  height:auto !important;
+  padding:14px 16px !important;
+  gap:12px !important;
+  align-items:center !important;
+  overflow:hidden !important;
+}
+
+#support-branch-accordion > .main-accordion-head .main-accordion-icon,
+#control-dan-accordion > .main-accordion-head .main-accordion-icon{
+  width:48px !important;
+  height:48px !important;
+  min-width:48px !important;
+  flex:0 0 48px !important;
+  font-size:24px !important;
+}
+
+#support-branch-accordion > .main-accordion-head .main-accordion-title,
+#control-dan-accordion > .main-accordion-head .main-accordion-title{
+  font-size:16px !important;
+  line-height:1.3 !important;
+  margin-bottom:3px !important;
+}
+
+#support-branch-accordion > .main-accordion-head .main-accordion-desc,
+#control-dan-accordion > .main-accordion-head .main-accordion-desc{
+  font-size:12px !important;
+  line-height:1.45 !important;
+}
+
+/* 2) 요원별 하위 박스와 통제단 각 부 박스도 같은 높이감으로 축소 */
+#role-select-list .role-card,
+#control-dan-accordion .control-body .role-card{
+  min-height:88px !important;
+  height:auto !important;
+  padding:14px 16px !important;
+  gap:12px !important;
+  align-items:center !important;
+  overflow:hidden !important;
+}
+
+#role-select-list .role-icon,
+#control-dan-accordion .control-body .role-icon{
+  width:48px !important;
+  height:48px !important;
+  min-width:48px !important;
+  flex:0 0 48px !important;
+  font-size:23px !important;
+}
+
+#role-select-list .role-info h3,
+#control-dan-accordion .control-body .role-info h3{
+  font-size:15px !important;
+  line-height:1.3 !important;
+  margin-bottom:3px !important;
+}
+
+#role-select-list .role-info p,
+#control-dan-accordion .control-body .role-info p{
+  font-size:11.5px !important;
+  line-height:1.45 !important;
+  max-height:none !important;
+  overflow:visible !important;
+}
+
+/* 3) 스크롤 유지: 카드가 작아져도 요원 목록은 내부 스크롤 유지 */
+#role-select-list,
+#role-select-list[style*="flex"]{
+  max-height:430px !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  -webkit-overflow-scrolling:touch !important;
+  overscroll-behavior:contain !important;
+}
+
+/* 가로화면 스크롤 유지 */
+@media (orientation:landscape){
+  #role-select-list,
+  #role-select-list[style*="flex"]{
+    max-height:300px !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+  }
+
+  #support-branch-accordion > .main-accordion-head,
+  #control-dan-accordion > .main-accordion-head,
+  #role-select-list .role-card,
+  #control-dan-accordion .control-body .role-card{
+    min-height:82px !important;
+  }
+}
+
+/* 좁은 세로화면에서도 동일 크기 유지 */
+@media (max-width:480px) and (orientation:portrait){
+  #support-branch-accordion > .main-accordion-head,
+  #control-dan-accordion > .main-accordion-head,
+  #role-select-list .role-card,
+  #control-dan-accordion .control-body .role-card{
+    min-height:88px !important;
+    padding:14px 16px !important;
+    gap:12px !important;
+  }
+
+  #support-branch-accordion > .main-accordion-head .main-accordion-icon,
+  #control-dan-accordion > .main-accordion-head .main-accordion-icon,
+  #role-select-list .role-icon,
+  #control-dan-accordion .control-body .role-icon{
+    width:48px !important;
+    height:48px !important;
+    min-width:48px !important;
+    flex-basis:48px !important;
+  }
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
