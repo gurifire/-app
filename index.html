@@ -3183,6 +3183,22 @@ function reset(){ mobilizeRegistrationSaved = false; try{ localStorage.removeIte
   if(rvScore) rvScore.style.display = '';
 }
 
+
+// V45_38: 지원반 각 요원/통제단 각 부 항목 진입 시 항상 체크리스트 맨 위부터 표시
+function scrollRoleListToTop(){
+  try{
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
+    var listScreen = document.getElementById('screen-list');
+    if(listScreen) listScreen.scrollTop = 0;
+
+    var checklistBody = document.getElementById('checklist-body');
+    if(checklistBody) checklistBody.scrollTop = 0;
+  }catch(e){}
+}
+
 // ══════════════════════════════════════════
 // SELECT ROLE
 // ══════════════════════════════════════════
@@ -3205,6 +3221,9 @@ function selectRole(role){
   buildChecklist(rd);
   showScreen('list');
   restoreChecklist();
+  scrollRoleListToTop();
+  setTimeout(scrollRoleListToTop, 0);
+  setTimeout(scrollRoleListToTop, 120);
   setTimeout(enforcePersonalChecklistView, 0);
   setTimeout(enforcePersonalChecklistView, 120);
   // 체크리스트 화면에서도 입력 필드 변경 시 임무완료 버튼 갱신
