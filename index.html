@@ -2608,6 +2608,9 @@ document.addEventListener('DOMContentLoaded', function(){
     try{ saveState(); }catch(e){}
     try{ showScreen('select'); }catch(e){}
     try{ restoreSelectScreen(); }catch(e){}
+    try{ restoreSelectScrollBeforeRoleEntry(); }catch(e){}
+    try{ setTimeout(restoreSelectScrollBeforeRoleEntry, 0); }catch(e){}
+    try{ setTimeout(restoreSelectScrollBeforeRoleEntry, 120); }catch(e){}
     window.guriSuppressHistoryPush = false;
   }
   function guriShowListByBack(){
@@ -2829,6 +2832,8 @@ function resetMobilize(){
 }
 
 var currentRole = null;
+// V45_39: 지원반 각 요원/통제단 각 부 진입 전 첫 화면 스크롤 위치 저장
+var selectScrollBeforeRoleEntry = 0;
 var checkedIds  = new Set();
 
 // 소속·계급·성명 입력 여부 확인 (전역)
@@ -3129,7 +3134,14 @@ function showScreen(id){
     updateProgress();
   }
 }
-function goBack(){ saveState(); showScreen('select'); restoreSelectScreen(); }
+function goBack(){
+  saveState();
+  showScreen('select');
+  restoreSelectScreen();
+  restoreSelectScrollBeforeRoleEntry();
+  setTimeout(restoreSelectScrollBeforeRoleEntry, 0);
+  setTimeout(restoreSelectScrollBeforeRoleEntry, 120);
+}
 function showList(){
   // 현장 출동 전 종료 결과화면(요원 미선택)에서는 첫 화면으로
   if(earlyEndTime && !currentRole){
@@ -3199,10 +3211,23 @@ function scrollRoleListToTop(){
   }catch(e){}
 }
 
+// V45_39: 첫 화면으로 돌아올 때, 요원/부 선택 직전의 스크롤 위치로 복원
+function restoreSelectScrollBeforeRoleEntry(){
+  try{
+    var y = Number(selectScrollBeforeRoleEntry || 0);
+    window.scrollTo(0, y);
+    document.documentElement.scrollTop = y;
+    document.body.scrollTop = y;
+  }catch(e){}
+}
+
+
 // ══════════════════════════════════════════
 // SELECT ROLE
 // ══════════════════════════════════════════
 function selectRole(role){
+  // V45_39: 첫 화면에서 각 요원/부 항목으로 들어가기 직전 위치 저장
+  try{ selectScrollBeforeRoleEntry = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0; }catch(e){}
   var prevRole = currentRole;
   currentRole = role;
   // 다른 요원으로 변경 시에만 체크 초기화
