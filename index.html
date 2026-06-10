@@ -2834,6 +2834,8 @@ function resetMobilize(){
 var currentRole = null;
 // V45_39: 지원반 각 요원/통제단 각 부 진입 전 첫 화면 스크롤 위치 저장
 var selectScrollBeforeRoleEntry = 0;
+// V45_41: 지원반·통제단 각 역할별 체크상태 분리 보관
+var roleCheckedState = {};
 var checkedIds  = new Set();
 
 // 소속·계급·성명 입력 여부 확인 (전역)
@@ -3152,9 +3154,28 @@ function showList(){
   }
 }
 function goSelectFromReview(){ clearSavedState(); departChecked.clear(); reset(); showScreen('select'); }
+
+// V45_41: 역할별 체크상태 분리 저장/복원
+function rememberCurrentRoleChecks(){
+  try{
+    if(currentRole && currentRole !== 'none'){
+      roleCheckedState[currentRole] = Array.from(checkedIds || []);
+    }
+  }catch(e){}
+}
+function applyRoleChecks(role){
+  try{
+    var arr = roleCheckedState && roleCheckedState[role] ? roleCheckedState[role] : [];
+    checkedIds = new Set(arr);
+  }catch(e){
+    checkedIds = new Set();
+  }
+}
+
 function resetForRole(){
   // 체크리스트 상태만 초기화 (대원정보·비상소집·출동단계 유지)
   checkedIds.clear();
+  if(currentRole){ roleCheckedState[currentRole] = []; }
   completedTime = null;
   completedDate = null;
   parentToSubs = {};
@@ -3229,15 +3250,18 @@ function selectRole(role){
   // V45_39: 첫 화면에서 각 요원/부 항목으로 들어가기 직전 위치 저장
   try{ selectScrollBeforeRoleEntry = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0; }catch(e){}
   var prevRole = currentRole;
+  if(prevRole && prevRole !== role){
+    rememberCurrentRoleChecks();
+  }
   currentRole = role;
-  // 다른 요원으로 변경 시에만 체크 초기화
+  // V45_41: 다른 역할의 체크상태가 현재 역할로 섞이지 않도록 역할별로 분리 복원
   if(prevRole !== role){
-    checkedIds.clear();
     completedTime = null;
     completedDate = null;
     parentToSubs = {};
     activityEndTime = null;
     withdrawalSids = [];
+    applyRoleChecks(role);
   }
   var rd = ROLES[role];
   document.getElementById('role-title').textContent    = rd.name;
@@ -3400,6 +3424,7 @@ function toggleAllComplete(pid){
       el.classList.add('checked');
     });
   }
+  rememberCurrentRoleChecks();
   updateProgress();
   saveState();
 }
@@ -3442,6 +3467,7 @@ function toggleParent(pid, isWithdrawalParent){
       if(b4) b4.innerHTML = '<span class="end-label">활동 종료</span>' + activityEndTime;
     }
   }
+  rememberCurrentRoleChecks();
   updateProgress();
   saveState();
 }
@@ -3494,6 +3520,7 @@ function toggleSub(sid, pid, isWithdrawal){
       }
     }
   }
+  rememberCurrentRoleChecks();
   updateProgress();
   saveState();
 }
@@ -3567,6 +3594,14 @@ function getRoleCheckedMapForReview(){
   var map = {};
   try{
     var state = loadState() || {};
+
+    if(state.roleCheckedState){
+      Object.keys(state.roleCheckedState).forEach(function(r){
+        if(state.roleCheckedState[r] && state.roleCheckedState[r].length > 0){
+          map[r] = state.roleCheckedState[r].slice();
+        }
+      });
+    }
     if(state.roleChecked){
       Object.keys(state.roleChecked).forEach(function(r){
         if(state.roleChecked[r] && state.roleChecked[r].length > 0){
@@ -4041,6 +4076,7 @@ function getNowHHMM(){
 }
 
 function saveState(){
+  try{ rememberCurrentRoleChecks(); }catch(e){}
   try {
     // checkedIds와 종료시각을 role별로 저장
     var roleChecked = {};
@@ -4076,8 +4112,9 @@ function saveState(){
       roleEndTime:   roleEndTime,
       departChecked: Array.from(departChecked),
       checkedIds:    Array.from(checkedIds),
-      roleChecked:   roleChecked,
+      roleChecked: roleCheckedState,
       currentRole:   currentRole,
+    roleCheckedState: roleCheckedState,
       departCardOpen: departCardOpen,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(state));
@@ -4165,6 +4202,13 @@ function restoreSelectScreen(){
 }
 
 function restoreChecklist(){
+  // V45_41: 저장된 역할별 체크상태 복원
+  try{
+    var stV45_41 = loadState ? loadState() : null;
+    if(stV45_41 && stV45_41.roleCheckedState){ roleCheckedState = stV45_41.roleCheckedState || {}; }
+    if(currentRole && roleCheckedState && roleCheckedState[currentRole]){ checkedIds = new Set(roleCheckedState[currentRole]); }
+  }catch(e){}
+
   var state = loadState();
   if(!state) return;
 
@@ -4383,6 +4427,7 @@ function restoreChecklist(){
     }
   }
   function saveFirebaseState(force){
+  try{ rememberCurrentRoleChecks(); }catch(e){}
     if(!FB.ready || !FB.db) return;
     try{
       var member=getMemberInfo();
@@ -5092,9 +5137,166 @@ function restoreChecklist(){
   window.exportRealtimeExcel=exportRealtimeExcel;
 
   function getConfiguredTotalCount(){
-    // V45_42: 실시간 현황 완료 현황 전체항목 수 복원
-    return 368;
+    var total = 0;
+    try{
+      if(window.ROLES){
+        Object.keys(ROLES).forEach(function(role){
+          var rd = ROLES[role];
+          if(!rd || !rd.phases) return;
+          rd.phases.forEach(function(ph){
+            (ph.items||[]).forEach(function(item){
+              total++;
+              if(item.subGroups && item.subGroups.length){
+                item.subGroups.forEach(function(grp){
+                  (grp.items||[]).forEach(function(){ total++; });
+                });
+              }else if(item.subs && item.subs.length){
+                item.subs.forEach(function(){ total++; });
+              }
+            });
+          });
+        });
+      }
+      var departCount = 0;
+      if(window.DEPART_ITEMS && DEPART_ITEMS.length) departCount = DEPART_ITEMS.length;
+      else if(window.departItems && departItems.length) departCount = departItems.length;
+      else {
+        var domDepart = document.querySelectorAll('#depart-items .depart-item, #depart-items .chk-item, #depart-items .sub-item');
+        departCount = domDepart ? domDepart.length : 0;
+      }
+      if(!departCount) departCount = 12;
+      total += departCount;
+    }catch(e){}
+    return total || 0;
   }
+
+  
+  function getExcelDownloadTimeText(){ return formatTimeHHmmForExcel(new Date()); }
+
+function parseDateForExcel(v){
+    if(!v) return null;
+    if(v instanceof Date) return isNaN(v.getTime()) ? null : v;
+    var s = String(v).trim();
+    if(!s || s === '-') return null;
+
+    var d = new Date(s);
+    if(!isNaN(d.getTime())) return d;
+
+    try{
+      var now = new Date();
+      var y = now.getFullYear(), mo = now.getMonth()+1, da = now.getDate();
+
+      var mDate = s.match(/(\d{4})[.\-\/]\s*(\d{1,2})[.\-\/]\s*(\d{1,2})/);
+      if(mDate){ y = Number(mDate[1]); mo = Number(mDate[2]); da = Number(mDate[3]); }
+
+      var mTime = s.match(/(오전|오후)?\s*(\d{1,2})\s*[:시]\s*(\d{1,2})?/);
+      if(mTime){
+        var h = Number(mTime[2] || 0), mi = Number(mTime[3] || 0);
+        if(mTime[1] === '오후' && h < 12) h += 12;
+        if(mTime[1] === '오전' && h === 12) h = 0;
+        return new Date(y, mo-1, da, h, mi, 0);
+      }
+    }catch(e){}
+    return null;
+  }
+
+  
+  function formatTimeHHmmForExcel(v){
+    try{
+      var d = parseDateForExcel(v) || new Date();
+      var h = String(d.getHours()).padStart(2, '0');
+      var m = String(d.getMinutes()).padStart(2, '0');
+      return h + ':' + m;
+    }catch(e){
+      var now = new Date();
+      return String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    }
+  }
+
+  function formatDurationMs(ms){
+    if(!ms || ms < 0) return '-';
+    var totalMin = Math.max(1, Math.floor(ms / 60000));
+    var h = Math.floor(totalMin / 60);
+    var m = totalMin % 60;
+    if(h && m) return h + '시간 ' + m + '분';
+    if(h) return h + '시간';
+    return m + '분';
+  }
+
+  function getActivityDurationText(m){
+    try{
+      m = m || {};
+      var mt = m.mobilizeTime || m.mobilize || m.mobilization || {};
+      var starts = [
+        mt.essential,
+        mt.general,
+        m.essentialTime,
+        m.generalTime,
+        m.mobEssentialTime,
+        m.mobGeneralTime,
+        m.startedAt,
+        m.startTime
+      ].map(parseDateForExcel).filter(Boolean);
+
+      if(!starts.length) return '-';
+      var start = starts.sort(function(a,b){ return a.getTime() - b.getTime(); })[0];
+
+      var ends = [
+        m.completedAt,
+        m.activityEndTime,
+        m.endedAt,
+        m.endTime,
+        m.finishedAt
+      ].map(parseDateForExcel).filter(Boolean);
+
+      var end = ends.length ? ends.sort(function(a,b){ return b.getTime() - a.getTime(); })[0] : new Date();
+
+      return formatDurationMs(end.getTime() - start.getTime());
+    }catch(e){
+      return '-';
+    }
+  }
+
+
+  
+  function enforcePersonalChecklistView(){
+  // V45_31: 상단 지원반 각 요원/통제단 각 부 체크박스는 절대 Firebase 타 사용자 값으로 표시하지 않음.
+  // 현재 기기의 개인 localStorage(guri_checklist_state)와 현재 선택 역할(currentRole) 기준으로만 체크 UI 복원.
+  try{
+    var state = (typeof loadState === 'function' && loadState()) || {};
+    var localIds = [];
+    if(state.roleChecked && currentRole && state.roleChecked[currentRole]){
+      localIds = state.roleChecked[currentRole] || [];
+    }else if(state.currentRole === currentRole && state.checkedIds){
+      localIds = state.checkedIds || [];
+    }
+
+    var localMap = {};
+    localIds.forEach(function(id){ localMap[String(id)] = true; });
+
+    // 체크리스트 화면의 실제 체크 UI만 대상으로 함
+    var scope = document.getElementById('screen-list');
+    if(!scope || !scope.classList.contains('active')) return;
+
+    var items = scope.querySelectorAll('#checklist-body [data-id]');
+    items.forEach(function(el){
+      var id = String(el.getAttribute('data-id') || '');
+      if(localMap[id]){
+        el.classList.add('checked');
+      }else{
+        el.classList.remove('checked');
+      }
+    });
+
+    // 전역 checkedIds도 개인 저장값으로만 재구성
+    if(window.checkedIds && typeof checkedIds.clear === 'function'){
+      checkedIds.clear();
+      localIds.forEach(function(id){ checkedIds.add(id); });
+    }
+
+    if(typeof updateProgress === 'function') updateProgress();
+  }catch(e){}
+}
 
 
   function computeUniqueLiveCompletion(members){
@@ -5147,7 +5349,35 @@ function renderDashboard(members){
     var keys=Object.keys(members||{});
     var done = uniqueLive.done;
     var total = uniqueLive.total;
-    var displayTotal = getConfiguredTotalCount() || total || uniqueLive.total;
+    // V45_40: 실시간 현황 '완료 현황'의 전체항목 수만 자동계산
+    // 기준: 지원반·통제단 각 역할의 체크항목 수 + 출동단계 항목 수
+    var dashboardTotal = 0;
+    try{
+      var rolesObj = (typeof ROLES !== 'undefined' && ROLES) ? ROLES : ((window && window.ROLES) ? window.ROLES : {});
+      Object.keys(rolesObj || {}).forEach(function(roleKey){
+        var rdTotal = 0;
+        var rd = rolesObj[roleKey];
+        if(rd && rd.phases){
+          rd.phases.forEach(function(ph){
+            (ph.items || []).forEach(function(item){
+              rdTotal++;
+              if(item.subGroups && item.subGroups.length){
+                item.subGroups.forEach(function(grp){
+                  (grp.items || []).forEach(function(){ rdTotal++; });
+                });
+              }else{
+                (item.subs || []).forEach(function(){ rdTotal++; });
+              }
+            });
+          });
+        }
+        dashboardTotal += rdTotal;
+      });
+      var departItems = (typeof SUP_ITEMS !== 'undefined' && SUP_ITEMS && SUP_ITEMS.length) ? SUP_ITEMS :
+                        ((typeof SUP !== 'undefined' && SUP && SUP.length) ? SUP : []);
+      dashboardTotal += (departItems && departItems.length) ? departItems.length : 0;
+    }catch(e){}
+    var displayTotal = dashboardTotal || uniqueLive.total || total;
     var pct=displayTotal ? Math.round(done/displayTotal*100) : 0;
     var pctEl=document.getElementById('fb-total-percent');
     var cntEl=document.getElementById('fb-total-count');
@@ -5173,21 +5403,7 @@ renderGroupBlocks(members);
     buildRows(members);
     setTimeout(enforcePersonalChecklistView, 80);
     setTimeout(enforcePersonalChecklistView, 250);
-  
-    // V45_42_COMPLETION_TOTAL_DOM_FIX: 완료 현황 카드 전체항목 수 최종 보정
-    try{
-      var fixedTotal = getConfiguredTotalCount() || displayTotal || 368;
-      var cards = document.querySelectorAll('.fb-summary-card');
-      for(var ci=0; ci<cards.length; ci++){
-        var labelEl = cards[ci].querySelector('.label');
-        var valueEl = cards[ci].querySelector('.value');
-        if(labelEl && valueEl && String(labelEl.textContent || '').indexOf('완료 현황') >= 0){
-          valueEl.textContent = done + ' / ' + fixedTotal + ' 완료';
-        }
-      }
-    }catch(e){}
-
-}
+  }
   function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function buildRows(members){
     members=activeMembers(members||{});
@@ -5649,32 +5865,6 @@ if('serviceWorker' in navigator){
   setInterval(applyPersonnelScroll, 1200);
 })();
 
-</script>
-
-
-<script>
-// V45_42: 실시간 현황 완료 현황 전체항목 수 표시 안전 보정
-function fixCompletionSummaryTotalV45_42(){
-  try{
-    var cards = document.querySelectorAll('.fb-summary-card');
-    for(var i=0;i<cards.length;i++){
-      var label = cards[i].querySelector('.label');
-      var value = cards[i].querySelector('.value');
-      if(label && value && String(label.textContent || '').indexOf('완료 현황') >= 0){
-        var m = String(value.textContent || '').match(/(\d+)\s*\/\s*\d+/);
-        var done = m ? m[1] : '0';
-        value.textContent = done + ' / 368 완료';
-      }
-    }
-  }catch(e){}
-}
-try{
-  document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(fixCompletionSummaryTotalV45_42, 300);
-    setTimeout(fixCompletionSummaryTotalV45_42, 1000);
-    setTimeout(fixCompletionSummaryTotalV45_42, 2000);
-  });
-}catch(e){}
 </script>
 
 </body>
