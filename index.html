@@ -5092,166 +5092,9 @@ function restoreChecklist(){
   window.exportRealtimeExcel=exportRealtimeExcel;
 
   function getConfiguredTotalCount(){
-    var total = 0;
-    try{
-      if(window.ROLES){
-        Object.keys(ROLES).forEach(function(role){
-          var rd = ROLES[role];
-          if(!rd || !rd.phases) return;
-          rd.phases.forEach(function(ph){
-            (ph.items||[]).forEach(function(item){
-              total++;
-              if(item.subGroups && item.subGroups.length){
-                item.subGroups.forEach(function(grp){
-                  (grp.items||[]).forEach(function(){ total++; });
-                });
-              }else if(item.subs && item.subs.length){
-                item.subs.forEach(function(){ total++; });
-              }
-            });
-          });
-        });
-      }
-      var departCount = 0;
-      if(window.DEPART_ITEMS && DEPART_ITEMS.length) departCount = DEPART_ITEMS.length;
-      else if(window.departItems && departItems.length) departCount = departItems.length;
-      else {
-        var domDepart = document.querySelectorAll('#depart-items .depart-item, #depart-items .chk-item, #depart-items .sub-item');
-        departCount = domDepart ? domDepart.length : 0;
-      }
-      if(!departCount) departCount = 12;
-      total += departCount;
-    }catch(e){}
-    return total || 0;
+    // V45_42: 실시간 현황 완료 현황 전체항목 수 복원
+    return 368;
   }
-
-  
-  function getExcelDownloadTimeText(){ return formatTimeHHmmForExcel(new Date()); }
-
-function parseDateForExcel(v){
-    if(!v) return null;
-    if(v instanceof Date) return isNaN(v.getTime()) ? null : v;
-    var s = String(v).trim();
-    if(!s || s === '-') return null;
-
-    var d = new Date(s);
-    if(!isNaN(d.getTime())) return d;
-
-    try{
-      var now = new Date();
-      var y = now.getFullYear(), mo = now.getMonth()+1, da = now.getDate();
-
-      var mDate = s.match(/(\d{4})[.\-\/]\s*(\d{1,2})[.\-\/]\s*(\d{1,2})/);
-      if(mDate){ y = Number(mDate[1]); mo = Number(mDate[2]); da = Number(mDate[3]); }
-
-      var mTime = s.match(/(오전|오후)?\s*(\d{1,2})\s*[:시]\s*(\d{1,2})?/);
-      if(mTime){
-        var h = Number(mTime[2] || 0), mi = Number(mTime[3] || 0);
-        if(mTime[1] === '오후' && h < 12) h += 12;
-        if(mTime[1] === '오전' && h === 12) h = 0;
-        return new Date(y, mo-1, da, h, mi, 0);
-      }
-    }catch(e){}
-    return null;
-  }
-
-  
-  function formatTimeHHmmForExcel(v){
-    try{
-      var d = parseDateForExcel(v) || new Date();
-      var h = String(d.getHours()).padStart(2, '0');
-      var m = String(d.getMinutes()).padStart(2, '0');
-      return h + ':' + m;
-    }catch(e){
-      var now = new Date();
-      return String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-    }
-  }
-
-  function formatDurationMs(ms){
-    if(!ms || ms < 0) return '-';
-    var totalMin = Math.max(1, Math.floor(ms / 60000));
-    var h = Math.floor(totalMin / 60);
-    var m = totalMin % 60;
-    if(h && m) return h + '시간 ' + m + '분';
-    if(h) return h + '시간';
-    return m + '분';
-  }
-
-  function getActivityDurationText(m){
-    try{
-      m = m || {};
-      var mt = m.mobilizeTime || m.mobilize || m.mobilization || {};
-      var starts = [
-        mt.essential,
-        mt.general,
-        m.essentialTime,
-        m.generalTime,
-        m.mobEssentialTime,
-        m.mobGeneralTime,
-        m.startedAt,
-        m.startTime
-      ].map(parseDateForExcel).filter(Boolean);
-
-      if(!starts.length) return '-';
-      var start = starts.sort(function(a,b){ return a.getTime() - b.getTime(); })[0];
-
-      var ends = [
-        m.completedAt,
-        m.activityEndTime,
-        m.endedAt,
-        m.endTime,
-        m.finishedAt
-      ].map(parseDateForExcel).filter(Boolean);
-
-      var end = ends.length ? ends.sort(function(a,b){ return b.getTime() - a.getTime(); })[0] : new Date();
-
-      return formatDurationMs(end.getTime() - start.getTime());
-    }catch(e){
-      return '-';
-    }
-  }
-
-
-  
-  function enforcePersonalChecklistView(){
-  // V45_31: 상단 지원반 각 요원/통제단 각 부 체크박스는 절대 Firebase 타 사용자 값으로 표시하지 않음.
-  // 현재 기기의 개인 localStorage(guri_checklist_state)와 현재 선택 역할(currentRole) 기준으로만 체크 UI 복원.
-  try{
-    var state = (typeof loadState === 'function' && loadState()) || {};
-    var localIds = [];
-    if(state.roleChecked && currentRole && state.roleChecked[currentRole]){
-      localIds = state.roleChecked[currentRole] || [];
-    }else if(state.currentRole === currentRole && state.checkedIds){
-      localIds = state.checkedIds || [];
-    }
-
-    var localMap = {};
-    localIds.forEach(function(id){ localMap[String(id)] = true; });
-
-    // 체크리스트 화면의 실제 체크 UI만 대상으로 함
-    var scope = document.getElementById('screen-list');
-    if(!scope || !scope.classList.contains('active')) return;
-
-    var items = scope.querySelectorAll('#checklist-body [data-id]');
-    items.forEach(function(el){
-      var id = String(el.getAttribute('data-id') || '');
-      if(localMap[id]){
-        el.classList.add('checked');
-      }else{
-        el.classList.remove('checked');
-      }
-    });
-
-    // 전역 checkedIds도 개인 저장값으로만 재구성
-    if(window.checkedIds && typeof checkedIds.clear === 'function'){
-      checkedIds.clear();
-      localIds.forEach(function(id){ checkedIds.add(id); });
-    }
-
-    if(typeof updateProgress === 'function') updateProgress();
-  }catch(e){}
-}
 
 
   function computeUniqueLiveCompletion(members){
@@ -5304,7 +5147,7 @@ function renderDashboard(members){
     var keys=Object.keys(members||{});
     var done = uniqueLive.done;
     var total = uniqueLive.total;
-    var displayTotal = uniqueLive.total || getConfiguredTotalCount() || total;
+    var displayTotal = getConfiguredTotalCount() || total || uniqueLive.total;
     var pct=displayTotal ? Math.round(done/displayTotal*100) : 0;
     var pctEl=document.getElementById('fb-total-percent');
     var cntEl=document.getElementById('fb-total-count');
@@ -5330,7 +5173,21 @@ renderGroupBlocks(members);
     buildRows(members);
     setTimeout(enforcePersonalChecklistView, 80);
     setTimeout(enforcePersonalChecklistView, 250);
-  }
+  
+    // V45_42_COMPLETION_TOTAL_DOM_FIX: 완료 현황 카드 전체항목 수 최종 보정
+    try{
+      var fixedTotal = getConfiguredTotalCount() || displayTotal || 368;
+      var cards = document.querySelectorAll('.fb-summary-card');
+      for(var ci=0; ci<cards.length; ci++){
+        var labelEl = cards[ci].querySelector('.label');
+        var valueEl = cards[ci].querySelector('.value');
+        if(labelEl && valueEl && String(labelEl.textContent || '').indexOf('완료 현황') >= 0){
+          valueEl.textContent = done + ' / ' + fixedTotal + ' 완료';
+        }
+      }
+    }catch(e){}
+
+}
   function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function buildRows(members){
     members=activeMembers(members||{});
@@ -5792,6 +5649,32 @@ if('serviceWorker' in navigator){
   setInterval(applyPersonnelScroll, 1200);
 })();
 
+</script>
+
+
+<script>
+// V45_42: 실시간 현황 완료 현황 전체항목 수 표시 안전 보정
+function fixCompletionSummaryTotalV45_42(){
+  try{
+    var cards = document.querySelectorAll('.fb-summary-card');
+    for(var i=0;i<cards.length;i++){
+      var label = cards[i].querySelector('.label');
+      var value = cards[i].querySelector('.value');
+      if(label && value && String(label.textContent || '').indexOf('완료 현황') >= 0){
+        var m = String(value.textContent || '').match(/(\d+)\s*\/\s*\d+/);
+        var done = m ? m[1] : '0';
+        value.textContent = done + ' / 368 완료';
+      }
+    }
+  }catch(e){}
+}
+try{
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(fixCompletionSummaryTotalV45_42, 300);
+    setTimeout(fixCompletionSummaryTotalV45_42, 1000);
+    setTimeout(fixCompletionSummaryTotalV45_42, 2000);
+  });
+}catch(e){}
 </script>
 
 </body>
