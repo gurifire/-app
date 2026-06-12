@@ -2750,12 +2750,22 @@ document.addEventListener('DOMContentLoaded', function(){
     window.guriHistoryReady = true;
   }
   function guriShowFirstToast(){
+    // V45_57: 토스트 요소가 없어서 미표시되는 문제 방지 - 없으면 즉시 생성
     var toast = document.getElementById('back-toast');
-    if(!toast) return;
+    if(!toast){
+      try{
+        toast = document.createElement('div');
+        toast.id = 'back-toast';
+        toast.className = 'back-toast';
+        document.body.appendChild(toast);
+      }catch(e){ return; }
+    }
     toast.textContent = '한 번 더 뒤로 누르시면 종료됩니다.';
     toast.classList.add('show');
     clearTimeout(window.guriBackToastTimer);
-    window.guriBackToastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1600);
+    window.guriBackToastTimer = setTimeout(function(){ 
+      try{ toast.classList.remove('show'); }catch(e){}
+    }, 1600);
   }
 
   // V45_56: 재난종료 전 기본 첫 화면에서도 뒤로가기 토스트가 잡히도록 현재 화면 guard state 보강
@@ -2883,10 +2893,10 @@ document.addEventListener('DOMContentLoaded', function(){
         try{ history.back(); }catch(err){}
         return false;
       }
+      // V45_57: 기본 관서선택 화면에서도 즉시 토스트 노출
+      window.guriAllowExit = false;
       guriShowFirstToast();
       try{
-        // V45_56: 토스트 표시 후 기본상태에서도 다음 뒤로가기 감지를 위해 guard 유지
-        history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
         history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
       }catch(err){}
       return false;
