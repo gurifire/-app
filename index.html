@@ -1501,6 +1501,99 @@ button{
   }
 }
 
+
+/* V45_42: 관서 선택 첫 화면 */
+.station-screen{
+  padding:0 0 32px;
+  min-height:100vh;
+  background:#F0F2F5;
+}
+.station-hero{
+  background:linear-gradient(150deg,#C0392B 0%,#922B21 55%,#7B241C 100%);
+  padding:26px 20px 24px;
+  color:white;
+  text-align:left;
+}
+.station-badge{
+  font-size:10px;
+  font-weight:800;
+  opacity:.82;
+  letter-spacing:.6px;
+  margin-bottom:6px;
+}
+.station-hero h2{
+  font-size:23px;
+  font-weight:900;
+  line-height:1.35;
+  letter-spacing:-.5px;
+  margin:0;
+  word-break:keep-all;
+}
+.station-hero p{
+  font-size:12px;
+  opacity:.78;
+  margin-top:7px;
+  line-height:1.45;
+}
+.station-list-wrap{
+  padding:18px 16px 0;
+}
+.station-guide{
+  font-size:12px;
+  color:#6c757d;
+  text-align:center;
+  margin-bottom:12px;
+  line-height:1.5;
+}
+.station-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.station-card{
+  background:white;
+  border:1.5px solid rgba(192,57,43,.16);
+  border-radius:14px;
+  padding:15px 12px;
+  min-height:74px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size:15px;
+  font-weight:900;
+  color:#1a1a1a;
+  box-shadow:0 1px 6px rgba(0,0,0,.08);
+  cursor:pointer;
+  -webkit-user-select:none;
+  user-select:none;
+}
+.station-card:active{
+  transform:scale(.98);
+  background:#FEF5F4;
+}
+.station-card.headquarter{
+  grid-column:1 / -1;
+  background:#C0392B;
+  color:white;
+  border-color:#C0392B;
+}
+.station-footer{
+  text-align:center;
+  font-size:10px;
+  color:#BBBBBB;
+  padding:18px 16px 0;
+  letter-spacing:.3px;
+}
+@media (min-width:720px){
+  .station-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+  .station-card.headquarter{
+    grid-column:auto;
+  }
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1782,20 +1875,49 @@ function captureScreen(){
 <body>
 
 <div class="app-header">
-  <div class="logo-badge">경기도소방<br>구리소방서</div>
+  <div class="logo-badge">경기도소방<br><span id="header-station-name">구리소방서</span></div>
   <div class="header-title">
-    <h1>🚒 긴급지원반 및 긴급구조통제단 임무 체크리스트</h1>
+    <h1>🚒 <span id="header-title-station">구리소방서</span> 긴급지원반 및 긴급구조통제단 임무 체크리스트</h1>
     <p>출동 전 전 항목을 확인하세요</p>
   </div>
 </div>
 
+<!-- ⓪ 관서 선택 -->
+<div class="screen active" id="screen-station">
+  <div class="station-screen">
+    <div class="station-hero">
+      <div class="station-badge">경기도소방재난본부 북부권역</div>
+      <h2>긴급지원반 및 긴급구조통제단<br>임무 체크리스트</h2>
+      <p>사용할 관서를 선택하세요.</p>
+    </div>
+    <div class="station-list-wrap">
+      <div class="station-guide">관서를 선택하면 해당 관서명으로 앱 화면이 표시됩니다.</div>
+      <div class="station-grid">
+        <div class="station-card headquarter" onclick="selectStation('북부본부')">북부본부</div>
+        <div class="station-card" onclick="selectStation('구리')">구리</div>
+        <div class="station-card" onclick="selectStation('남양주')">남양주</div>
+        <div class="station-card" onclick="selectStation('가평')">가평</div>
+        <div class="station-card" onclick="selectStation('동두천')">동두천</div>
+        <div class="station-card" onclick="selectStation('연천')">연천</div>
+        <div class="station-card" onclick="selectStation('포천')">포천</div>
+        <div class="station-card" onclick="selectStation('양주')">양주</div>
+        <div class="station-card" onclick="selectStation('고양')">고양</div>
+        <div class="station-card" onclick="selectStation('일산')">일산</div>
+        <div class="station-card" onclick="selectStation('파주')">파주</div>
+        <div class="station-card" onclick="selectStation('의정부')">의정부</div>
+      </div>
+    </div>
+    <div class="station-footer">제작 : 구리소방서 소방교 김대운</div>
+  </div>
+</div>
+
 <!-- ① 요원 선택 -->
-<div class="screen active" id="screen-select">
+<div class="screen" id="screen-select">
   <div class="select-screen">
     <div class="select-hero">
       <div class="select-hero-icon">🚒</div>
       <div class="select-hero-text">
-        <div class="select-badge">경기도소방 구리소방서</div>
+        <div class="select-badge">경기도소방 <span id="select-station-name">구리소방서</span></div>
         <h2>긴급지원반 및 긴급구조통제단<br>임무 체크리스트</h2>
         
       </div>
@@ -2558,6 +2680,11 @@ var ROLES = {
 // 초기 첫 화면: 앱 헤더 숨김
 document.addEventListener('DOMContentLoaded', function(){
   document.querySelector('.app-header').style.display = 'none';
+  try{
+    var savedStation = localStorage.getItem('guri_selected_station_name');
+    if(savedStation){ selectedStationName = savedStation; }
+  }catch(e){}
+  applyStationName();
   // 앱 실행 시 localStorage 완전 초기화 (항상 새로 시작)
   clearSavedState();
 
@@ -2591,7 +2718,8 @@ document.addEventListener('DOMContentLoaded', function(){
   function guriInitHistory(){
     try{
       history.replaceState({guriAppBack:true, screen:'root', role:null, seq:0}, '', guriBaseUrl() + '#guri-root');
-      history.pushState(guriScreenState('select'), '', guriBaseUrl() + '#guri-select-' + window.guriHistorySeq);
+      // V45_47: 기존 구리소방서용 첫 화면 히스토리 구조를 관서선택 화면에 적용
+      history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
     }catch(e){}
     window.guriHistoryReady = true;
   }
@@ -2603,6 +2731,25 @@ document.addEventListener('DOMContentLoaded', function(){
     clearTimeout(window.guriBackToastTimer);
     window.guriBackToastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1600);
   }
+
+  // V45_45: 관서선택 첫 화면 뒤로가기 팝업 전용 처리
+  function guriShowStationBackToast(){
+    try{
+      var stationScreen = document.getElementById('screen-station');
+      if(stationScreen && stationScreen.className.indexOf('active') < 0){
+        window.guriSuppressHistoryPush = true;
+        showScreen('station');
+        window.guriSuppressHistoryPush = false;
+      }
+    }catch(e){}
+    try{ guriShowFirstToast(); }catch(e){}
+    try{
+      // V45_46: 관서선택 첫 화면에서 뒤로가기 후에도 다시 guard state 유지
+      history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
+      history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
+    }catch(e){}
+  }
+
   function guriShowSelectByBack(){
     window.guriSuppressHistoryPush = true;
     try{ saveState(); }catch(e){}
@@ -2650,7 +2797,7 @@ document.addEventListener('DOMContentLoaded', function(){
     if(e && e.preventDefault) e.preventDefault();
 
     var activeEl = document.querySelector('.screen.active');
-    var active = activeEl ? activeEl.id : 'screen-select';
+    var active = activeEl ? activeEl.id : 'screen-station';
 
     // 결과화면 2: 마지막 임무완료를 누른 체크리스트 화면으로 복귀
     // 결과화면 1: 첫 화면으로 복귀
@@ -2663,17 +2810,37 @@ document.addEventListener('DOMContentLoaded', function(){
       return false;
     }
 
-    // 체크리스트 화면: 앱 종료 대신 첫 화면으로 복귀
+    // 체크리스트 화면: 앱 종료 대신 내부 첫 화면으로 복귀
     if(active === 'screen-list'){
       guriShowSelectByBack();
       return false;
     }
 
-    // 첫 화면: 앱 종료 방지
-    guriShowSelectByBack();
+    // V45_47: 관서 선택 후 내부 첫 화면에서 뒤로가기 → 관서선택 화면 복귀
+    if(active === 'screen-select'){
+      window.guriSuppressHistoryPush = true;
+      try{ showScreen('station'); }catch(e){}
+      window.guriSuppressHistoryPush = false;
+      try{
+        history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
+      }catch(err){}
+      return false;
+    }
+
+    // V45_47: 구리소방서용 첫 화면 뒤로가기 토스트 로직을 관서선택 화면에 적용
+    // 관서선택 화면: 앱 종료 방지 + 종료 안내 팝업
+    if(active === 'screen-station'){
+      guriShowFirstToast();
+      try{
+        history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
+      }catch(err){}
+      return false;
+    }
+
+    // 예외 상황도 관서선택 화면 기준으로 처리
     guriShowFirstToast();
     try{
-      history.pushState(guriScreenState('select'), '', guriBaseUrl() + '#guri-select-' + window.guriHistorySeq);
+      history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
     }catch(err){}
     return false;
   }, true);
@@ -2829,6 +2996,82 @@ function resetMobilize(){
   activityEndTime = null;
   if(typeof saveFirebaseState === 'function') saveFirebaseState(true);
   updateMobilizeSaveButton();
+}
+
+var selectedStationName = '구리소방서';
+
+function formatStationName(name){
+  name = String(name || '').trim();
+  if(!name) return '구리소방서';
+  if(name === '북부본부') return '북부본부';
+  return name.indexOf('소방서') >= 0 ? name : name + '소방서';
+}
+
+function applyStationName(){
+  var name = selectedStationName || '구리소방서';
+  var headerStation = document.getElementById('header-station-name');
+  var headerTitleStation = document.getElementById('header-title-station');
+  var selectStation = document.getElementById('select-station-name');
+  if(headerStation) headerStation.textContent = name;
+  if(headerTitleStation) headerTitleStation.textContent = name;
+  if(selectStation) selectStation.textContent = name;
+  try{ document.title = name + ' 긴급지원반 임무 체크리스트'; }catch(e){}
+  try{ applyStationMemberOptions(); }catch(e){}
+}
+
+// V45_48: 북부본부 선택 시에만 소속·계급 목록 전용 적용
+function applyStationMemberOptions(){
+  var unitEl = document.getElementById('member-unit');
+  var rankEl = document.getElementById('member-rank');
+  if(!unitEl || !rankEl) return;
+
+  var currentUnit = unitEl.value || '';
+  var currentRank = rankEl.value || '';
+
+  var defaultUnits = ['청문인권담당관','소방행정과','화재예방과','재난대응과'];
+  if(selectedStationName === '의정부소방서'){
+    defaultUnits = ['청문인권담당관','소방행정과','화재예방과','화재조사분석과','재난대응과'];
+  }
+  if(selectedStationName === '가평소방서' || selectedStationName === '연천소방서'){
+    defaultUnits = ['청문인권담당관','소방행정과','화재예방과','현장대응단'];
+  }
+  var defaultRanks = ['소방총감','소방정감','소방감','소방준감','소방정','소방령','소방경','소방위','소방장','소방교','소방사'];
+
+  var northUnits = ['소방행정기획과','예방과','대응과'];
+  var northRanks = ['소방총감','소방정감','소방감','소방준감','소방정','소방령','소방경','소방위','소방장','소방교','소방사'];
+
+  var useNorth = (selectedStationName === '북부본부');
+  var units = useNorth ? northUnits : defaultUnits;
+  var ranks = useNorth ? northRanks : defaultRanks;
+
+  unitEl.innerHTML = '<option value="">소속 선택</option>' + units.map(function(v){
+    return '<option value="' + v + '">' + v + '</option>';
+  }).join('');
+
+  rankEl.innerHTML = '<option value="">계급 선택</option>' + ranks.map(function(v){
+    return '<option value="' + v + '">' + v + '</option>';
+  }).join('');
+
+  if(units.indexOf(currentUnit) >= 0){ unitEl.value = currentUnit; }
+  if(ranks.indexOf(currentRank) >= 0){ rankEl.value = currentRank; }
+
+  try{ updateSelectBtn(); }catch(e){}
+  try{ updateMobilizeSaveButton(); }catch(e){}
+}
+
+
+function selectStation(name){
+  selectedStationName = formatStationName(name);
+  try{ localStorage.setItem('guri_selected_station_name', selectedStationName); }catch(e){}
+  applyStationName();
+  // V45_47: 기존 showScreen 전환 로직만 사용하여 구리소방서용 뒤로가기 구조와 동일하게 처리
+  showScreen('select');
+}
+
+// V45_43: 관서 선택 후 첫 화면에서 뒤로가기 시 관서선택 화면으로 복귀
+function showStationScreenByBack(){
+  try{ saveState(); }catch(e){}
+  try{ showScreen('station'); }catch(e){}
 }
 
 var currentRole = null;
@@ -3106,7 +3349,7 @@ function showScreen(id){
   document.getElementById('screen-' + id).classList.add('active');
   window.scrollTo(0, 0);
   // 첫 화면(select)에서는 앱 헤더 숨김 (자체 히어로 헤더가 있음)
-  document.querySelector('.app-header').style.display = (id === 'select') ? 'none' : 'flex';
+  document.querySelector('.app-header').style.display = (id === 'select' || id === 'station') ? 'none' : 'flex';
   if(window.guriPushScreenState && window.guriHistoryReady && !window.guriSuppressHistoryPush){
     window.guriPushScreenState(id);
   }
@@ -5869,3 +6112,5 @@ if('serviceWorker' in navigator){
 
 </body>
 </html>
+
+<!-- V45_49 marker -->
