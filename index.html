@@ -2725,6 +2725,44 @@ document.addEventListener('DOMContentLoaded', function(){
   window.guriAllowExit = false;
 
   function guriBaseUrl(){ return location.pathname + location.search; }
+  // V45_61: 모바일 파일 직접 실행 환경에서 pushState URL 인자로 인한 실패 방지
+  function guriIsLocalFileRun(){
+    try{
+      return location.protocol === 'file:' || location.protocol === 'content:' || location.protocol === 'blob:';
+    }catch(e){ return false; }
+  }
+  function guriSafePushState(state, title, url){
+    try{
+      if(guriIsLocalFileRun()){
+        history.pushState(state, title || '');
+      }else{
+        history.pushState(state, title || '', url);
+      }
+      return true;
+    }catch(e1){
+      try{
+        history.pushState(state, title || '');
+        return true;
+      }catch(e2){}
+    }
+    return false;
+  }
+  function guriSafeReplaceState(state, title, url){
+    try{
+      if(guriIsLocalFileRun()){
+        history.replaceState(state, title || '');
+      }else{
+        history.replaceState(state, title || '', url);
+      }
+      return true;
+    }catch(e1){
+      try{
+        history.replaceState(state, title || '');
+        return true;
+      }catch(e2){}
+    }
+    return false;
+  }
   function guriScreenState(screen){
     window.guriHistorySeq += 1;
     return {
@@ -2737,15 +2775,15 @@ document.addEventListener('DOMContentLoaded', function(){
   window.guriPushScreenState = function(screen){
     if(!window.guriHistoryReady || window.guriSuppressHistoryPush) return;
     try{
-      history.pushState(guriScreenState(screen), '', guriBaseUrl() + '#guri-' + screen + '-' + window.guriHistorySeq);
+      guriSafePushState(guriScreenState(screen), '', guriBaseUrl() + '#guri-' + screen + '-' + window.guriHistorySeq);
     }catch(e){}
   };
   function guriInitHistory(){
     try{
-      history.replaceState({guriAppBack:true, screen:'root', role:null, seq:0}, '', guriBaseUrl() + '#guri-root');
-      // V45_56: 재난종료 전 기본상태에서도 첫 화면 뒤로가기 토스트가 작동하도록 guard state 보강
-      history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
-      history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
+      // V45_63: 이전파일 기준 유지. hash 방식 제거, pushState 방식만 사용
+      guriSafeReplaceState({guriAppBack:true, screen:'root', role:null, seq:0}, '', guriBaseUrl() + '#guri-root');
+      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
+      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
     }catch(e){}
     window.guriHistoryReady = true;
   }
@@ -2768,13 +2806,83 @@ document.addEventListener('DOMContentLoaded', function(){
     }, 1600);
   }
 
+  // V45_64: 모바일 content:// 실행 시 관서선택 첫 화면 뒤로가기 스택 재장전
+  function guriReloadStationBackHistory(){
+    try{
+      if(!window.guriHistoryReady) return;
+      var activeEl = document.querySelector('.screen.active');
+      var active = activeEl ? activeEl.id : 'screen-station';
+      if(active !== 'screen-station') return;
+
+      // 같은 화면에서 너무 자주 쌓이지 않도록 최소 간격 제한
+      var now = Date.now ? Date.now() : (new Date()).getTime();
+      if(window.guriLastStationHistoryReload && now - window.guriLastStationHistoryReload < 500) return;
+      window.guriLastStationHistoryReload = now;
+
+      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-ready-' + (++window.guriHistorySeq));
+      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-lock-' + (++window.guriHistorySeq));
+    }catch(e){}
+  }
+
+
+  // V45_58: 모바일 Chrome 보조 뒤로가기 처리
+  function guriHandleFirstScreenBackForMobile(source){
+    var activeEl = document.querySelector('.screen.active');
+    var active = activeEl ? activeEl.id : 'screen-station';
+
+    // V45_63: 관서 선택 후 내부 첫 화면에서는 토스트 없이 관서선택 화면으로만 복귀
+    if(active === 'screen-select'){
+      window.guriSuppressHistoryPush = true;
+      try{ showScreen('station'); }catch(e){}
+      window.guriSuppressHistoryPush = false;
+      try{
+        guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
+        guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
+      }catch(e){}
+      return true;
+    }
+
+    // V45_63: 토스트는 맨 첫 관서선택 화면에서만 표시
+    if(active === 'screen-station'){
+      var toast = document.getElementById('back-toast');
+      if(!toast){
+        try{
+          toast = document.createElement('div');
+          toast.id = 'back-toast';
+          toast.className = 'back-toast';
+          document.body.appendChild(toast);
+        }catch(e){}
+      }
+
+      if(toast && toast.classList && toast.classList.contains('show')){
+        try{ toast.classList.remove('show'); }catch(e){}
+        try{ clearTimeout(window.guriBackToastTimer); }catch(e){}
+        window.guriAllowExit = true;
+        try{ history.back(); }catch(e){}
+        return true;
+      }
+
+      window.guriAllowExit = false;
+      guriShowFirstToast();
+      try{
+        // V45_64: 토스트 표시 후에도 두 번째 뒤로가기를 감지할 수 있도록 재장전
+        guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-toast-guard-' + (++window.guriHistorySeq));
+        guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-toast-' + (++window.guriHistorySeq));
+      }catch(e){}
+      return true;
+    }
+
+    return false;
+  }
+
+
   // V45_56: 재난종료 전 기본 첫 화면에서도 뒤로가기 토스트가 잡히도록 현재 화면 guard state 보강
   function guriEnsureFirstScreenBackGuard(screenName){
     try{
       if(!window.guriHistoryReady) return;
       screenName = screenName || 'station';
       if(screenName !== 'station' && screenName !== 'select') return;
-      history.pushState(guriScreenState(screenName), '', guriBaseUrl() + '#guri-' + screenName + '-guard-' + window.guriHistorySeq);
+      guriSafePushState(guriScreenState(screenName), '', guriBaseUrl() + '#guri-' + screenName + '-guard-' + window.guriHistorySeq);
     }catch(e){}
   }
 
@@ -2792,8 +2900,8 @@ document.addEventListener('DOMContentLoaded', function(){
     try{ guriShowFirstToast(); }catch(e){}
     try{
       // V45_46: 관서선택 첫 화면에서 뒤로가기 후에도 다시 guard state 유지
-      history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
-      history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
+      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
+      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
     }catch(e){}
   }
 
@@ -2830,6 +2938,33 @@ document.addEventListener('DOMContentLoaded', function(){
 
   // 초기 history 구성은 기존 화면 초기화가 끝난 뒤 실행
   setTimeout(guriInitHistory, 0);
+  // V45_64: 관서선택 화면 표시 직후 history 재장전
+  setTimeout(guriReloadStationBackHistory, 300);
+  setTimeout(guriReloadStationBackHistory, 900);
+  setTimeout(guriReloadStationBackHistory, 1500);
+  // V45_63: 모바일 content:// 첫 화면에서 history stack이 늦게 잡히는 경우를 대비한 pushState 재무장
+  setTimeout(function(){
+    try{
+      if(window.guriHistoryReady){
+        var activeEl = document.querySelector('.screen.active');
+        var active = activeEl ? activeEl.id : 'screen-station';
+        if(active === 'screen-station'){
+          guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-mobile1-' + window.guriHistorySeq);
+        }
+      }
+    }catch(e){}
+  }, 250);
+  setTimeout(function(){
+    try{
+      if(window.guriHistoryReady){
+        var activeEl = document.querySelector('.screen.active');
+        var active = activeEl ? activeEl.id : 'screen-station';
+        if(active === 'screen-station'){
+          guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-mobile2-' + window.guriHistorySeq);
+        }
+      }
+    }catch(e){}
+  }, 900);
 
   window.addEventListener('popstate', function(e){
     // Android Chrome/WebView에서 popstate가 순간 중복 발생하는 경우 방지
@@ -2869,46 +3004,28 @@ document.addEventListener('DOMContentLoaded', function(){
       return false;
     }
 
-    // V45_47: 관서 선택 후 내부 첫 화면에서 뒤로가기 → 관서선택 화면 복귀
+    // V45_58: 관서 선택 후 내부 첫 화면에서 뒤로가기 → 관서선택 화면 복귀
     if(active === 'screen-select'){
-      window.guriSuppressHistoryPush = true;
-      try{ showScreen('station'); }catch(e){}
-      window.guriSuppressHistoryPush = false;
-      try{
-        // V45_56: 내부 첫 화면에서 관서선택 화면 복귀 후에도 뒤로가기 토스트 guard 보강
-        history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
-        history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
-      }catch(err){}
-      return false;
+      if(guriHandleFirstScreenBackForMobile('pop')) return false;
     }
 
-    // V45_47: 구리소방서용 첫 화면 뒤로가기 토스트 로직을 관서선택 화면에 적용
-    // 관서선택 화면: 첫 뒤로가기 안내, 토스트 표시 중 두 번째 뒤로가기 시 종료
+    // V45_58: 관서선택 첫 화면 뒤로가기 토스트 로직
     if(active === 'screen-station'){
-      var toast = document.getElementById('back-toast');
-      if(toast && toast.classList && toast.classList.contains('show')){
-        try{ toast.classList.remove('show'); }catch(err){}
-        try{ clearTimeout(window.guriBackToastTimer); }catch(err){}
-        window.guriAllowExit = true;
-        try{ history.back(); }catch(err){}
-        return false;
-      }
-      // V45_57: 기본 관서선택 화면에서도 즉시 토스트 노출
-      window.guriAllowExit = false;
-      guriShowFirstToast();
-      try{
-        history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
-      }catch(err){}
-      return false;
+      if(guriHandleFirstScreenBackForMobile('pop')) return false;
     }
 
     // 예외 상황도 관서선택 화면 기준으로 처리
     guriShowFirstToast();
     try{
-      history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
+      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
     }catch(err){}
     return false;
   }, true);
+
+
+  // V45_58: 모바일 Chrome/file:// 환경에서 popstate 대신 hashchange만 발생하는 경우 보조 처리
+  /* V45_63: V45_62 hash 방식 오류로 hashchange 보조감지 비활성화 */
+  /* hashchange back trap disabled */
 
   // 구형 안드로이드 터치 이벤트 보완 (onclick 미동작 시 touchend로 대체)
   function addTouchFallback(selector, fn){
@@ -3515,6 +3632,13 @@ function showScreen(id){
     });
     updateProgress();
   }
+
+  // V45_64: 관서선택 화면 진입 시 뒤로가기 history 재장전
+  if(id === 'station' && typeof guriReloadStationBackHistory === 'function'){
+    setTimeout(guriReloadStationBackHistory, 80);
+    setTimeout(guriReloadStationBackHistory, 450);
+  }
+
 }
 function goBack(){
   saveState();
@@ -6107,13 +6231,13 @@ renderGroupBlocks(members);
   function pushScreenState(screen){
     if(!initialized) return;
     try{
-      history.pushState({guriScreen:true, screen:screen, seq:seq}, '', stateUrl(screen));
+      guriSafePushState({guriScreen:true, screen:screen, seq:seq}, '', stateUrl(screen));
     }catch(e){}
   }
 
   function replaceRootState(){
     try{
-      history.replaceState({guriScreen:true, screen:'root', seq:0}, '', location.pathname + location.search + '#guri-root');
+      guriSafeReplaceState({guriScreen:true, screen:'root', seq:0}, '', location.pathname + location.search + '#guri-root');
     }catch(e){}
   }
 
