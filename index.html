@@ -1685,6 +1685,20 @@ button{
   var rawGet = localStorage.getItem.bind(localStorage);
   var rawRemove = localStorage.removeItem.bind(localStorage);
 
+  // V45_53: 관서별 입력·체크상태가 서로 섞이지 않도록 localStorage 키에 관서명을 포함
+  function currentStationKeyForStorage(){
+    try{
+      var name = '';
+      try{ name = (typeof selectedStationName !== 'undefined' && selectedStationName) ? selectedStationName : ''; }catch(e0){}
+      if(!name){ name = rawGet('guri_selected_station_name') || '구리소방서'; }
+      name = String(name || '구리소방서').trim();
+      if(name === '북부본부') return '북부본부';
+      return name.replace(/소방서$/,'').replace(/[.#$\/[\]\s]/g,'_') || '구리';
+    }catch(e){
+      return '구리';
+    }
+  }
+
   function currentMemberKeyForStorage(){
     try{
       var device = 'device';
@@ -1724,7 +1738,7 @@ button{
   function personalKey(key){
     if(!shouldPersonalizeKey(key)) return key;
     if(String(key).indexOf('personal::') === 0) return key;
-    return 'personal::' + currentMemberKeyForStorage() + '::' + key;
+    return 'personal::' + currentStationKeyForStorage() + '::' + currentMemberKeyForStorage() + '::' + key;
   }
 
   localStorage.setItem = function(key, value){
@@ -1745,7 +1759,7 @@ button{
 
   window.clearPersonalCheckState = function(){
     try{
-      var prefix = 'personal::' + currentMemberKeyForStorage() + '::';
+      var prefix = 'personal::' + currentStationKeyForStorage() + '::' + currentMemberKeyForStorage() + '::';
       var keys = [];
       for(var i=0;i<localStorage.length;i++){
         var k = localStorage.key(i);
@@ -2688,6 +2702,16 @@ document.addEventListener('DOMContentLoaded', function(){
   // 앱 실행 시 localStorage 완전 초기화 (항상 새로 시작)
   clearSavedState();
 
+  // V45_51: 관서 변경 직후 새로고침되면 해당 관서 첫 화면으로 바로 진입
+  try{
+    if(localStorage.getItem('guri_open_selected_station') === 'Y'){
+      localStorage.removeItem('guri_open_selected_station');
+      setTimeout(function(){
+        try{ showScreen('select'); }catch(e){}
+      }, 0);
+    }
+  }catch(e){}
+
   // 뒤로가기: 아래 스크립트에서 처리
 
   // ── 핸드폰 자체 뒤로가기 처리 (화면 스택 방식)
@@ -2698,6 +2722,7 @@ document.addEventListener('DOMContentLoaded', function(){
   window.guriHistorySeq = 0;
   window.guriLastPopTime = 0;
   window.guriBackToastTimer = null;
+  window.guriAllowExit = false;
 
   function guriBaseUrl(){ return location.pathname + location.search; }
   function guriScreenState(screen){
@@ -2793,6 +2818,12 @@ document.addEventListener('DOMContentLoaded', function(){
     }
     window.guriLastPopTime = now;
 
+    // 첫 화면 토스트 표시 중 두 번째 뒤로가기: 브라우저 기본 뒤로가기 허용(앱 종료)
+    if(window.guriAllowExit){
+      window.guriAllowExit = false;
+      return true;
+    }
+
     if(e && e.stopImmediatePropagation) e.stopImmediatePropagation();
     if(e && e.preventDefault) e.preventDefault();
 
@@ -2828,8 +2859,16 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     // V45_47: 구리소방서용 첫 화면 뒤로가기 토스트 로직을 관서선택 화면에 적용
-    // 관서선택 화면: 앱 종료 방지 + 종료 안내 팝업
+    // 관서선택 화면: 첫 뒤로가기 안내, 토스트 표시 중 두 번째 뒤로가기 시 종료
     if(active === 'screen-station'){
+      var toast = document.getElementById('back-toast');
+      if(toast && toast.classList && toast.classList.contains('show')){
+        try{ toast.classList.remove('show'); }catch(err){}
+        try{ clearTimeout(window.guriBackToastTimer); }catch(err){}
+        window.guriAllowExit = true;
+        try{ history.back(); }catch(err){}
+        return false;
+      }
       guriShowFirstToast();
       try{
         history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
@@ -3060,11 +3099,79 @@ function applyStationMemberOptions(){
 }
 
 
+// V45_53: 관서 변경 시 기존 관서 데이터 삭제/초기화 없이, 화면만 선택 관서의 저장상태로 전환
+function resetVisibleStateForStationContextOnly(){
+  try{ mobilizeRegistrationSaved = false; }catch(e){}
+  try{ mobilizeTime = { essential:null, general:null }; }catch(e){}
+  try{ earlyEndTime = null; activityEndTime = null; completedTime = null; completedDate = null; }catch(e){}
+  try{ departChecked = new Set(); }catch(e){}
+  try{ checkedIds = new Set(); }catch(e){}
+  try{ roleCheckedState = {}; }catch(e){}
+  try{ parentToSubs = {}; withdrawalSids = []; }catch(e){}
+
+  // V45_54: 관서 전환 시 이전 관서에서 열어둔 체크박스/접이식 펼침 상태가 다른 관서에 보이지 않도록 화면 펼침상태만 닫음
+  try{
+    roleSelectOpen = false;
+    departCardOpen = false;
+    var roleList = document.getElementById('role-select-list');
+    var roleArrow = document.getElementById('role-select-arrow');
+    var departWrap = document.getElementById('depart-sub-wrap');
+    var departArrow = document.getElementById('depart-arrow');
+    if(roleList) roleList.style.display = 'none';
+    if(roleArrow) roleArrow.textContent = '›';
+    if(departWrap) departWrap.style.display = 'none';
+    if(departArrow) departArrow.textContent = '›';
+    ['support-branch-accordion','control-dan-accordion','ctrl-plan','ctrl-field','ctrl-resource'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.className = el.className.replace(/\s*open/g,'');
+    });
+  }catch(e){}
+
+  try{
+    ['member-unit','member-rank','member-name'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.value='';
+    });
+  }catch(e){}
+  try{
+    document.querySelectorAll('.checked').forEach(function(el){ el.classList.remove('checked'); });
+    document.querySelectorAll('.disabled').forEach(function(el){ el.classList.remove('disabled'); });
+    document.querySelectorAll('[id^="sub-end-"]').forEach(function(el){ el.innerHTML=''; });
+  }catch(e){}
+  try{
+    ['essential','general'].forEach(function(type){
+      var out=document.getElementById('mob-time-'+type); if(out) out.textContent='--:--';
+      var item=document.getElementById('mob-item-'+type); if(item) item.classList.remove('disabled');
+    });
+  }catch(e){}
+  try{ var eet=document.getElementById('ee-time-out'); if(eet) eet.textContent='--:--'; }catch(e){}
+  try{ buildDepartItems(); }catch(e){}
+  try{ updateSelectBtn(); }catch(e){}
+  try{ updateMobilizeSaveButton(); }catch(e){}
+}
+
+function restoreStationScopedLocalState(){
+  resetVisibleStateForStationContextOnly();
+  try{ restoreSelectScreen(); }catch(e){}
+  try{ mobilizeRegistrationSaved = (localStorage.getItem('guri_mobilize_registration_saved') === 'Y'); }catch(e){ mobilizeRegistrationSaved = false; }
+  try{ updateSelectBtn(); }catch(e){}
+  try{ updateMobilizeSaveButton(); }catch(e){}
+}
+
 function selectStation(name){
-  selectedStationName = formatStationName(name);
+  try{ if(typeof saveState === 'function') saveState(); }catch(e){}
+  var nextStationName = formatStationName(name);
+  selectedStationName = nextStationName;
   try{ localStorage.setItem('guri_selected_station_name', selectedStationName); }catch(e){}
+
+  // V45_52: 관서별 Firebase 경로 분리는 유지하되,
+  // 관서 선택 시 기존 체크상태 초기화 및 자동 새로고침은 하지 않음.
   applyStationName();
-  // V45_47: 기존 showScreen 전환 로직만 사용하여 구리소방서용 뒤로가기 구조와 동일하게 처리
+  try{
+    if(typeof window.reconnectStationFirebase === 'function'){
+      window.reconnectStationFirebase();
+    }
+  }catch(e){}
+  try{ restoreStationScopedLocalState(); }catch(e){}
   showScreen('select');
 }
 
@@ -4509,15 +4616,143 @@ function restoreChecklist(){
 // - 사용자별 체크결과 저장 + 지원반장 현황판 + Excel 다운로드 + 재난종료 초기화
 // ─────────────────────────────────────
 (function(){
-  var firebaseConfig = {
-    apiKey: "AIzaSyBUYalzy4UaQY0qQOhCzUdGENeZtwUzoj8",
-    authDomain: "gurichecklist.firebaseapp.com",
-    databaseURL: "https://gurichecklist-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "gurichecklist",
-    storageBucket: "gurichecklist.firebasestorage.app",
-    messagingSenderId: "98338457593",
-    appId: "1:98338457593:web:79d363b66380006f26df28"
+  var firebaseConfigs = {
+    "의정부": {
+      apiKey: "AIzaSyD990-lwIdd-I6WA4Xa-723DcznPkl0I1c",
+      authDomain: "uijeongbu-18fa8.firebaseapp.com",
+      databaseURL: "https://uijeongbu-18fa8-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "uijeongbu-18fa8",
+      storageBucket: "uijeongbu-18fa8.firebasestorage.app",
+      messagingSenderId: "948307122139",
+      appId: "1:948307122139:web:598d4f10a4196bd3e679fe"
+    },
+    "파주": {
+      apiKey: "AIzaSyCEIEATo2U1Wzs9TbwPZ6lOwavGuoQipfg",
+      authDomain: "paju-e0352.firebaseapp.com",
+      databaseURL: "https://paju-e0352-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "paju-e0352",
+      storageBucket: "paju-e0352.firebasestorage.app",
+      messagingSenderId: "82772352449",
+      appId: "1:82772352449:web:3c051318cffe0ecccea340"
+    },
+    "일산": {
+      apiKey: "AIzaSyA_kxOCivTYgRmxyY9FKHtoQcKPJZryWME",
+      authDomain: "ilsan-442ed.firebaseapp.com",
+      databaseURL: "https://ilsan-442ed-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ilsan-442ed",
+      storageBucket: "ilsan-442ed.firebasestorage.app",
+      messagingSenderId: "564628971218",
+      appId: "1:564628971218:web:dcbd725654cfc23b36570b"
+    },
+    "가평": {
+      apiKey: "AIzaSyBm_2K4Uw3uU1QOemVTwJEo43G-3UCPIvQ",
+      authDomain: "gapyeong-48509.firebaseapp.com",
+      databaseURL: "https://gapyeong-48509-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "gapyeong-48509",
+      storageBucket: "gapyeong-48509.firebasestorage.app",
+      messagingSenderId: "801049934648",
+      appId: "1:801049934648:web:0ef88a135bd99842a85fcd"
+    },
+    "동두천": {
+      apiKey: "AIzaSyCe1HlRrcqjI-Qs-wlGRJRe8lJR2rVgnJM",
+      authDomain: "dongducheon-7d9ee.firebaseapp.com",
+      databaseURL: "https://dongducheon-7d9ee-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "dongducheon-7d9ee",
+      storageBucket: "dongducheon-7d9ee.firebasestorage.app",
+      messagingSenderId: "977946760357",
+      appId: "1:977946760357:web:02859f21141950b8b8e94c"
+    },
+    "연천": {
+      apiKey: "AIzaSyBn8i4F9jzwmRoBfxCQwKLKwCIk-c9JKto",
+      authDomain: "yeoncheon-1badb.firebaseapp.com",
+      databaseURL: "https://yeoncheon-1badb-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "yeoncheon-1badb",
+      storageBucket: "yeoncheon-1badb.firebasestorage.app",
+      messagingSenderId: "383421540053",
+      appId: "1:383421540053:web:e5e736c898ae34a4cb245c"
+    },
+    "포천": {
+      apiKey: "AIzaSyAAegG7VluCISCg4rZHPAwOyrcTFEcgY4s",
+      authDomain: "pocheon-24889.firebaseapp.com",
+      databaseURL: "https://pocheon-24889-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "pocheon-24889",
+      storageBucket: "pocheon-24889.firebasestorage.app",
+      messagingSenderId: "789769657881",
+      appId: "1:789769657881:web:7cdb7a2febbc623ea25488"
+    },
+    "양주": {
+      apiKey: "AIzaSyCFnkhNP7wxF93q0z22quZsVXM3FALUWIE",
+      authDomain: "yangju-ff89e.firebaseapp.com",
+      databaseURL: "https://yangju-ff89e-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "yangju-ff89e",
+      storageBucket: "yangju-ff89e.firebasestorage.app",
+      messagingSenderId: "247521999928",
+      appId: "1:247521999928:web:7061b8c83e052fb0bd7acd"
+    },
+    "고양": {
+      apiKey: "AIzaSyCXLQxdwKLEfFJer4h1okzNoYw-jWWXj5k",
+      authDomain: "goyang-3bab7.firebaseapp.com",
+      databaseURL: "https://goyang-3bab7-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "goyang-3bab7",
+      storageBucket: "goyang-3bab7.firebasestorage.app",
+      messagingSenderId: "896299413418",
+      appId: "1:896299413418:web:eb4743d50b84a2cb3ec5d3"
+    },
+    "남양주": {
+      apiKey: "AIzaSyBhcKfG86jwXFFExfnK6NF6c_Oehia_fiA",
+      authDomain: "namyangju-af305.firebaseapp.com",
+      databaseURL: "https://namyangju-af305-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "namyangju-af305",
+      storageBucket: "namyangju-af305.firebasestorage.app",
+      messagingSenderId: "335438752633",
+      appId: "1:335438752633:web:671fe865614ad84f16dda8"
+    },
+    "구리": {
+      apiKey: "AIzaSyBUYalzy4UaQY0qQOhCzUdGENeZtwUzoj8",
+      authDomain: "gurichecklist.firebaseapp.com",
+      databaseURL: "https://gurichecklist-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "gurichecklist",
+      storageBucket: "gurichecklist.firebasestorage.app",
+      messagingSenderId: "98338457593",
+      appId: "1:98338457593:web:79d363b66380006f26df28"
+    }
   };
+
+  function getFirebaseStationKey(){
+    var name = '';
+    try{ name = (typeof selectedStationName !== 'undefined' && selectedStationName) ? selectedStationName : ''; }catch(e){}
+    if(!name){
+      try{ name = localStorage.getItem('guri_selected_station_name') || ''; }catch(e2){}
+    }
+    name = String(name || '구리').trim();
+    if(name === '북부본부') return '북부본부';
+    return name.replace(/소방서$/,'');
+  }
+
+  function getFirebaseConfigForStation(){
+    var key = getFirebaseStationKey();
+    return {
+      key: key,
+      config: firebaseConfigs[key] || null
+    };
+  }
+
+  function getFirebaseAppName(key){
+    return 'guri_checklist_' + safeKey(key || '구리');
+  }
+
+  function getFirebaseDeviceMemberStorageKey(){
+    return 'guri_fb_device_member_key_' + safeKey(getFirebaseStationKey() || '구리');
+  }
+
+  function detachFirebaseListeners(){
+    try{
+      if(FB.db && FB.sessionId){
+        FB.db.ref('sessions/'+FB.sessionId+'/members').off();
+        FB.db.ref('sessions/'+FB.sessionId+'/disasterStatus').off();
+      }
+    }catch(e){}
+  }
 
   var FB = {
     ready:false,
@@ -4531,8 +4766,11 @@ function restoreChecklist(){
 
   function pad2(n){ return String(n).padStart ? String(n).padStart(2,'0') : (n<10?'0':'')+n; }
   function todaySessionId(){
-    // V45_27: 브라우저 접속과 설치앱(PWA)이 항상 같은 Firebase 실시간 방을 보도록 세션ID 고정
-    return 'guri_checklist_live';
+    // V45_51: 관서별 Firebase/경로 분리. 각 관서가 같은 HTML을 써도 실시간 방이 섞이지 않도록 관서명을 포함합니다.
+    var key = '구리';
+    try{ key = getFirebaseStationKey() || '구리'; }catch(e){}
+    key = String(key).replace(/[.#$\/[\]\s]/g,'_');
+    return 'checklist_live_' + key;
   }
   function getStableDeviceId(){
     try{
@@ -4657,18 +4895,57 @@ function restoreChecklist(){
   function initFirebase(){
     try{
       if(!window.firebase){ setStatus('Firebase SDK 로드 실패'); return; }
-      if(!firebase.apps.length){ firebase.initializeApp(firebaseConfig); }
-      FB.db=firebase.database();
+
+      var selected = getFirebaseConfigForStation();
+      var stationKey = selected.key;
+      var stationConfig = selected.config;
+
+      detachFirebaseListeners();
+      FB.rows=[];
+      FB.lastSnapshot=null;
+      FB.disasterStatus={};
+      FB.deviceMemberKey=null;
+
+      if(!stationConfig){
+        FB.ready=false;
+        FB.db=null;
+        FB.stationKey=stationKey;
+        setStatus(stationKey + ' Firebase 설정 없음');
+        console.log('Firebase config missing for station:', stationKey);
+        return;
+      }
+
+      var appName = getFirebaseAppName(stationKey);
+      var app = null;
+      try{
+        app = firebase.app(appName);
+      }catch(appErr){
+        app = firebase.initializeApp(stationConfig, appName);
+      }
+
+      FB.app=app;
+      FB.db=firebase.database(app);
       FB.ready=true;
+      FB.stationKey=stationKey;
       FB.sessionId=getSessionId();
-      try{ FB.deviceMemberKey = localStorage.getItem('guri_fb_device_member_key') || null; }catch(e0){}
-      setStatus('연결 준비 완료');
+      try{ FB.deviceMemberKey = localStorage.getItem(getFirebaseDeviceMemberStorageKey()) || null; }catch(e0){}
+      setStatus(stationKey + ' 연결 준비 완료');
       listenSession();
     }catch(e){
       console.log('Firebase init error', e);
       setStatus('연결 오류');
     }
   }
+
+  window.reconnectStationFirebase = function(){
+    try{
+      // V45_51: 관서 변경 직후 이전 관서의 로컬 상태가 새 관서 DB에 복사 저장되지 않도록 자동 저장 금지
+      initFirebase();
+    }catch(e){
+      console.log('Firebase reconnect error', e);
+      setStatus('연결 오류');
+    }
+  };
   function saveFirebaseState(force){
   try{ rememberCurrentRoleChecks(); }catch(e){}
     if(!FB.ready || !FB.db) return;
@@ -4682,7 +4959,7 @@ function restoreChecklist(){
         if(prevKey){
           FB.db.ref('sessions/'+FB.sessionId+'/members/'+prevKey).remove();
           FB.deviceMemberKey=null;
-          try{ localStorage.removeItem('guri_fb_device_member_key'); }catch(e0){}
+          try{ localStorage.removeItem(getFirebaseDeviceMemberStorageKey()); }catch(e0){}
           setStatus('활동인원 반영 해제');
         }
         return;
@@ -4699,7 +4976,7 @@ function restoreChecklist(){
       }
 
       FB.deviceMemberKey=key;
-      try{ localStorage.setItem('guri_fb_device_member_key', key); }catch(e1){}
+      try{ localStorage.setItem(getFirebaseDeviceMemberStorageKey(), key); }catch(e1){}
 
       FB.db.ref('sessions/'+FB.sessionId+'/members/'+key).set(data)
         .then(function(){ setStatus('저장됨 '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})); })
