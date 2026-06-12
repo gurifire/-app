@@ -2743,7 +2743,8 @@ document.addEventListener('DOMContentLoaded', function(){
   function guriInitHistory(){
     try{
       history.replaceState({guriAppBack:true, screen:'root', role:null, seq:0}, '', guriBaseUrl() + '#guri-root');
-      // V45_47: 기존 구리소방서용 첫 화면 히스토리 구조를 관서선택 화면에 적용
+      // V45_56: 재난종료 전 기본상태에서도 첫 화면 뒤로가기 토스트가 작동하도록 guard state 보강
+      history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
       history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
     }catch(e){}
     window.guriHistoryReady = true;
@@ -2756,6 +2757,17 @@ document.addEventListener('DOMContentLoaded', function(){
     clearTimeout(window.guriBackToastTimer);
     window.guriBackToastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1600);
   }
+
+  // V45_56: 재난종료 전 기본 첫 화면에서도 뒤로가기 토스트가 잡히도록 현재 화면 guard state 보강
+  function guriEnsureFirstScreenBackGuard(screenName){
+    try{
+      if(!window.guriHistoryReady) return;
+      screenName = screenName || 'station';
+      if(screenName !== 'station' && screenName !== 'select') return;
+      history.pushState(guriScreenState(screenName), '', guriBaseUrl() + '#guri-' + screenName + '-guard-' + window.guriHistorySeq);
+    }catch(e){}
+  }
+
 
   // V45_45: 관서선택 첫 화면 뒤로가기 팝업 전용 처리
   function guriShowStationBackToast(){
@@ -2853,6 +2865,8 @@ document.addEventListener('DOMContentLoaded', function(){
       try{ showScreen('station'); }catch(e){}
       window.guriSuppressHistoryPush = false;
       try{
+        // V45_56: 내부 첫 화면에서 관서선택 화면 복귀 후에도 뒤로가기 토스트 guard 보강
+        history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
         history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
       }catch(err){}
       return false;
@@ -2871,6 +2885,8 @@ document.addEventListener('DOMContentLoaded', function(){
       }
       guriShowFirstToast();
       try{
+        // V45_56: 토스트 표시 후 기본상태에서도 다음 뒤로가기 감지를 위해 guard 유지
+        history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
         history.pushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
       }catch(err){}
       return false;
@@ -3459,6 +3475,10 @@ function showScreen(id){
   document.querySelector('.app-header').style.display = (id === 'select' || id === 'station') ? 'none' : 'flex';
   if(window.guriPushScreenState && window.guriHistoryReady && !window.guriSuppressHistoryPush){
     window.guriPushScreenState(id);
+    // V45_56: 재난종료 전 기본상태의 첫 화면 뒤로가기 토스트 guard 보강
+    if((id === 'station' || id === 'select') && typeof guriEnsureFirstScreenBackGuard === 'function'){
+      guriEnsureFirstScreenBackGuard(id);
+    }
   }
   if(id === 'select'){
     buildDepartItems();
