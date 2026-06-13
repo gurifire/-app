@@ -710,25 +710,22 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 }
 
 
-/* V45_25: 출동단계 카드 전용 내부 스크롤 */
+/* V45_25: 출동단계 카드 전용 하단 잘림 방지 수정 */
 @media (max-width:768px){
   .depart-card{
-    max-height:420px !important;
-    overflow:hidden !important;
+    max-height:none !important;
+    overflow:visible !important;
   }
 
   .depart-header{
-    position:sticky !important;
-    top:0 !important;
-    z-index:20 !important;
+    position:static !important;
+    top:auto !important;
+    z-index:auto !important;
   }
 
   .depart-items{
-    max-height:340px !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-    -webkit-overflow-scrolling:touch !important;
-    overscroll-behavior:contain !important;
+    max-height:none !important;
+    overflow:visible !important;
   }
 }
 
@@ -1900,7 +1897,7 @@ function captureScreen(){
 <div class="screen active" id="screen-station">
   <div class="station-screen">
     <div class="station-hero">
-      <div class="station-badge">경기도소방재난본부 북부권역</div>
+      <div class="station-badge">경기도북부소방재난본부</div>
       <h2>긴급지원반 및 긴급구조통제단<br>임무 체크리스트</h2>
       <p>사용할 관서를 선택하세요.</p>
     </div>
@@ -2271,8 +2268,7 @@ function captureScreen(){
     <div id="review-body"></div>
     <button class="capture-btn" onclick="captureScreen()">📸 결과화면 캡처 저장</button>
     <div class="capture-loading" id="capture-loading"></div>
-    <button class="print-btn" onclick="goSelectFromReview()">↩ 처음으로 돌아가기</button>
-  </div>
+</div>
 </div>
 
 <script>
@@ -2653,11 +2649,11 @@ var ROLES = {
     barColor:'#2472A3',
     phases:[
       { phase:'비상소집', ph:'ph-blue', items:[
-        { kw:'인원파악', kc:'kw-blue', main:'긴급지원반 인원 파악(총 13명)',
-          subs:['필수요원 5명(1시간 이내 응소)','필수요원 외 8명'] }
+        { kw:'인원파악', kc:'kw-blue', main:'긴급지원반 인원 파악',
+          subs:['필수요원 (1시간 이내 응소)','필수요원 외 '] }
       ]},
       { phase:'지원준비', ph:'ph-blue', items:[
-        { kw:'물품적재', kc:'kw-blue', main:'긴급지원반 필요물품 적재(화물차 또는 생활안전차)',
+        { kw:'물품적재', kc:'kw-blue', main:'긴급지원반 필요물품 적재',
           subs:['천막 2개','테이블 2개','의자 8개','긴급지원반 소모품 박스','긴급지원반 조끼 및 헬멧 보관함','상황판 및 상황판 거치대','긴급지원반 백팩','PS-LTE 가방(17개)(사무실 보관·통제단 담당자 자리)','식수 및 이온음료(긴급구조통제단 창고 보관)'] }
       ]},
       { phase:'임무수행', ph:'ph-orange', items:[
@@ -2712,320 +2708,228 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   }catch(e){}
 
-  // 뒤로가기: 아래 스크립트에서 처리
-
-  // ── 핸드폰 자체 뒤로가기 처리 (화면 스택 방식)
-  // 화면 전환은 실제 페이지 이동이 아니므로, 화면 전환마다 history state를 직접 쌓고
-  // popstate 발생 시 브라우저 종료 대신 앱 내부 화면만 전환한다.
+  // ─────────────────────────────────────
+  // 뒤로가기 로직 재적용
+  // 기준:
+  // 1) 관서선택 첫 화면(screen-station)에서만 "한 번 더 뒤로" 토스트 표시
+  // 2) 그 외 내부 화면은 브라우저 history 순서대로 이전 화면/이전 위치 복원
+  // 3) 기존 기능·Firebase·체크상태는 수정하지 않음
+  // ─────────────────────────────────────
   window.guriHistoryReady = false;
   window.guriSuppressHistoryPush = false;
-  window.guriHistorySeq = 0;
-  window.guriLastPopTime = 0;
   window.guriBackToastTimer = null;
-  window.guriAllowExit = false;
+  window.guriBackExitArmed = false;
+  window.guriBackSeq = 0;
+  window.guriLastScreenScroll = window.guriLastScreenScroll || {};
 
-  function guriBaseUrl(){ return location.pathname + location.search; }
-  // V45_61: 모바일 파일 직접 실행 환경에서 pushState URL 인자로 인한 실패 방지
-  function guriIsLocalFileRun(){
+  function guriCurrentScreenId(){
     try{
-      return location.protocol === 'file:' || location.protocol === 'content:' || location.protocol === 'blob:';
-    }catch(e){ return false; }
-  }
-  function guriSafePushState(state, title, url){
-    try{
-      if(guriIsLocalFileRun()){
-        history.pushState(state, title || '');
-      }else{
-        history.pushState(state, title || '', url);
-      }
-      return true;
-    }catch(e1){
-      try{
-        history.pushState(state, title || '');
-        return true;
-      }catch(e2){}
+      var el = document.querySelector('.screen.active');
+      if(!el || !el.id) return 'station';
+      return String(el.id).replace(/^screen-/, '');
+    }catch(e){
+      return 'station';
     }
-    return false;
   }
-  function guriSafeReplaceState(state, title, url){
+
+  function guriSaveCurrentScrollPosition(){
     try{
-      if(guriIsLocalFileRun()){
-        history.replaceState(state, title || '');
-      }else{
-        history.replaceState(state, title || '', url);
-      }
-      return true;
-    }catch(e1){
-      try{
-        history.replaceState(state, title || '');
-        return true;
-      }catch(e2){}
-    }
-    return false;
+      var screen = guriCurrentScreenId();
+      var y = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      window.guriLastScreenScroll[screen] = y;
+    }catch(e){}
   }
-  function guriScreenState(screen){
-    window.guriHistorySeq += 1;
+
+  function guriBackState(screen){
+    window.guriBackSeq += 1;
+    var y = 0;
+    try{
+      y = window.guriLastScreenScroll && window.guriLastScreenScroll[screen] ? window.guriLastScreenScroll[screen] : 0;
+    }catch(e){}
     return {
       guriAppBack:true,
-      screen:screen,
-      role:(typeof currentRole !== 'undefined' ? currentRole : null),
-      seq:window.guriHistorySeq
+      screen:screen || guriCurrentScreenId(),
+      scrollY:y || 0,
+      seq:window.guriBackSeq
     };
   }
-  window.guriPushScreenState = function(screen){
-    if(!window.guriHistoryReady || window.guriSuppressHistoryPush) return;
+
+  function guriPushStateSafe(state){
     try{
-      guriSafePushState(guriScreenState(screen), '', guriBaseUrl() + '#guri-' + screen + '-' + window.guriHistorySeq);
-    }catch(e){}
-  };
-  function guriInitHistory(){
-    try{
-      // V45_63: 이전파일 기준 유지. hash 방식 제거, pushState 방식만 사용
-      guriSafeReplaceState({guriAppBack:true, screen:'root', role:null, seq:0}, '', guriBaseUrl() + '#guri-root');
-      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
-      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
-    }catch(e){}
-    window.guriHistoryReady = true;
+      history.pushState(state, '');
+      return true;
+    }catch(e){
+      return false;
+    }
   }
-  function guriShowFirstToast(){
-    // V45_57: 토스트 요소가 없어서 미표시되는 문제 방지 - 없으면 즉시 생성
+
+  function guriReplaceStateSafe(state){
+    try{
+      history.replaceState(state, '');
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function guriEnsureBackToast(){
     var toast = document.getElementById('back-toast');
     if(!toast){
       try{
         toast = document.createElement('div');
         toast.id = 'back-toast';
         toast.className = 'back-toast';
+        toast.textContent = '한 번 더 뒤로 누르시면 종료됩니다.';
         document.body.appendChild(toast);
-      }catch(e){ return; }
+      }catch(e){}
     }
+    return toast;
+  }
+
+  function guriShowFirstScreenBackToast(){
+    var toast = guriEnsureBackToast();
+    if(!toast) return;
     toast.textContent = '한 번 더 뒤로 누르시면 종료됩니다.';
     toast.classList.add('show');
     clearTimeout(window.guriBackToastTimer);
-    window.guriBackToastTimer = setTimeout(function(){ 
+    window.guriBackToastTimer = setTimeout(function(){
       try{ toast.classList.remove('show'); }catch(e){}
     }, 1600);
   }
 
-  // V45_64: 모바일 content:// 실행 시 관서선택 첫 화면 뒤로가기 스택 재장전
-  function guriReloadStationBackHistory(){
+  function guriHideFirstScreenBackToast(){
     try{
-      if(!window.guriHistoryReady) return;
-      var activeEl = document.querySelector('.screen.active');
-      var active = activeEl ? activeEl.id : 'screen-station';
-      if(active !== 'screen-station') return;
-
-      // 같은 화면에서 너무 자주 쌓이지 않도록 최소 간격 제한
-      var now = Date.now ? Date.now() : (new Date()).getTime();
-      if(window.guriLastStationHistoryReload && now - window.guriLastStationHistoryReload < 500) return;
-      window.guriLastStationHistoryReload = now;
-
-      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-ready-' + (++window.guriHistorySeq));
-      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-lock-' + (++window.guriHistorySeq));
-    }catch(e){}
-  }
-
-
-  // V45_58: 모바일 Chrome 보조 뒤로가기 처리
-  function guriHandleFirstScreenBackForMobile(source){
-    var activeEl = document.querySelector('.screen.active');
-    var active = activeEl ? activeEl.id : 'screen-station';
-
-    // V45_63: 관서 선택 후 내부 첫 화면에서는 토스트 없이 관서선택 화면으로만 복귀
-    if(active === 'screen-select'){
-      window.guriSuppressHistoryPush = true;
-      try{ showScreen('station'); }catch(e){}
-      window.guriSuppressHistoryPush = false;
-      try{
-        guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
-        guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
-      }catch(e){}
-      return true;
-    }
-
-    // V45_63: 토스트는 맨 첫 관서선택 화면에서만 표시
-    if(active === 'screen-station'){
       var toast = document.getElementById('back-toast');
-      if(!toast){
-        try{
-          toast = document.createElement('div');
-          toast.id = 'back-toast';
-          toast.className = 'back-toast';
-          document.body.appendChild(toast);
-        }catch(e){}
-      }
+      if(toast) toast.classList.remove('show');
+      clearTimeout(window.guriBackToastTimer);
+    }catch(e){}
+  }
 
-      if(toast && toast.classList && toast.classList.contains('show')){
-        try{ toast.classList.remove('show'); }catch(e){}
-        try{ clearTimeout(window.guriBackToastTimer); }catch(e){}
-        window.guriAllowExit = true;
-        try{ history.back(); }catch(e){}
-        return true;
-      }
-
-      window.guriAllowExit = false;
-      guriShowFirstToast();
-      try{
-        // V45_64: 토스트 표시 후에도 두 번째 뒤로가기를 감지할 수 있도록 재장전
-        guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-toast-guard-' + (++window.guriHistorySeq));
-        guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-toast-' + (++window.guriHistorySeq));
-      }catch(e){}
-      return true;
+  function guriIsFirstStationScreen(){
+    try{
+      var station = document.getElementById('screen-station');
+      return !!(station && station.classList.contains('active'));
+    }catch(e){
+      return false;
     }
-
-    return false;
   }
 
-
-  // V45_56: 재난종료 전 기본 첫 화면에서도 뒤로가기 토스트가 잡히도록 현재 화면 guard state 보강
-  function guriEnsureFirstScreenBackGuard(screenName){
+  function guriRestoreScreenFromHistory(screen, scrollY){
+    window.guriSuppressHistoryPush = true;
     try{
-      if(!window.guriHistoryReady) return;
-      screenName = screenName || 'station';
-      if(screenName !== 'station' && screenName !== 'select') return;
-      guriSafePushState(guriScreenState(screenName), '', guriBaseUrl() + '#guri-' + screenName + '-guard-' + window.guriHistorySeq);
-    }catch(e){}
-  }
-
-
-  // V45_45: 관서선택 첫 화면 뒤로가기 팝업 전용 처리
-  function guriShowStationBackToast(){
-    try{
-      var stationScreen = document.getElementById('screen-station');
-      if(stationScreen && stationScreen.className.indexOf('active') < 0){
-        window.guriSuppressHistoryPush = true;
+      if(screen === 'station'){
+        try{ saveState(); }catch(e){}
         showScreen('station');
-        window.guriSuppressHistoryPush = false;
+      }else if(screen === 'select'){
+        try{ saveState(); }catch(e){}
+        showScreen('select');
+        try{ restoreSelectScreen(); }catch(e){}
+      }else if(screen === 'list'){
+        showScreen('list');
+        try{ restoreChecklist(); }catch(e){}
+        try{ updateProgress(); }catch(e){}
+      }else if(screen === 'review'){
+        showScreen('review');
+      }else{
+        showScreen('station');
       }
-    }catch(e){}
-    try{ guriShowFirstToast(); }catch(e){}
-    try{
-      // V45_46: 관서선택 첫 화면에서 뒤로가기 후에도 다시 guard state 유지
-      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-guard-' + window.guriHistorySeq);
-      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
-    }catch(e){}
-  }
-
-  function guriShowSelectByBack(){
-    window.guriSuppressHistoryPush = true;
-    try{ saveState(); }catch(e){}
-    try{ showScreen('select'); }catch(e){}
-    try{ restoreSelectScreen(); }catch(e){}
-    try{ restoreSelectScrollBeforeRoleEntry(); }catch(e){}
-    try{ setTimeout(restoreSelectScrollBeforeRoleEntry, 0); }catch(e){}
-    try{ setTimeout(restoreSelectScrollBeforeRoleEntry, 120); }catch(e){}
-    window.guriSuppressHistoryPush = false;
-  }
-  function guriShowListByBack(){
-    window.guriSuppressHistoryPush = true;
-    try{
-      if(currentRole && currentRole !== 'none' && ROLES && ROLES[currentRole]){
-        var rd = ROLES[currentRole];
-        var title = document.getElementById('role-title');
-        var subtitle = document.getElementById('role-subtitle');
-        var fill = document.getElementById('prog-fill');
-        if(title) title.textContent = rd.name;
-        if(subtitle) subtitle.textContent = rd.subtitle;
-        if(fill) fill.style.background = rd.barColor;
-        buildChecklist(rd);
-      }
-      showScreen('list');
-      if(typeof restoreChecklist === 'function') restoreChecklist();
-      if(typeof enforcePersonalChecklistView === 'function') enforcePersonalChecklistView();
-      if(typeof updateProgress === 'function') updateProgress();
     }catch(e){}
     window.guriSuppressHistoryPush = false;
+
+    setTimeout(function(){
+      try{
+        var y = Number(scrollY || 0);
+        if(screen === 'select' && !y && typeof selectScrollBeforeRoleEntry !== 'undefined'){
+          y = Number(selectScrollBeforeRoleEntry || 0);
+        }
+        window.scrollTo(0, y);
+        document.documentElement.scrollTop = y;
+        document.body.scrollTop = y;
+      }catch(e){}
+    }, 0);
+
+    setTimeout(function(){
+      try{
+        var y2 = Number(scrollY || 0);
+        if(screen === 'select' && !y2 && typeof selectScrollBeforeRoleEntry !== 'undefined'){
+          y2 = Number(selectScrollBeforeRoleEntry || 0);
+        }
+        window.scrollTo(0, y2);
+        document.documentElement.scrollTop = y2;
+        document.body.scrollTop = y2;
+      }catch(e){}
+    }, 120);
   }
 
-  // 초기 history 구성은 기존 화면 초기화가 끝난 뒤 실행
-  setTimeout(guriInitHistory, 0);
-  // V45_64: 관서선택 화면 표시 직후 history 재장전
-  setTimeout(guriReloadStationBackHistory, 300);
-  setTimeout(guriReloadStationBackHistory, 900);
-  setTimeout(guriReloadStationBackHistory, 1500);
-  // V45_63: 모바일 content:// 첫 화면에서 history stack이 늦게 잡히는 경우를 대비한 pushState 재무장
-  setTimeout(function(){
+  window.guriPushScreenState = function(screen){
+    if(!window.guriHistoryReady || window.guriSuppressHistoryPush) return;
     try{
-      if(window.guriHistoryReady){
-        var activeEl = document.querySelector('.screen.active');
-        var active = activeEl ? activeEl.id : 'screen-station';
-        if(active === 'screen-station'){
-          guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-mobile1-' + window.guriHistorySeq);
-        }
-      }
+      guriHideFirstScreenBackToast();
+      var s = screen || guriCurrentScreenId();
+      guriPushStateSafe(guriBackState(s));
     }catch(e){}
-  }, 250);
-  setTimeout(function(){
+  };
+
+  // 기존 showScreen 내부 호환용 빈 함수
+  window.guriEnsureFirstScreenBackGuard = function(){};
+
+  function guriInitBackHistory(){
     try{
-      if(window.guriHistoryReady){
-        var activeEl = document.querySelector('.screen.active');
-        var active = activeEl ? activeEl.id : 'screen-station';
-        if(active === 'screen-station'){
-          guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-mobile2-' + window.guriHistorySeq);
-        }
+      var current = guriCurrentScreenId();
+      window.guriLastScreenScroll[current] = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      guriReplaceStateSafe(guriBackState(current));
+      // 첫 화면 종료 방지용 guard 1개만 추가
+      if(current === 'station'){
+        guriPushStateSafe(guriBackState('station'));
       }
-    }catch(e){}
-  }, 900);
+      window.guriHistoryReady = true;
+    }catch(e){
+      window.guriHistoryReady = true;
+    }
+  }
+
+  window.addEventListener('scroll', function(){
+    guriSaveCurrentScrollPosition();
+  }, {passive:true});
 
   window.addEventListener('popstate', function(e){
-    // Android Chrome/WebView에서 popstate가 순간 중복 발생하는 경우 방지
-    var now = (Date.now ? Date.now() : (new Date()).getTime());
-    if(now - window.guriLastPopTime < 120){
-      if(e && e.stopImmediatePropagation) e.stopImmediatePropagation();
-      return false;
-    }
-    window.guriLastPopTime = now;
+    var state = e && e.state ? e.state : null;
 
-    // 첫 화면 토스트 표시 중 두 번째 뒤로가기: 브라우저 기본 뒤로가기 허용(앱 종료)
-    if(window.guriAllowExit){
-      window.guriAllowExit = false;
-      return true;
-    }
+    // 관서선택 첫 화면에서만 토스트/종료 처리
+    if(guriIsFirstStationScreen()){
+      var toast = guriEnsureBackToast();
+      var isShowing = !!(toast && toast.classList && toast.classList.contains('show'));
 
-    if(e && e.stopImmediatePropagation) e.stopImmediatePropagation();
-    if(e && e.preventDefault) e.preventDefault();
-
-    var activeEl = document.querySelector('.screen.active');
-    var active = activeEl ? activeEl.id : 'screen-station';
-
-    // 결과화면 2: 마지막 임무완료를 누른 체크리스트 화면으로 복귀
-    // 결과화면 1: 첫 화면으로 복귀
-    if(active === 'screen-review'){
-      if(currentRole && currentRole !== 'none'){
-        guriShowListByBack();
-      }else{
-        guriShowSelectByBack();
+      if(isShowing || window.guriBackExitArmed){
+        window.guriBackExitArmed = false;
+        guriHideFirstScreenBackToast();
+        // 이번 popstate는 막지 않고, 추가로 한 번 더 뒤로 보내 앱 종료 흐름을 허용
+        setTimeout(function(){
+          try{ history.back(); }catch(e){}
+        }, 0);
+        return;
       }
-      return false;
+
+      window.guriBackExitArmed = true;
+      guriShowFirstScreenBackToast();
+      guriPushStateSafe(guriBackState('station'));
+      return;
     }
 
-    // 체크리스트 화면: 앱 종료 대신 내부 첫 화면으로 복귀
-    if(active === 'screen-list'){
-      guriShowSelectByBack();
-      return false;
-    }
+    // 내부 화면은 history state가 가리키는 이전 화면으로 복원
+    guriHideFirstScreenBackToast();
+    window.guriBackExitArmed = false;
 
-    // V45_58: 관서 선택 후 내부 첫 화면에서 뒤로가기 → 관서선택 화면 복귀
-    if(active === 'screen-select'){
-      if(guriHandleFirstScreenBackForMobile('pop')) return false;
-    }
-
-    // V45_58: 관서선택 첫 화면 뒤로가기 토스트 로직
-    if(active === 'screen-station'){
-      if(guriHandleFirstScreenBackForMobile('pop')) return false;
-    }
-
-    // 예외 상황도 관서선택 화면 기준으로 처리
-    guriShowFirstToast();
-    try{
-      guriSafePushState(guriScreenState('station'), '', guriBaseUrl() + '#guri-station-' + window.guriHistorySeq);
-    }catch(err){}
-    return false;
+    var targetScreen = state && state.guriAppBack && state.screen ? state.screen : 'station';
+    var targetScroll = state && typeof state.scrollY !== 'undefined' ? state.scrollY : 0;
+    guriRestoreScreenFromHistory(targetScreen, targetScroll);
   }, true);
 
-
-  // V45_58: 모바일 Chrome/file:// 환경에서 popstate 대신 hashchange만 발생하는 경우 보조 처리
-  /* V45_63: V45_62 hash 방식 오류로 hashchange 보조감지 비활성화 */
-  /* hashchange back trap disabled */
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', guriInitBackHistory);
+  }else{
+    setTimeout(guriInitBackHistory, 0);
+  }
 
   // 구형 안드로이드 터치 이벤트 보완 (onclick 미동작 시 touchend로 대체)
   function addTouchFallback(selector, fn){
@@ -3632,16 +3536,12 @@ function showScreen(id){
     });
     updateProgress();
   }
-
-  // V45_64: 관서선택 화면 진입 시 뒤로가기 history 재장전
-  if(id === 'station' && typeof guriReloadStationBackHistory === 'function'){
-    setTimeout(guriReloadStationBackHistory, 80);
-    setTimeout(guriReloadStationBackHistory, 450);
-  }
-
 }
 function goBack(){
   saveState();
+  if(window.guriHistoryReady){
+    try{ history.back(); return; }catch(e){}
+  }
   showScreen('select');
   restoreSelectScreen();
   restoreSelectScrollBeforeRoleEntry();
@@ -3649,6 +3549,9 @@ function goBack(){
   setTimeout(restoreSelectScrollBeforeRoleEntry, 120);
 }
 function showList(){
+  if(window.guriHistoryReady){
+    try{ history.back(); return; }catch(e){}
+  }
   // 현장 출동 전 종료 결과화면(요원 미선택)에서는 첫 화면으로
   if(earlyEndTime && !currentRole){
     restoreSelectScreen();
@@ -6158,10 +6061,10 @@ renderGroupBlocks(members);
             '<div class="fb-edit-panel" id="fb-disaster-edit">'+
               '<div class="fb-edit-title">담당 요원만 재난현황 입력 · 수정</div>'+ 
               '<div class="fb-edit-grid">'+
-                '<div class="fb-edit-field"><label>구조대상자</label><input id="input-rescueRequired" placeholder="예: 5명"></div>'+ 
+                '<div class="fb-edit-field"><label>구조대상자</label><input id="input-rescueRequired" placeholder="예: "></div>'+ 
                 '<div class="fb-edit-field"><label>구조완료</label><input id="input-rescueDone" placeholder="예: 3명"></div>'+ 
                 '<div class="fb-edit-field"><label>이송현황</label><input id="input-rescueTransport" placeholder="예: 병원 이송 2명"></div><div class="fb-edit-field"><label>분류현황</label><input id="input-rescueTriage" placeholder="예: 중상1 경상2"></div>'+ 
-                '<div class="fb-edit-field"><label>동원인원</label><input id="input-resourcePersonnel" placeholder="예: 45명"></div>'+ 
+                '<div class="fb-edit-field"><label>동원인원</label><input id="input-resourcePersonnel" placeholder="예: 4"></div>'+ 
                 '<div class="fb-edit-field"><label>동원차량</label><input id="input-resourceVehicles" placeholder="예: 12대"></div>'+ 
                 '<div class="fb-edit-field"><label>주요장비</label><input id="input-resourceEquipment" placeholder="예: 드론1, 구조차1"></div>'+ 
                 '<div class="fb-edit-field"><label>유관기관</label><input id="input-resourceAgencies" placeholder="예: 경찰, 시청"></div>'+ 
@@ -6207,142 +6110,7 @@ renderGroupBlocks(members);
 </script>
 
 <script>
-// ─────────────────────────────────────
-// V35: 휴대폰 자체 뒤로가기 전용 화면 이력 관리자
-// 목적: 결과화면2 → 마지막 체크리스트 화면 → 첫 화면 순서 보장
-// 기존 popstate 로직은 guri-original-popstate-disabled로 비활성화하고, 이 로직만 사용
-// ─────────────────────────────────────
-(function(){
-  return; // disabled: use single back-guard popstate logic from stable V3
-  var initialized = false;
-  var suppressHistoryPush = false;
-  var seq = 0;
-  var toastTimer = null;
-
-  function currentActiveScreen(){
-    var el = document.querySelector('.screen.active');
-    return el ? el.id.replace('screen-', '') : 'select';
-  }
-
-  function stateUrl(screen){
-    return location.pathname + location.search + '#guri-' + screen + '-' + (++seq);
-  }
-
-  function pushScreenState(screen){
-    if(!initialized) return;
-    try{
-      guriSafePushState({guriScreen:true, screen:screen, seq:seq}, '', stateUrl(screen));
-    }catch(e){}
-  }
-
-  function replaceRootState(){
-    try{
-      guriSafeReplaceState({guriScreen:true, screen:'root', seq:0}, '', location.pathname + location.search + '#guri-root');
-    }catch(e){}
-  }
-
-  function showToast(){
-    var toast = document.getElementById('back-toast');
-    if(!toast) return;
-    toast.textContent = '한 번 더 뒤로 누르시면 종료됩니다.';
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1600);
-  }
-
-  function closeDepartIfOpen(){
-    if(typeof departCardOpen !== 'undefined' && departCardOpen){
-      var dw = document.getElementById('depart-sub-wrap');
-      var da = document.getElementById('depart-arrow');
-      if(dw) dw.style.display = 'none';
-      if(da) da.textContent = '›';
-      departCardOpen = false;
-      return true;
-    }
-    return false;
-  }
-
-  function moveToSelect(){
-    suppressHistoryPush = true;
-    try{ saveState(); }catch(e){}
-    try{ showScreen('select'); }catch(e){}
-    try{ restoreSelectScreen(); }catch(e){}
-    suppressHistoryPush = false;
-  }
-
-  function moveToList(){
-    suppressHistoryPush = true;
-    try{ showScreen('list'); }catch(e){}
-    try{ restoreChecklist(); }catch(e){}
-    try{ updateProgress(); }catch(e){}
-    suppressHistoryPush = false;
-  }
-
-  function patchShowScreen(){
-    if(typeof window.showScreen !== 'function' || window.__guriShowScreenPatched) return;
-    var originalShowScreen = window.showScreen;
-    window.showScreen = function(id){
-      originalShowScreen(id);
-      if(initialized && !suppressHistoryPush){
-        pushScreenState(id);
-      }
-    };
-    window.__guriShowScreenPatched = true;
-  }
-
-  function handlePopState(e){
-    if(e && e.stopImmediatePropagation) e.stopImmediatePropagation();
-
-    var target = e && e.state && e.state.guriScreen ? e.state.screen : 'select';
-    var active = currentActiveScreen();
-
-    // 결과화면2/결과화면1에서 휴대폰 뒤로가기: 마지막 화면으로 복귀
-    if(active === 'review'){
-      if(earlyEndTime && (!currentRole || currentRole === 'none')){
-        moveToSelect();
-        pushScreenState('select');
-      }else{
-        moveToList();
-        pushScreenState('list');
-      }
-      return false;
-    }
-
-    // 체크리스트 화면에서 휴대폰 뒤로가기: 첫 화면으로 복귀
-    if(active === 'list'){
-      if(closeDepartIfOpen()){
-        pushScreenState('list');
-        return false;
-      }
-      moveToSelect();
-      pushScreenState('select');
-      return false;
-    }
-
-    // 첫 화면에서는 앱 종료 방지
-    if(closeDepartIfOpen()){
-      pushScreenState('select');
-      return false;
-    }
-    showToast();
-    pushScreenState('select');
-    return false;
-  }
-
-  function init(){
-    patchShowScreen();
-    replaceRootState();
-    initialized = true;
-    pushScreenState('select');
-  }
-
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', init);
-  }else{
-    init();
-  }
-  window.addEventListener('popstate', handlePopState, true);
-})();
+// 기존 비활성 뒤로가기 로직 제거 완료
 </script>
 
 <div class="back-toast" id="back-toast">한 번 더 뒤로 누르시면 종료됩니다.</div>
