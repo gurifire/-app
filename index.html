@@ -325,6 +325,8 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .fb-dashboard-head{background:#2472A3;color:white;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .fb-dashboard-title{font-size:13px;font-weight:800}
 .fb-dashboard-status{font-size:10px;opacity:.9;white-space:nowrap}
+.fb-edit-auth{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;opacity:.95;white-space:nowrap}
+.fb-edit-auth input{width:16px;height:16px;accent-color:#2472A3;cursor:pointer}
 .fb-dashboard-body{padding:12px 14px}
 .fb-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:6px;gap:8px}
 .fb-row strong{font-size:13px;color:#2472A3}
@@ -5259,8 +5261,10 @@ function restoreChecklist(){
   }
   function toggleDisasterEdit(){
     var el=document.getElementById('fb-disaster-edit'); if(!el) return;
-    if(el.className.indexOf('show')>=0) el.className=el.className.replace(/\s*show/g,'');
-    else el.className += ' show';
+    if(el.className.indexOf('show')>=0){ el.className=el.className.replace(/\s*show/g,''); return; }
+    var auth=document.getElementById('fb-disaster-edit-auth');
+    if(!auth || !auth.checked){ alert('상단 재난현황 수정 체크박스를 체크한 후 수정할 수 있습니다.'); return; }
+    el.className += ' show';
   }
   function saveDisasterStatus(){
     if(!FB.ready || !FB.db){ alert('Firebase 연결을 확인해 주세요.'); return; }
@@ -6040,7 +6044,7 @@ renderGroupBlocks(members);
     box.className='fb-dashboard';
     box.id='fb-dashboard';
     box.innerHTML=''+
-      '<div class="fb-dashboard-head"><div class="fb-dashboard-title">📡 실시간 현황</div><div class="fb-dashboard-status" id="fb-status">연결 대기</div></div>'+ 
+      '<div class="fb-dashboard-head"><div class="fb-dashboard-title">📡 실시간 현황</div><div class="fb-edit-auth"><label><input type="checkbox" id="fb-disaster-edit-auth"> 재난현황 수정</label><div class="fb-dashboard-status" id="fb-status">연결 대기</div></div></div>'+ 
       '<div class="fb-dashboard-body">'+
         
         '<div class="fb-summary-grid">'+
