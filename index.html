@@ -3169,6 +3169,8 @@ function resetMobilize(){
 }
 
 var selectedStationName = '구리소방서';
+// V20: 앱 최초 실행/관서선택 화면에서는 Firebase 인원·데이터 미반영
+var stationFirebaseActivated = false;
 
 function formatStationName(name){
   name = String(name || '').trim();
@@ -3293,7 +3295,9 @@ function selectStation(name){
   try{ if(typeof saveState === 'function') saveState(); }catch(e){}
   var nextStationName = formatStationName(name);
   selectedStationName = nextStationName;
-  window.guriStationPresenceAllowed = true;
+  stationFirebaseActivated = true;
+  // V20: 동시접속 presence는 사용하지 않고, 활동인원은 저장 버튼 이후 해당 관서 Firebase에만 반영
+  window.guriStationPresenceAllowed = false;
   try{ localStorage.setItem('guri_selected_station_name', selectedStationName); }catch(e){}
 
   // V45_52: 관서별 Firebase 경로 분리는 유지하되,
@@ -3588,7 +3592,8 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
   document.getElementById('screen-' + id).classList.add('active');
   if(id === 'station'){
-    try{ window.guriStationPresenceAllowed = false; if(window.clearStationPresence) window.clearStationPresence(); }catch(e){}
+    try{ stationFirebaseActivated = false; window.guriStationPresenceAllowed = false; if(window.clearStationPresence) window.clearStationPresence(); }catch(e){}
+    try{ if(typeof refreshStationOverviewActivity === 'function') setTimeout(refreshStationOverviewActivity, 100); }catch(e){}
   }
   window.scrollTo(0, 0);
   // 첫 화면(select)에서는 앱 헤더 숨김 (자체 히어로 헤더가 있음)
@@ -4875,12 +4880,17 @@ function restoreChecklist(){
   };
 
 
-  // V11: 관서선택 화면 활동중·실시간 동시접속 표시
+  // V22: 관서선택 화면 활동중 표시
+  // - 동시접속 presence 미사용
+  // - 첫 화면에서는 쓰기 없이 각 관서 Firebase의 당일 sessions/*/members를 1회 조회
+  // - 유효 활동인원 1명 이상 + 체크 데이터 1개 이상일 때만 "활동중" 표시
   var STATION_OVERVIEW_KEYS = ['북부본부','구리','남양주','가평','동두천','연천','포천','양주','고양','일산','파주','의정부'];
   var stationOverviewDB = null;
   var stationOverviewReady = false;
   var stationPresenceRef = null;
   var stationPresenceTimer = null;
+  var stationOverviewState = {};
+  var stationOverviewRefreshTimer = null;
 
   function ensureStationLiveBadges(){
     try{
@@ -4895,54 +4905,124 @@ function restoreChecklist(){
         if(!card.querySelector('.station-live-badge')){
           var badge = document.createElement('span');
           badge.className = 'station-live-badge';
-          badge.textContent = '활동중 · 0명';
+          badge.textContent = '활동중';
           card.appendChild(badge);
         }
       }
     }catch(e){}
   }
 
-  function renderStationOverviewPresence(data){
+  function hasAnyCheckedForStationOverview(record){
+    try{
+      if(!record) return false;
+      if(Number(record.done || 0) > 0) return true;
+      if(record.earlyEndTime || record.activityEndTime) return true;
+      if(record.departChecked && record.departChecked.length > 0) return true;
+      var roleChecked = record.roleChecked || {};
+      var roleKeys = Object.keys(roleChecked || {});
+      for(var i=0;i<roleKeys.length;i++){
+        var arr = roleChecked[roleKeys[i]] || [];
+        if(arr && arr.length > 0) return true;
+      }
+      var roleSummary = record.roleSummary || {};
+      var summaryKeys = Object.keys(roleSummary || {});
+      for(var j=0;j<summaryKeys.length;j++){
+        if(Number((roleSummary[summaryKeys[j]] || {}).done || 0) > 0) return true;
+      }
+    }catch(e){}
+    return false;
+  }
+
+  function renderStationOverviewActivity(){
     try{
       ensureStationLiveBadges();
-      var now = Date.now();
       STATION_OVERVIEW_KEYS.forEach(function(key){
-        var group = (data && data[key]) || {};
-        var count = 0;
-        Object.keys(group || {}).forEach(function(deviceKey){
-          var item = group[deviceKey] || {};
-          var lastSeen = Number(item.lastSeen || 0);
-          var fresh = lastSeen ? ((now - lastSeen) < 120000) : true;
-          if(item.online !== false && fresh) count++;
-        });
+        var info = stationOverviewState[key] || {activeCount:0, hasChecked:false};
+        var isLive = !!(info.activeCount > 0 && info.hasChecked);
         var card = document.querySelector('.station-card[data-station-key="'+key+'"]');
         if(!card) return;
         var badge = card.querySelector('.station-live-badge');
-        if(count > 0){
+        if(isLive){
           card.classList.add('is-live');
-          if(badge) badge.textContent = '활동중 · '+count+'명';
+          if(badge) badge.textContent = '활동중';
         }else{
           card.classList.remove('is-live');
-          if(badge) badge.textContent = '활동중 · 0명';
+          if(badge) badge.textContent = '활동중';
         }
       });
     }catch(e){}
   }
 
+  function renderStationOverviewPresence(data){
+    // 기존 presence 표시 함수 호환용: V22에서는 활동중 표시로만 갱신
+    renderStationOverviewActivity();
+  }
+
+  function getOverviewSessionIdForStation(key){
+    try{
+      var skey = String(key || '구리').replace(/[.#$\/\[\]\s]/g,'_');
+      return 'checklist_live_' + skey;
+    }catch(e){
+      return 'checklist_live_구리';
+    }
+  }
+
+  function updateOneStationOverview(key){
+    try{
+      var config = firebaseConfigs[key];
+      if(!config || !window.firebase) return;
+      var appName = 'guri_station_overview_read_' + safeKey(key || 'station');
+      var app = null;
+      try{ app = firebase.app(appName); }
+      catch(e){ app = firebase.initializeApp(config, appName); }
+      var db = firebase.database(app);
+      try{ db.goOnline(); }catch(eOnline){}
+      var sid = getOverviewSessionIdForStation(key);
+      db.ref('sessions/'+sid+'/members').once('value').then(function(snapshot){
+        var members = snapshot.val() || {};
+        var activeCount = 0;
+        var hasChecked = false;
+        Object.keys(members || {}).forEach(function(memberKey){
+          var rec = members[memberKey] || {};
+          if(isValidMemberRecord(rec, memberKey)){
+            activeCount++;
+            if(hasAnyCheckedForStationOverview(rec)) hasChecked = true;
+          }
+        });
+        stationOverviewState[key] = {activeCount:activeCount, hasChecked:hasChecked};
+        renderStationOverviewActivity();
+        try{ db.goOffline(); }catch(e0){}
+      }).catch(function(err){
+        console.log('station overview read error', key, err);
+        try{ db.goOffline(); }catch(e1){}
+      });
+    }catch(e){ console.log('station overview update error', key, e); }
+  }
+
+  function refreshStationOverviewActivity(){
+    try{
+      ensureStationLiveBadges();
+      if(!window.firebase) return;
+      STATION_OVERVIEW_KEYS.forEach(function(key){ updateOneStationOverview(key); });
+    }catch(e){ console.log('station overview refresh error', e); }
+  }
+
+  window.refreshStationOverviewActivity = refreshStationOverviewActivity;
+
   function initStationOverviewMonitor(){
     try{
       ensureStationLiveBadges();
-      if(stationOverviewReady || !window.firebase) return;
-      var centerConfig = firebaseConfigs['북부본부'];
-      if(!centerConfig) return;
-      var centerApp = null;
-      try{ centerApp = firebase.app('guri_station_overview_center'); }
-      catch(e){ centerApp = firebase.initializeApp(centerConfig, 'guri_station_overview_center'); }
-      stationOverviewDB = firebase.database(centerApp);
+      if(stationOverviewReady) return;
       stationOverviewReady = true;
-      stationOverviewDB.ref('stationPresence').on('value', function(snapshot){
-        renderStationOverviewPresence(snapshot.val() || {});
-      });
+      refreshStationOverviewActivity();
+      if(!stationOverviewRefreshTimer){
+        stationOverviewRefreshTimer = setInterval(function(){
+          try{
+            var stationScreen = document.getElementById('screen-station');
+            if(stationScreen && stationScreen.classList.contains('active')) refreshStationOverviewActivity();
+          }catch(e){}
+        }, 60000);
+      }
     }catch(e){ console.log('station overview monitor error', e); }
   }
 
@@ -4956,6 +5036,8 @@ function restoreChecklist(){
 
   function registerStationPresence(stationKey){
     try{
+      // V20: 동시접속 presence 기록 비활성화(활동인원은 저장 버튼 이후 해당 관서 DB members에만 기록)
+      return;
       if(!window.guriStationPresenceAllowed) return;
       initStationOverviewMonitor();
       if(!stationOverviewDB || !stationKey) return;
@@ -5161,6 +5243,7 @@ function restoreChecklist(){
   }
   function initFirebase(){
     try{
+      if(!stationFirebaseActivated){ FB.ready=false; FB.db=null; setStatus('관서 선택 전'); return; }
       if(!window.firebase){ setStatus('Firebase SDK 로드 실패'); return; }
 
       var selected = getFirebaseConfigForStation();
@@ -5208,6 +5291,7 @@ function restoreChecklist(){
   window.reconnectStationFirebase = function(){
     try{
       // V45_51: 관서 변경 직후 이전 관서의 로컬 상태가 새 관서 DB에 복사 저장되지 않도록 자동 저장 금지
+      if(!stationFirebaseActivated) return;
       initFirebase();
     }catch(e){
       console.log('Firebase reconnect error', e);
@@ -5216,6 +5300,7 @@ function restoreChecklist(){
   };
   function saveFirebaseState(force){
   try{ rememberCurrentRoleChecks(); }catch(e){}
+    if(!stationFirebaseActivated) return;
     if(!FB.ready || !FB.db) return;
     try{
       var member=getMemberInfo();
@@ -6333,11 +6418,11 @@ renderGroupBlocks(members);
   }
   function init(){
     FB.sessionId=getSessionId();
-    try{ initStationOverviewMonitor(); }catch(e){}
+    // V22: 첫 화면은 쓰기 없이 활동중 여부만 조회, 인원·데이터 저장은 관서 선택 및 저장 이후에만 수행
     addDashboard();
-    initFirebase();
+    setStatus('관서 선택 전');
     wrapSaveState();
-    setTimeout(saveFirebaseState, 600);
+    initStationOverviewMonitor();
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
   else init();
