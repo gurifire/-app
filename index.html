@@ -430,7 +430,7 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .fb-sub-group-label{font-size:11px;font-weight:800;color:#7D3C98;padding:7px 14px 3px 32px;background:#FCFCFC}
 .fb-muted-empty{font-size:12px;color:#888;padding:12px;background:white;border-radius:10px;border:1px dashed #DDD}
 
-@media (min-width:720px){.fb-disaster-grid{grid-template-columns:1fr 1fr 1fr}.fb-summary-grid{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:720px){.fb-disaster-grid{grid-template-columns:1fr 1fr}.fb-summary-grid{grid-template-columns:repeat(3,1fr)}}
 
 
 /* V45_19: 모바일 세로화면 재난현황 수정창 폭 보정 */
@@ -5301,6 +5301,9 @@ function restoreChecklist(){
   }
   function defaultDisasterStatus(){
     return {
+      overviewDateTime:'-',
+      overviewLocation:'-',
+      overviewResponseLevel:'-',
       rescueRequired:'-',
       rescueDone:'-',
       rescueOngoing:'-',
@@ -5324,12 +5327,13 @@ function restoreChecklist(){
     var d=defaultDisasterStatus();
     Object.keys(data).forEach(function(k){ d[k]=data[k]; });
     function put(id, val){ var el=document.getElementById(id); if(el) el.textContent=(val===''||val==null)?'-':val; }
+    put('ds-overview-dateTime', d.overviewDateTime); put('ds-overview-location', d.overviewLocation); put('ds-overview-responseLevel', d.overviewResponseLevel);
     put('ds-rescue-required', d.rescueRequired); put('ds-rescue-done', d.rescueDone); put('ds-rescue-transport', d.rescueTransport); put('ds-rescue-triage', d.rescueTriage);
     put('ds-resource-personnel', d.resourcePersonnel); put('ds-resource-vehicles', d.resourceVehicles); put('ds-resource-equipment', d.resourceEquipment); put('ds-resource-agencies', d.resourceAgencies);
     put('ds-damage-people', d.damagePeople); put('ds-damage-property', d.damageProperty || ((d.damageBuildings && d.damageBuildings !== '-') || (d.damageVehicles && d.damageVehicles !== '-') ? ['건물 '+(d.damageBuildings||'-'), '차량 '+(d.damageVehicles||'-')].join(' / ') : '-')); put('ds-damage-note', d.damageNote);
     var meta=document.getElementById('ds-meta');
     if(meta) meta.textContent='최종 수정: '+((d.updatedBy||'미입력')+' · '+(d.updatedAtText||'미저장'));
-    ['rescueRequired','rescueDone','rescueTransport','rescueTriage','resourcePersonnel','resourceVehicles','resourceEquipment','resourceAgencies','damagePeople','damageProperty','damageNote'].forEach(function(k){
+    ['overviewDateTime','overviewLocation','overviewResponseLevel','rescueRequired','rescueDone','rescueTransport','rescueTriage','resourcePersonnel','resourceVehicles','resourceEquipment','resourceAgencies','damagePeople','damageProperty','damageNote'].forEach(function(k){
       var el=document.getElementById('input-'+k); if(el) el.value=(d[k]==='-'?'':(d[k]||''));
     });
   }
@@ -5345,6 +5349,7 @@ function restoreChecklist(){
     function val(k){ var el=document.getElementById('input-'+k); return el ? el.value.trim() : ''; }
     var m=getMemberInfo();
     var data={
+      overviewDateTime:val('overviewDateTime')||'-', overviewLocation:val('overviewLocation')||'-', overviewResponseLevel:val('overviewResponseLevel')||'-',
       rescueRequired:val('rescueRequired')||'-', rescueDone:val('rescueDone')||'-', rescueTransport:val('rescueTransport')||'-', rescueTriage:val('rescueTriage')||'-',
       resourcePersonnel:val('resourcePersonnel')||'-', resourceVehicles:val('resourceVehicles')||'-', resourceEquipment:val('resourceEquipment')||'-', resourceAgencies:val('resourceAgencies')||'-',
       damagePeople:val('damagePeople')||'-', damageProperty:val('damageProperty')||'-', damageNote:val('damageNote')||'',
@@ -5707,6 +5712,9 @@ function restoreChecklist(){
   function buildDisasterRowsForExcel(){
     var d = window.lastDisasterStatus || {};
     return [
+      {'구분':'재난개요','항목':'발생일시','내용':d.overviewDateTime || getTextByIdForExcel('ds-overview-dateTime')},
+      {'구분':'재난개요','항목':'발생장소','내용':d.overviewLocation || getTextByIdForExcel('ds-overview-location')},
+      {'구분':'재난개요','항목':'대응단계(시간)','내용':d.overviewResponseLevel || getTextByIdForExcel('ds-overview-responseLevel')},
       {'구분':'인명구조현황','항목':'구조대상자','내용':d.rescueRequired || getTextByIdForExcel('ds-rescue-required')},
       {'구분':'인명구조현황','항목':'구조완료','내용':d.rescueDone || getTextByIdForExcel('ds-rescue-done')},
       {'구분':'인명구조현황','항목':'이송현황','내용':d.rescueTransport || getTextByIdForExcel('ds-rescue-transport')},
@@ -6130,15 +6138,19 @@ renderGroupBlocks(members);
           '<div class="fb-fixed-summary">📊 재난현황 <span class="fb-acc-desc">전원 열람 · 담당자 수정</span></div>'+ 
           '<div class="fb-acc-body">'+
             '<div class="fb-disaster-grid">'+
+              '<div class="fb-disaster-section"><div class="fb-disaster-title">📌 재난개요</div><div class="fb-disaster-kv"><div>발생일시<strong id="ds-overview-dateTime">-</strong></div><div>대응단계(시간)<strong id="ds-overview-responseLevel">-</strong></div><div class="fb-kv-wide">발생장소<strong id="ds-overview-location">-</strong></div></div></div>'+ 
               '<div class="fb-disaster-section"><div class="fb-disaster-title">👤 인명구조현황</div><div class="fb-disaster-kv"><div>구조대상자<strong id="ds-rescue-required">-</strong></div><div>구조완료<strong id="ds-rescue-done">-</strong></div><div>이송현황<strong id="ds-rescue-transport">-</strong></div><div>분류현황<strong id="ds-rescue-triage">-</strong></div></div></div>'+ 
-              '<div class="fb-disaster-section"><div class="fb-disaster-title">🚒 자원관리현황</div><div class="fb-disaster-kv"><div>동원인원<strong id="ds-resource-personnel">-</strong></div><div>동원차량<strong id="ds-resource-vehicles">-</strong></div><div>주요장비<strong id="ds-resource-equipment">-</strong></div><div>유관기관<strong id="ds-resource-agencies">-</strong></div></div></div>'+ 
               '<div class="fb-disaster-section"><div class="fb-disaster-title">🏢 피해현황</div><div class="fb-disaster-kv"><div>인명피해<strong id="ds-damage-people">-</strong></div><div>재산피해<strong id="ds-damage-property">-</strong></div><div class="fb-kv-wide">기타피해<strong id="ds-damage-note">-</strong></div></div></div>'+ 
+              '<div class="fb-disaster-section"><div class="fb-disaster-title">🚒 자원관리현황</div><div class="fb-disaster-kv"><div>동원인원<strong id="ds-resource-personnel">-</strong></div><div>동원차량<strong id="ds-resource-vehicles">-</strong></div><div>주요장비<strong id="ds-resource-equipment">-</strong></div><div>유관기관<strong id="ds-resource-agencies">-</strong></div></div></div>'+ 
             '</div>'+ 
             '<div class="fb-disaster-meta" id="ds-meta">최종 수정: 미저장</div>'+ 
             '<div class="fb-btns"><button class="fb-btn" onclick="toggleDisasterEdit()">재난현황 수정</button></div>'+ 
             '<div class="fb-edit-panel" id="fb-disaster-edit">'+
               '<div class="fb-edit-title">담당 요원만 재난현황 입력 · 수정</div>'+ 
               '<div class="fb-edit-grid">'+
+                '<div class="fb-edit-field"><label>발생일시</label><input id="input-overviewDateTime" placeholder="예: 2026. 6. 16. 14:20"></div>'+ 
+                '<div class="fb-edit-field"><label>대응단계(시간)</label><input id="input-overviewResponseLevel" placeholder="예: 대응1단계(14:35)"></div>'+ 
+                '<div class="fb-edit-field fb-edit-wide"><label>발생장소</label><input id="input-overviewLocation" placeholder="예: 구리시 ○○동 ○○아파트"></div>'+ 
                 '<div class="fb-edit-field"><label>구조대상자</label><input id="input-rescueRequired" placeholder="예: "></div>'+ 
                 '<div class="fb-edit-field"><label>구조완료</label><input id="input-rescueDone" placeholder="예: 3명"></div>'+ 
                 '<div class="fb-edit-field"><label>이송현황</label><input id="input-rescueTransport" placeholder="예: 병원 이송 2명"></div><div class="fb-edit-field"><label>분류현황</label><input id="input-rescueTriage" placeholder="예: 중상1 경상2"></div>'+ 
