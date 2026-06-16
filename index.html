@@ -338,6 +338,7 @@ html,body{height:100%;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun G
 .fb-btn:active{background:#EBF5FB}
 .fb-btn.danger{border-color:#C0392B;color:#C0392B}
 .fb-btn.danger:active{background:#FEF5F4}
+.fb-btn:disabled{opacity:0.35;cursor:not-allowed;pointer-events:none}
 .fb-modal-backdrop{position:fixed;left:0;right:0;top:0;bottom:0;background:rgba(0,0,0,0.38);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
 .fb-modal-backdrop.show{display:flex}
 .fb-modal{width:100%;max-width:320px;background:white;border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,0.28);overflow:hidden;text-align:center}
@@ -1592,6 +1593,24 @@ button{
     grid-column:auto;
   }
 }
+
+
+/* V11: 관서선택 화면 활동중·동시접속 표시 */
+.station-card{position:relative;flex-direction:column;gap:3px;line-height:1.25;}
+.station-live-badge{
+  display:none;
+  font-size:10px;
+  font-weight:900;
+  line-height:1;
+  padding:3px 7px;
+  border-radius:999px;
+  background:#E8F8F5;
+  color:#117A65;
+  border:1px solid rgba(17,122,101,.18);
+  white-space:nowrap;
+}
+.station-card.is-live .station-live-badge{display:inline-flex;align-items:center;gap:3px;}
+.station-card.headquarter .station-live-badge{background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.35);}
 
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -3274,6 +3293,7 @@ function selectStation(name){
   try{ if(typeof saveState === 'function') saveState(); }catch(e){}
   var nextStationName = formatStationName(name);
   selectedStationName = nextStationName;
+  window.guriStationPresenceAllowed = true;
   try{ localStorage.setItem('guri_selected_station_name', selectedStationName); }catch(e){}
 
   // V45_52: 관서별 Firebase 경로 분리는 유지하되,
@@ -3567,6 +3587,9 @@ function completeFromSelect(){
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
   document.getElementById('screen-' + id).classList.add('active');
+  if(id === 'station'){
+    try{ window.guriStationPresenceAllowed = false; if(window.clearStationPresence) window.clearStationPresence(); }catch(e){}
+  }
   window.scrollTo(0, 0);
   // 첫 화면(select)에서는 앱 헤더 숨김 (자체 히어로 헤더가 있음)
   document.querySelector('.app-header').style.display = (id === 'select' || id === 'station') ? 'none' : 'flex';
@@ -4851,6 +4874,117 @@ function restoreChecklist(){
     }
   };
 
+
+  // V11: 관서선택 화면 활동중·실시간 동시접속 표시
+  var STATION_OVERVIEW_KEYS = ['북부본부','구리','남양주','가평','동두천','연천','포천','양주','고양','일산','파주','의정부'];
+  var stationOverviewDB = null;
+  var stationOverviewReady = false;
+  var stationPresenceRef = null;
+  var stationPresenceTimer = null;
+
+  function ensureStationLiveBadges(){
+    try{
+      var cards = document.querySelectorAll('.station-card');
+      for(var i=0;i<cards.length;i++){
+        var card = cards[i];
+        var onclick = card.getAttribute('onclick') || '';
+        var m = onclick.match(/selectStation\('([^']+)'\)/);
+        if(!m) continue;
+        var key = m[1];
+        card.setAttribute('data-station-key', key);
+        if(!card.querySelector('.station-live-badge')){
+          var badge = document.createElement('span');
+          badge.className = 'station-live-badge';
+          badge.textContent = '활동중 · 0명';
+          card.appendChild(badge);
+        }
+      }
+    }catch(e){}
+  }
+
+  function renderStationOverviewPresence(data){
+    try{
+      ensureStationLiveBadges();
+      var now = Date.now();
+      STATION_OVERVIEW_KEYS.forEach(function(key){
+        var group = (data && data[key]) || {};
+        var count = 0;
+        Object.keys(group || {}).forEach(function(deviceKey){
+          var item = group[deviceKey] || {};
+          var lastSeen = Number(item.lastSeen || 0);
+          var fresh = lastSeen ? ((now - lastSeen) < 120000) : true;
+          if(item.online !== false && fresh) count++;
+        });
+        var card = document.querySelector('.station-card[data-station-key="'+key+'"]');
+        if(!card) return;
+        var badge = card.querySelector('.station-live-badge');
+        if(count > 0){
+          card.classList.add('is-live');
+          if(badge) badge.textContent = '활동중 · '+count+'명';
+        }else{
+          card.classList.remove('is-live');
+          if(badge) badge.textContent = '활동중 · 0명';
+        }
+      });
+    }catch(e){}
+  }
+
+  function initStationOverviewMonitor(){
+    try{
+      ensureStationLiveBadges();
+      if(stationOverviewReady || !window.firebase) return;
+      var centerConfig = firebaseConfigs['북부본부'];
+      if(!centerConfig) return;
+      var centerApp = null;
+      try{ centerApp = firebase.app('guri_station_overview_center'); }
+      catch(e){ centerApp = firebase.initializeApp(centerConfig, 'guri_station_overview_center'); }
+      stationOverviewDB = firebase.database(centerApp);
+      stationOverviewReady = true;
+      stationOverviewDB.ref('stationPresence').on('value', function(snapshot){
+        renderStationOverviewPresence(snapshot.val() || {});
+      });
+    }catch(e){ console.log('station overview monitor error', e); }
+  }
+
+  function clearStationPresence(){
+    try{ if(stationPresenceTimer) clearInterval(stationPresenceTimer); }catch(e){}
+    stationPresenceTimer = null;
+    try{ if(stationPresenceRef) stationPresenceRef.remove(); }catch(e){}
+    stationPresenceRef = null;
+  }
+  window.clearStationPresence = clearStationPresence;
+
+  function registerStationPresence(stationKey){
+    try{
+      if(!window.guriStationPresenceAllowed) return;
+      initStationOverviewMonitor();
+      if(!stationOverviewDB || !stationKey) return;
+      clearStationPresence();
+      var device = (typeof getStableDeviceId === 'function') ? getStableDeviceId() : ('dev_'+Math.random().toString(36).slice(2));
+      var dkey = safeKey(device);
+      stationPresenceRef = stationOverviewDB.ref('stationPresence/'+safeKey(stationKey)+'/'+dkey);
+      function writePresence(){
+        try{
+          stationPresenceRef.set({
+            online:true,
+            station:stationKey,
+            deviceId:device,
+            lastSeen:Date.now(),
+            updatedAt:firebase.database.ServerValue.TIMESTAMP
+          });
+          stationPresenceRef.onDisconnect().remove();
+        }catch(e){}
+      }
+      writePresence();
+      stationPresenceTimer = setInterval(writePresence, 30000);
+    }catch(e){ console.log('station presence error', e); }
+  }
+
+  try{
+    window.addEventListener('beforeunload', function(){ try{ clearStationPresence(); }catch(e){} });
+    window.addEventListener('pagehide', function(){ try{ clearStationPresence(); }catch(e){} });
+  }catch(e){}
+
   function getFirebaseStationKey(){
     var name = '';
     try{ name = (typeof selectedStationName !== 'undefined' && selectedStationName) ? selectedStationName : ''; }catch(e){}
@@ -5062,6 +5196,7 @@ function restoreChecklist(){
       FB.stationKey=stationKey;
       FB.sessionId=getSessionId();
       try{ FB.deviceMemberKey = localStorage.getItem(getFirebaseDeviceMemberStorageKey()) || null; }catch(e0){}
+      try{ registerStationPresence(stationKey); }catch(ePresence){}
       setStatus(stationKey + ' 연결 준비 완료');
       listenSession();
     }catch(e){
@@ -5363,7 +5498,15 @@ function restoreChecklist(){
   }
   window.toggleDisasterEdit=toggleDisasterEdit;
   window.saveDisasterStatus=saveDisasterStatus;
+  function updateDisasterEndButtonAuth(){
+    var auth=document.getElementById('fb-disaster-edit-auth');
+    var btn=document.getElementById('fb-disaster-end-btn');
+    if(btn) btn.disabled = !(auth && auth.checked);
+  }
+  window.updateDisasterEndButtonAuth=updateDisasterEndButtonAuth;
   function showDisasterEndModal(){
+    var auth=document.getElementById('fb-disaster-edit-auth');
+    if(!auth || !auth.checked){ alert('상단 재난현황 수정 체크박스를 체크한 후 재난종료를 할 수 있습니다.'); return; }
     var el=document.getElementById('fb-end-modal');
     if(el) el.className += ' show';
   }
@@ -6126,7 +6269,7 @@ renderGroupBlocks(members);
     box.className='fb-dashboard';
     box.id='fb-dashboard';
     box.innerHTML=''+
-      '<div class="fb-dashboard-head"><div class="fb-dashboard-title">📡 실시간 현황</div><div class="fb-edit-auth"><label><input type="checkbox" id="fb-disaster-edit-auth"> 재난현황 수정</label><div class="fb-dashboard-status" id="fb-status">연결 대기</div></div></div>'+ 
+      '<div class="fb-dashboard-head"><div class="fb-dashboard-title">📡 실시간 현황</div><div class="fb-edit-auth"><label><input type="checkbox" id="fb-disaster-edit-auth" onchange="updateDisasterEndButtonAuth()"> 재난현황 수정</label><div class="fb-dashboard-status" id="fb-status">연결 대기</div></div></div>'+ 
       '<div class="fb-dashboard-body">'+
         
         '<div class="fb-summary-grid">'+
@@ -6168,13 +6311,14 @@ renderGroupBlocks(members);
         '</details>'+ 
         '<details class="fb-acc"><summary>🚒 긴급구조현장지휘대 지원반 <span class="fb-acc-desc"></span></summary><div class="fb-acc-body" id="fb-support-group"></div></details>'+ 
         '<details class="fb-acc"><summary>🧭 긴급구조통제단 <span class="fb-acc-desc"></span></summary><div class="fb-acc-body" id="fb-control-group"></div></details>'+ 
-        '<div class="fb-btns"><button class="fb-btn" onclick="exportRealtimeExcel()">엑셀 다운로드</button><button class="fb-btn danger" onclick="showDisasterEndModal()">재난종료</button></div>'+ 
+        '<div class="fb-btns"><button class="fb-btn" onclick="exportRealtimeExcel()">엑셀 다운로드</button><button class="fb-btn danger" id="fb-disaster-end-btn" onclick="showDisasterEndModal()" disabled>재난종료</button></div>'+ 
         '<div class="fb-modal-backdrop" id="fb-end-modal"><div class="fb-modal"><div class="fb-modal-body"><div class="fb-modal-icon">⚠️</div><div class="fb-modal-msg">재난활동을 종료합니다.<br>저장된 현황이 초기화됩니다.</div></div><div class="fb-modal-actions"><button class="fb-modal-cancel" onclick="hideDisasterEndModal()">취소</button><button class="fb-modal-confirm" onclick="confirmDisasterEnd()">확인</button></div></div></div>'+ 
       '</div>';
     anchor.parentNode.insertBefore(box, anchor);
     var sid=document.getElementById('fb-session-id'); if(sid) sid.textContent=FB.sessionId || getSessionId();
     renderDisasterStatus(FB.disasterStatus||{});
     renderGroupBlocks(FB.lastSnapshot||{});
+    updateDisasterEndButtonAuth();
   }
   function wrapSaveState(){
     if(typeof window.saveState !== 'function') return;
@@ -6189,6 +6333,7 @@ renderGroupBlocks(members);
   }
   function init(){
     FB.sessionId=getSessionId();
+    try{ initStationOverviewMonitor(); }catch(e){}
     addDashboard();
     initFirebase();
     wrapSaveState();
