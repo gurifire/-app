@@ -2684,7 +2684,70 @@ var ROLES = {
       ]}
     ]
   }
-};
+};;
+
+
+// ══════════════════════════════════════════
+// 관서별 지원반장 확인 목록 문구 적용
+// - 구리소방서: 기존 문구 유지
+// - 구리 외 관서 및 북부본부: 세부 수량·괄호 문구 간소화
+// ══════════════════════════════════════════
+var CHIEF_BASE_PHASES = null;
+var CHIEF_SIMPLE_PHASES = null;
+
+function cloneChiefData(obj){
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function simplifyChiefLabel(text){
+  var map = {
+    '천막 2개':'천막',
+    '테이블 2개':'테이블',
+    '의자 8개':'의자',
+    'PS-LTE 가방(17개)(사무실 보관·통제단 담당자 자리)':'PS-LTE',
+    '식수 및 이온음료(긴급구조통제단 창고 보관)':'식수 및 이온음료',
+    '현장지휘소 운영 (필수인원 2명·팀원)':'현장지휘소 운영',
+    '민간인 통제 (필수인원 1명, 차량통제와 병행)':'민간인 통제',
+    '자원집결지 운영 (필수인원 1명·팀장)':'자원집결지 운영',
+    '자원집결지 운영 (필수인원 1명)':'자원집결지 운영',
+    '자원대기소 운영 (필수인원 1명)':'자원대기소 운영'
+  };
+  return map[text] || text;
+}
+
+function simplifyChiefPhases(phases){
+  phases.forEach(function(phase){
+    (phase.items || []).forEach(function(item){
+      if(item.main) item.main = simplifyChiefLabel(item.main);
+      if(item.subs){
+        item.subs = item.subs.map(function(v){ return simplifyChiefLabel(v); });
+      }
+      if(item.subGroups){
+        item.subGroups.forEach(function(group){
+          if(group.items){
+            group.items = group.items.map(function(v){ return simplifyChiefLabel(v); });
+          }
+        });
+      }
+    });
+  });
+  return phases;
+}
+
+function applyChiefStationText(){
+  try{
+    if(!window.ROLES || !ROLES.chief || !ROLES.chief.phases) return;
+    if(!CHIEF_BASE_PHASES){
+      CHIEF_BASE_PHASES = cloneChiefData(ROLES.chief.phases);
+      CHIEF_SIMPLE_PHASES = simplifyChiefPhases(cloneChiefData(CHIEF_BASE_PHASES));
+    }
+    var station = '';
+    try{ station = formatStationName(selectedStationName || '구리소방서'); }catch(e0){ station = selectedStationName || '구리소방서'; }
+    var useBase = (station === '구리소방서');
+    ROLES.chief.phases = cloneChiefData(useBase ? CHIEF_BASE_PHASES : CHIEF_SIMPLE_PHASES);
+  }catch(e){}
+}
+
 
 // ══════════════════════════════════════════
 // STATE
@@ -3097,6 +3160,7 @@ function formatStationName(name){
 
 function applyStationName(){
   var name = selectedStationName || '구리소방서';
+  try{ applyChiefStationText(); }catch(e){}
   var headerStation = document.getElementById('header-station-name');
   var headerTitleStation = document.getElementById('header-title-station');
   var selectStation = document.getElementById('select-station-name');
@@ -3672,6 +3736,7 @@ function selectRole(role){
     withdrawalSids = [];
     applyRoleChecks(role);
   }
+  try{ applyChiefStationText(); }catch(e){}
   var rd = ROLES[role];
   document.getElementById('role-title').textContent    = rd.name;
   document.getElementById('role-subtitle').textContent = rd.subtitle;
