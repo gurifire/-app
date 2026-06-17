@@ -2804,8 +2804,7 @@ document.addEventListener('DOMContentLoaded', function(){
     if(savedStation){ selectedStationName = savedStation; }
   }catch(e){}
   applyStationName();
-  // 앱 실행 시 localStorage 완전 초기화 (항상 새로 시작)
-  clearSavedState();
+  // V27: 앱 새로고침 시 관서 내부 입력사항은 유지하고, 재난종료 시에만 초기화
 
   // V45_51: 관서 변경 직후 새로고침되면 해당 관서 첫 화면으로 바로 진입
   try{
@@ -3194,6 +3193,8 @@ function resetMobilize(){
 }
 
 var selectedStationName = '구리소방서';
+// V29: 사용자 입력·체크상태 초기화는 재난종료 최종 확인 시에만 허용
+window.guriAllowUserDataClearByDisasterEnd = false;
 // V20: 앱 최초 실행/관서선택 화면에서는 Firebase 인원·데이터 미반영
 var stationFirebaseActivated = false;
 
@@ -3317,7 +3318,12 @@ function restoreStationScopedLocalState(){
 }
 
 function selectStation(name){
-  try{ if(typeof saveState === 'function') saveState(); }catch(e){}
+  // V29: 관서선택 첫 화면에서 관서 진입 시 빈 화면 상태가 기존 관서 저장값을 덮어쓰지 않도록 방지
+  try{
+    var stationScreen = document.getElementById('screen-station');
+    var isStationSelectScreen = !!(stationScreen && stationScreen.classList.contains('active'));
+    if(!isStationSelectScreen && typeof saveState === 'function') saveState();
+  }catch(e){}
   var nextStationName = formatStationName(name);
   selectedStationName = nextStationName;
   stationFirebaseActivated = true;
@@ -4657,6 +4663,8 @@ function loadState(){
 }
 
 function clearSavedState(){
+  // V29: 사용자 입력·체크상태 초기화는 재난종료 최종 확인 시에만 허용
+  if(!window.guriAllowUserDataClearByDisasterEnd){ return; }
   try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
 }
 
@@ -5030,6 +5038,8 @@ function restoreChecklist(){
       STATION_OVERVIEW_KEYS.forEach(function(key){ updateOneStationOverview(key); });
     }catch(e){ console.log('station overview refresh error', e); }
   }
+  // V30: 관서선택 화면 복귀 시 새로고침 없이 활동중 표시가 즉시 갱신되도록 전역 노출
+  window.refreshStationOverviewActivity = refreshStationOverviewActivity;
 
   function initStationOverviewMonitor(){
     try{
@@ -5622,6 +5632,7 @@ function restoreChecklist(){
     if(el) el.className=el.className.replace(/\s*show/g,'');
   }
   function resetLocalChecklistState(){
+    try{ window.guriAllowUserDataClearByDisasterEnd = true; }catch(e){}
     try{ if(typeof clearSavedState==='function') clearSavedState(); }catch(e){}
     try{ localStorage.removeItem('guri_checklist_state'); }catch(e){}
     try{ localStorage.removeItem('guri_fb_session_id'); }catch(e){}
