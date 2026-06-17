@@ -1612,6 +1612,31 @@ button{
 .station-card.is-live .station-live-badge{display:inline-flex;align-items:center;gap:3px;}
 .station-card.headquarter .station-live-badge{background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.35);}
 
+
+/* V25: 실시간 현황 내 지원반 완료목록 스크롤 적용
+   - 대상: 긴급구조현장지휘대 지원반 완료목록 영역만
+   - 한 번에 약 3~4개 항목 노출 후 내부 스크롤
+   - 다른 기능/데이터/Firebase 로직 수정 없음
+*/
+#fb-support-group{
+  max-height:430px !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  -webkit-overflow-scrolling:touch !important;
+  overscroll-behavior:contain !important;
+  padding-right:6px !important;
+}
+
+#fb-support-group::-webkit-scrollbar{
+  width:6px;
+}
+
+@media (max-width:640px){
+  #fb-support-group{
+    max-height:390px !important;
+  }
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -4883,7 +4908,7 @@ function restoreChecklist(){
   // V22: 관서선택 화면 활동중 표시
   // - 동시접속 presence 미사용
   // - 첫 화면에서는 쓰기 없이 각 관서 Firebase의 당일 sessions/*/members를 1회 조회
-  // - 유효 활동인원 1명 이상 + 체크 데이터 1개 이상일 때만 "활동중" 표시
+  // - 실시간 현황의 활동인원 1명 이상일 때만 "활동중" 표시
   var STATION_OVERVIEW_KEYS = ['북부본부','구리','남양주','가평','동두천','연천','포천','양주','고양','일산','파주','의정부'];
   var stationOverviewDB = null;
   var stationOverviewReady = false;
@@ -4938,7 +4963,7 @@ function restoreChecklist(){
       ensureStationLiveBadges();
       STATION_OVERVIEW_KEYS.forEach(function(key){
         var info = stationOverviewState[key] || {activeCount:0, hasChecked:false};
-        var isLive = !!(info.activeCount > 0 && info.hasChecked);
+        var isLive = !!(info.activeCount > 0);
         var card = document.querySelector('.station-card[data-station-key="'+key+'"]');
         if(!card) return;
         var badge = card.querySelector('.station-live-badge');
@@ -4976,7 +5001,6 @@ function restoreChecklist(){
       try{ app = firebase.app(appName); }
       catch(e){ app = firebase.initializeApp(config, appName); }
       var db = firebase.database(app);
-      try{ db.goOnline(); }catch(eOnline){}
       var sid = getOverviewSessionIdForStation(key);
       db.ref('sessions/'+sid+'/members').once('value').then(function(snapshot){
         var members = snapshot.val() || {};
@@ -5006,8 +5030,6 @@ function restoreChecklist(){
       STATION_OVERVIEW_KEYS.forEach(function(key){ updateOneStationOverview(key); });
     }catch(e){ console.log('station overview refresh error', e); }
   }
-
-  window.refreshStationOverviewActivity = refreshStationOverviewActivity;
 
   function initStationOverviewMonitor(){
     try{
@@ -5606,6 +5628,7 @@ function restoreChecklist(){
   }
   function confirmDisasterEnd(){
     hideDisasterEndModal();
+    if(!confirm('모든 사용자의 데이터가 초기화 됩니다.')){ return; }
       try{ renderDisasterStatus({}); if(FB && FB.db){ FB.db.ref('sessions/'+FB.sessionId+'/disasterStatus').set(defaultDisasterStatus()); } }catch(e){}
     if(!FB.ready || !FB.db){ alert('Firebase 연결을 확인해 주세요.'); return; }
     var targetSession=FB.sessionId || getSessionId();
@@ -6629,6 +6652,141 @@ if('serviceWorker' in navigator){
 
 </script>
 
+
+
+<script>
+/* V26: 실시간 현황 항목 박스 열림상태 관서별 분리
+   - 대상: 실시간 현황 하단 지원반/통제단 및 하위 완료목록 접이식 박스
+   - 관서별로 열림/닫힘 상태를 별도 저장·복원
+   - Firebase/체크리스트/재난현황 데이터 로직 수정 없음
+*/
+(function(){
+  if(window.__stationScopedFbAccordionPatched) return;
+  window.__stationScopedFbAccordionPatched = true;
+
+  function stationKey(){
+    try{
+      var name = (typeof selectedStationName !== 'undefined' && selectedStationName) ? selectedStationName : (localStorage.getItem('guri_selected_station_name') || '구리소방서');
+      name = String(name || '구리소방서').trim();
+      if(name === '북부본부') return '북부본부';
+      return name.replace(/소방서$/,'').replace(/[.#$\/\[\]\s]/g,'_') || '구리';
+    }catch(e){ return '구리'; }
+  }
+
+  function storageKey(){
+    return 'guri_fb_accordion_open_state::' + stationKey();
+  }
+
+  function normalizeText(t){
+    return String(t || '').replace(/\s+/g,' ').trim();
+  }
+
+  function detailKey(details){
+    try{
+      if(!details) return '';
+      if(details.querySelector && details.querySelector('#fb-support-group')) return 'outer:support';
+      if(details.querySelector && details.querySelector('#fb-control-group')) return 'outer:control';
+      var group = details.closest ? details.closest('#fb-support-group,#fb-control-group') : null;
+      var prefix = group ? (group.id === 'fb-control-group' ? 'control:' : 'support:') : 'detail:';
+      var sum = details.querySelector ? details.querySelector(':scope > summary') : null;
+      var txt = normalizeText(sum ? sum.textContent : details.textContent);
+      txt = txt.replace(/\d+\s*\/\s*\d+\s*완료\s*·\s*\d+%/g,'').replace(/미완료/g,'').trim();
+      return prefix + txt;
+    }catch(e){
+      return '';
+    }
+  }
+
+  function getDashboardDetails(){
+    var arr = [];
+    try{
+      var support = document.getElementById('fb-support-group');
+      var control = document.getElementById('fb-control-group');
+      var outerS = support && support.closest ? support.closest('details') : null;
+      var outerC = control && control.closest ? control.closest('details') : null;
+      if(outerS) arr.push(outerS);
+      if(outerC) arr.push(outerC);
+      document.querySelectorAll('#fb-support-group details.fb-role-detail, #fb-control-group details.fb-role-detail').forEach(function(d){ arr.push(d); });
+    }catch(e){}
+    return arr;
+  }
+
+  function readState(){
+    try{
+      var raw = sessionStorage.getItem(storageKey());
+      return raw ? JSON.parse(raw) : {};
+    }catch(e){ return {}; }
+  }
+
+  function writeState(state){
+    try{ sessionStorage.setItem(storageKey(), JSON.stringify(state || {})); }catch(e){}
+  }
+
+  function saveAccordionState(){
+    try{
+      var state = {};
+      getDashboardDetails().forEach(function(d){
+        var k = detailKey(d);
+        if(k) state[k] = !!d.open;
+      });
+      writeState(state);
+    }catch(e){}
+  }
+
+  function applyAccordionState(){
+    try{
+      var state = readState();
+      getDashboardDetails().forEach(function(d){
+        var k = detailKey(d);
+        if(!k) return;
+        d.open = !!state[k];
+      });
+    }catch(e){}
+  }
+
+  document.addEventListener('toggle', function(e){
+    try{
+      var t = e.target;
+      if(!t || t.tagName !== 'DETAILS') return;
+      if(t.closest && (t.closest('#fb-dashboard') || t.querySelector('#fb-support-group') || t.querySelector('#fb-control-group'))){
+        setTimeout(saveAccordionState, 0);
+      }
+    }catch(err){}
+  }, true);
+
+  if(typeof window.selectStation === 'function' && !window.selectStation.__stationAccordionWrapped){
+    var originalSelectStation = window.selectStation;
+    var wrappedSelectStation = function(){
+      try{ saveAccordionState(); }catch(e){}
+      var result = originalSelectStation.apply(this, arguments);
+      setTimeout(applyAccordionState, 0);
+      setTimeout(applyAccordionState, 120);
+      setTimeout(applyAccordionState, 300);
+      return result;
+    };
+    wrappedSelectStation.__stationAccordionWrapped = true;
+    window.selectStation = wrappedSelectStation;
+  }
+
+  if(typeof window.renderGroupBlocks === 'function' && !window.renderGroupBlocks.__stationAccordionWrapped){
+    var originalRenderGroupBlocks = window.renderGroupBlocks;
+    var wrappedRenderGroupBlocks = function(){
+      var result = originalRenderGroupBlocks.apply(this, arguments);
+      setTimeout(applyAccordionState, 0);
+      return result;
+    };
+    wrappedRenderGroupBlocks.__stationAccordionWrapped = true;
+    window.renderGroupBlocks = wrappedRenderGroupBlocks;
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(applyAccordionState, 200);
+  });
+  window.addEventListener('pageshow', function(){
+    setTimeout(applyAccordionState, 200);
+  });
+})();
+</script>
 </body>
 </html>
 
