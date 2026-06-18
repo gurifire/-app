@@ -5192,7 +5192,11 @@ function restoreChecklist(){
   }
   function getMemberKey(){
     var m=getMemberInfo();
-    var key=[m.unit,m.rank,m.name].filter(Boolean).join('_');
+    // V34: 동명이인 또는 다른 기기에서 같은 소속·계급·성명을 입력해도 별도 사용자로 집계되도록 기기 고유ID를 key에 포함
+    var deviceKey = '';
+    try{ deviceKey = getStableDeviceId(); }catch(e){ deviceKey = 'dev_fallback'; }
+    var memberText = [m.unit,m.rank,m.name].filter(Boolean).join('_');
+    var key = deviceKey + (memberText ? '_' + memberText : '');
     if(!key) key='미입력_'+Math.random().toString(36).slice(2,8);
     return safeKey(key);
   }
@@ -5712,6 +5716,18 @@ function restoreChecklist(){
     return out;
   }
 
+  // V34_1: Firebase key에 기기ID가 포함되어도 엑셀에는 실제 입력한 소속·계급·성명이 출력되도록 보정
+  function getExcelMemberInfo(m, fallbackLabel){
+    m = m || {};
+    var member = m.member || {};
+    var parsed = splitMemberLabelForExcel(fallbackLabel || m.label || m.memberLabel || '');
+    return {
+      unit: member.unit || m.unit || parsed.unit || '-',
+      rank: member.rank || m.rank || parsed.rank || '-',
+      name: member.name || m.name || parsed.name || fallbackLabel || '-'
+    };
+  }
+
   function buildAllChecklistTitlesForExcel(){
     var list = [];
     try{
@@ -5866,12 +5882,7 @@ function restoreChecklist(){
     Object.keys(members || {}).forEach(function(k){
       var m = members[k] || {};
       var label = m.label || m.memberLabel || k;
-      var parsed = splitMemberLabelForExcel(label);
-      var row = {
-        unit: m.unit || parsed.unit || '-',
-        rank: m.rank || parsed.rank || '-',
-        name: m.name || parsed.name || label || '-'
-      };
+      var row = getExcelMemberInfo(m, label);
 
       [k, label, row.name, row.unit + '_' + row.rank + '_' + row.name].forEach(function(key){
         var nk = normalizeNameForExcel(key);
@@ -5959,10 +5970,11 @@ function restoreChecklist(){
       if(Array.isArray(checked)){
         checked.forEach(function(v, idx){
           if(!isCheckedValueForExcel(v)) return;
+          var info = getExcelMemberInfo(m, label);
           rows.push({
-            '소속': m.unit || parsed.unit || '-',
-            '계급': m.rank || parsed.rank || '-',
-            '성명': m.name || parsed.name || '-',
+            '소속': info.unit,
+            '계급': info.rank,
+            '성명': info.name,
             '항목명': getCheckedItemTitleForExcel(idx, v)
           });
         });
@@ -5970,10 +5982,11 @@ function restoreChecklist(){
         Object.keys(checked || {}).forEach(function(itemKey){
           var v = checked[itemKey];
           if(!isCheckedValueForExcel(v)) return;
+          var info = getExcelMemberInfo(m, label);
           rows.push({
-            '소속': m.unit || parsed.unit || '-',
-            '계급': m.rank || parsed.rank || '-',
-            '성명': m.name || parsed.name || '-',
+            '소속': info.unit,
+            '계급': info.rank,
+            '성명': info.name,
             '항목명': getCheckedItemTitleForExcel(itemKey, v)
           });
         });
@@ -5991,11 +6004,11 @@ function restoreChecklist(){
       if(!mt.essential && !mt.general) return;
 
       var label = m.label || m.memberLabel || k;
-      var parsed = splitMemberLabelForExcel(label);
+      var info = getExcelMemberInfo(m, label);
       rows.push({
-        '소속': m.unit || parsed.unit || '-',
-        '계급': m.rank || parsed.rank || '-',
-        '성명': m.name || parsed.name || label || '-',
+        '소속': info.unit,
+        '계급': info.rank,
+        '성명': info.name,
         '필수요원 응소': mt.essential || '-',
         '일반요원 응소': mt.general || '-',
         '활동종료': formatTimeHHmmForExcel(m.completedAt || m.activityEndTime || new Date()),
