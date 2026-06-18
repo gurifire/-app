@@ -4924,6 +4924,8 @@ function restoreChecklist(){
   var stationPresenceTimer = null;
   var stationOverviewState = {};
   var stationOverviewRefreshTimer = null;
+  // V32: 관서선택 첫 화면 활동중 표시를 Firebase members 실시간 리스너로 갱신
+  var stationOverviewListeners = {};
 
   function ensureStationLiveBadges(){
     try{
@@ -5010,7 +5012,13 @@ function restoreChecklist(){
       catch(e){ app = firebase.initializeApp(config, appName); }
       var db = firebase.database(app);
       var sid = getOverviewSessionIdForStation(key);
-      db.ref('sessions/'+sid+'/members').once('value').then(function(snapshot){
+      var path = 'sessions/'+sid+'/members';
+
+      // V32: 1회 조회가 아니라 실시간 리스너로 유지하여 새로고침 없이 활동중 표시 갱신
+      if(stationOverviewListeners[key]) return;
+      var ref = db.ref(path);
+      stationOverviewListeners[key] = ref;
+      ref.on('value', function(snapshot){
         var members = snapshot.val() || {};
         var activeCount = 0;
         var hasChecked = false;
@@ -5023,10 +5031,8 @@ function restoreChecklist(){
         });
         stationOverviewState[key] = {activeCount:activeCount, hasChecked:hasChecked};
         renderStationOverviewActivity();
-        try{ db.goOffline(); }catch(e0){}
-      }).catch(function(err){
+      }, function(err){
         console.log('station overview read error', key, err);
-        try{ db.goOffline(); }catch(e1){}
       });
     }catch(e){ console.log('station overview update error', key, e); }
   }
@@ -5131,6 +5137,7 @@ function restoreChecklist(){
       if(FB.db && FB.sessionId){
         FB.db.ref('sessions/'+FB.sessionId+'/members').off();
         FB.db.ref('sessions/'+FB.sessionId+'/disasterStatus').off();
+        FB.db.ref('sessions/'+FB.sessionId+'/resetSignal').off();
       }
     }catch(e){}
   }
@@ -5385,6 +5392,24 @@ function restoreChecklist(){
       FB.disasterStatus=snapshot.val() || {};
       renderDisasterStatus(FB.disasterStatus || {});
     }, function(err){ console.log('disaster listen error',err); });
+
+    // V32: 재난종료 신호를 모든 접속 사용자에게 전파하여 각 사용자 로컬 입력도 함께 초기화
+    FB.db.ref('sessions/'+FB.sessionId+'/resetSignal').on('value', function(snapshot){
+      var signal = snapshot.val();
+      if(!signal || !signal.resetAt) return;
+      var key = 'guri_last_reset_signal_' + safeKey(FB.sessionId || getSessionId());
+      var resetAt = String(signal.resetAt || '');
+      try{
+        if(localStorage.getItem(key) === resetAt) return;
+        localStorage.setItem(key, resetAt);
+      }catch(e0){}
+      try{ window.guriAllowUserDataClearByDisasterEnd = true; }catch(e1){}
+      try{ if(typeof clearSavedState === 'function') clearSavedState(); }catch(e2){}
+      try{ if(typeof resetVisibleStateForStationContextOnly === 'function') resetVisibleStateForStationContextOnly(); }catch(e3){}
+      try{ renderDashboard({}); }catch(e4){}
+      try{ renderDisasterStatus(defaultDisasterStatus()); }catch(e5){}
+      try{ setStatus('재난활동 종료 · 초기화 완료'); }catch(e6){}
+    }, function(err){ console.log('reset signal listen error',err); });
   }
   var FB_GROUPS = [
     {id:'support', title:'긴급구조현장지휘대 지원반', icon:'🚒', target:'fb-support-group', roles:[
@@ -5634,21 +5659,37 @@ function restoreChecklist(){
   function resetLocalChecklistState(){
     try{ window.guriAllowUserDataClearByDisasterEnd = true; }catch(e){}
     try{ if(typeof clearSavedState==='function') clearSavedState(); }catch(e){}
+    try{ if(typeof clearPersonalCheckState==='function') clearPersonalCheckState(); }catch(e){}
     try{ localStorage.removeItem('guri_checklist_state'); }catch(e){}
     try{ localStorage.removeItem('guri_fb_session_id'); }catch(e){}
   }
   function confirmDisasterEnd(){
     hideDisasterEndModal();
     if(!confirm('모든 사용자의 데이터가 초기화 됩니다.')){ return; }
-      try{ renderDisasterStatus({}); if(FB && FB.db){ FB.db.ref('sessions/'+FB.sessionId+'/disasterStatus').set(defaultDisasterStatus()); } }catch(e){}
     if(!FB.ready || !FB.db){ alert('Firebase 연결을 확인해 주세요.'); return; }
     var targetSession=FB.sessionId || getSessionId();
-    FB.db.ref('sessions/'+targetSession).remove().then(function(){
+    var resetAt = new Date().toISOString();
+
+    // V32: 세션 전체 삭제 대신 허용된 하위 경로만 초기화하여 처리 실패를 방지하고,
+    // resetSignal로 모든 접속 사용자의 로컬 입력 초기화를 유도합니다.
+    var updates = {};
+    updates['sessions/'+targetSession+'/members'] = null;
+    updates['sessions/'+targetSession+'/disasterStatus'] = defaultDisasterStatus();
+    updates['sessions/'+targetSession+'/resetSignal'] = {
+      resetAt: resetAt,
+      resetBy: (function(){ try{ var m=getMemberInfo(); return [m.unit,m.rank,m.name].filter(Boolean).join(' ') || '미입력'; }catch(e){ return '미입력'; } })()
+    };
+    updates['sessions/'+targetSession+'/meta/updatedAt'] = resetAt;
+    updates['sessions/'+targetSession+'/meta/resetAt'] = resetAt;
+
+    FB.db.ref().update(updates).then(function(){
       resetLocalChecklistState();
+      FB.deviceMemberKey=null;
+      try{ localStorage.removeItem(getFirebaseDeviceMemberStorageKey()); }catch(e0){}
       FB.lastSnapshot={};
       FB.disasterStatus={};
       renderDashboard({});
-      renderDisasterStatus({});
+      renderDisasterStatus(defaultDisasterStatus());
       setStatus('재난활동 종료 · 초기화 완료');
       setTimeout(function(){ location.reload(); }, 500);
     }).catch(function(e){ console.log(e); alert('재난활동 종료 처리 실패'); });
