@@ -1637,6 +1637,60 @@ button{
   }
 }
 
+
+
+/* V45_50: 실시간 현황 - 긴급구조현장지휘대 지원반 펼침 목록 스크롤 보정
+   - 대상: 실시간 현황 하단 긴급구조현장지휘대 지원반 목록만
+   - 기존 기능/Firebase/통제단/체크리스트 로직 수정 없음
+   - id가 details가 아닌 내부 body에 부여된 구조를 반영하여 스크롤 적용
+*/
+#fb-support-group{
+  max-height:520px !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  -webkit-overflow-scrolling:touch !important;
+  overscroll-behavior:contain !important;
+  padding-right:6px !important;
+}
+
+#fb-support-group .fb-role-detail[open]{
+  max-height:420px !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  -webkit-overflow-scrolling:touch !important;
+  overscroll-behavior:contain !important;
+}
+
+#fb-support-group .fb-role-detail[open] > summary{
+  position:sticky !important;
+  top:0 !important;
+  z-index:10 !important;
+  background:#fff !important;
+}
+
+#fb-support-group .fb-readonly-body{
+  overflow:visible !important;
+}
+
+@media (max-width:768px){
+  #fb-support-group{
+    max-height:70vh !important;
+  }
+
+  #fb-support-group .fb-role-detail[open]{
+    max-height:360px !important;
+  }
+}
+
+@media (orientation:landscape) and (max-height:520px){
+  #fb-support-group{
+    max-height:62vh !important;
+  }
+
+  #fb-support-group .fb-role-detail[open]{
+    max-height:260px !important;
+  }
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
