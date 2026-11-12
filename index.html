@@ -2182,8 +2182,8 @@ function captureScreen(){
         
       </div>
     </div>
-    <!-- V45_57: 실시간 오비트 진입 버튼 (보기 전용) -->
-    <button type="button" class="go-open" id="go-open-btn" onclick="guriOpenOrbit()" aria-label="실시간 오비트 보기"><span class="ic"></span><span class="tx"><b>실시간 오비트 보기</b><span>우리 관서 대원 체크 현황을 궤도로 한눈에 · 보기 전용</span></span><span class="ar">›</span></button>
+    <!-- V45_57: 임무 상황판(오비트) 진입 버튼 (보기 전용), V45_60 이름 변경 -->
+    <button type="button" class="go-open" id="go-open-btn" onclick="guriOpenOrbit()" aria-label="임무 상황판"><span class="ic"></span><span class="tx"><b>임무 상황판</b><span>역할별 임무 진행·미배치 역할을 한눈에 · 보기 전용</span></span><span class="ar">›</span></button>
     <div class="select-divider">
       <span>출동 대원 정보</span>
     </div>
@@ -7075,7 +7075,7 @@ if('serviceWorker' in navigator){
 (function(){
   if(window.GuriOrbit) return;
 
-  var VERSION = 'V45_59';
+  var VERSION = 'V45_60';
   var C = 300, R_NODE = 206, R_LABEL = 228, R_SECT = 126, R_CORE = 60, R_DIAL = 286;
   var STALE_MIN = 20;
   var NS = 'http://www.w3.org/2000/svg';
@@ -7248,7 +7248,7 @@ if('serviceWorker' in navigator){
   function shell(){
     return '' +
       '<div class="go-top"><button type="button" class="go-back" data-go="back" aria-label="돌아가기">← 돌아가기</button>' +
-        '<div class="go-title"><b id="go-ttl">실시간 오비트</b><span>읽기 전용 · 대원 체크 현황</span></div>' +
+        '<div class="go-title"><b id="go-ttl">임무 상황판</b><span>읽기 전용 · 역할별 임무 진행</span></div>' +
         '<span class="go-conn" id="go-conn">연결 확인 중</span></div>' +
       '<div class="go-offline" id="go-offline">오프라인입니다. 마지막으로 받은 현황을 보여주고 있습니다.</div>' +
       '<div class="go-wrap">' +
@@ -7264,7 +7264,7 @@ if('serviceWorker' in navigator){
           '<div class="go-panel"><div class="go-ph"><h3>역할별 현황</h3><span id="go-rcnt"></span></div><div id="go-roles"></div><div class="go-hint">역할을 누르면 대원이 펼쳐지고, 대원을 누르면 임무 완료 현황이 열립니다.</div></div>' +
           '<div class="go-panel"><div class="go-ph"><h3>변화 기록</h3><span>이 화면을 연 뒤부터</span></div><div id="go-log"></div></div>' +
         '</div></div>' +
-        '<div class="go-foot">이 화면은 보기 전용입니다. 재난현황 입력·수정은 기존 실시간 현황에서 합니다.<br>' + VERSION + ' 실시간 오비트</div>' +
+        '<div class="go-foot">이 화면은 보기 전용입니다. 재난현황 입력·수정은 기존 실시간 현황에서 합니다.<br>' + VERSION + ' 임무 상황판</div>' +
       '</div>';
   }
   function $(id){ return document.getElementById(id); }
@@ -7703,7 +7703,7 @@ if('serviceWorker' in navigator){
     var root = opts.root;
     root.innerHTML = shell();
     S = { opts:opts, list:[], vac:[], ds:{}, log:[], open:{ roles:{}, all:{}, log:false }, sel:null, gotMembers:false, unsub:[], stationShort:opts.stationShort || '관서' };
-    $('go-ttl').textContent = (opts.stationName || '관서') + ' 오비트';
+    $('go-ttl').textContent = (opts.stationName || '관서') + ' 임무 상황판';
     drawBase(); legend(); drawStage(); overlay('loading');
     if(!root.__goBound){ bindTap(root, onTap); root.__goBound = true; }
     syncOnline();
