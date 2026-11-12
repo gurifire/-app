@@ -4879,6 +4879,7 @@ function clearSavedState(){
   // V29: 사용자 입력·체크상태 초기화는 재난종료 최종 확인 시에만 허용
   if(!window.guriAllowUserDataClearByDisasterEnd){ return; }
   try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+  try { localStorage.removeItem('guri_checked_at_v1'); window.__guriCheckedAt = null; } catch(e) {} // V45_62
 }
 
 function restoreSelectScreen(){
@@ -5471,6 +5472,48 @@ function restoreChecklist(){
     }
     return {done:done,total:total,roleSummary:roleSummary};
   }
+  /* V45_62: 임무 체크 시각 기록 (roleCheckedAt)
+     - 체크된 항목마다 처음 체크한 시각(ISO)을 남기고, 해제하면 지움
+     - 이 기능이 들어가기 전에 이미 체크돼 있던 항목은 '' (시각 미기록)
+     - 기존 대원 기록과 함께 저장되므로 Firebase 쓰기 횟수는 늘지 않음 */
+  // 업데이트 후 처음 실행될 때, 이미 체크돼 있던 항목은 '시각 미기록'('')으로 표시해 둠
+  (function guriInitCheckedAt(){
+    try{
+      if(localStorage.getItem('guri_checked_at_init_v1')) return;
+      var st = (typeof loadState === 'function' && loadState()) || {}, rc = st.roleChecked || {}, init = {};
+      Object.keys(rc).forEach(function(r){ (rc[r] || []).forEach(function(id){ (init[r] = init[r] || {})[String(id)] = ''; }); });
+      localStorage.setItem('guri_checked_at_v1', JSON.stringify(init));
+      localStorage.setItem('guri_checked_at_init_v1', '1');
+    }catch(e){}
+  })();
+  function guriTrackCheckedAt(roleChecked){
+    var KEY = 'guri_checked_at_v1';
+    var prev = window.__guriCheckedAt || null;
+    if(!prev){
+      try{ prev = JSON.parse(localStorage.getItem(KEY) || 'null'); }catch(e0){ prev = null; }
+    }
+    if(!prev){
+      try{
+        var mine = (FB.lastSnapshot && FB.deviceMemberKey) ? FB.lastSnapshot[FB.deviceMemberKey] : null;
+        if(mine && mine.roleCheckedAt) prev = JSON.parse(JSON.stringify(mine.roleCheckedAt));
+      }catch(e1){}
+    }
+    prev = prev || {};
+    var nowIso = new Date().toISOString(), out = {};
+    Object.keys(roleChecked || {}).forEach(function(r){
+      var ids = roleChecked[r] || [];
+      if(!ids.length) return;
+      out[r] = {};
+      ids.forEach(function(id){
+        var k = String(id);
+        out[r][k] = (prev[r] && Object.prototype.hasOwnProperty.call(prev[r], k)) ? prev[r][k] : nowIso;
+      });
+    });
+    window.__guriCheckedAt = out;
+    try{ localStorage.setItem(KEY, JSON.stringify(out)); }catch(e3){}
+    return out;
+  }
+
   function collectState(){
     var state={};
     try{ state = (typeof loadState==='function' && loadState()) || {}; }catch(e){}
@@ -5484,6 +5527,7 @@ function restoreChecklist(){
       earlyEndTime:(window.earlyEndTime || state.earlyEndTime || null),
       activityEndTime:(window.activityEndTime || state.activityEndTime || null),
       roleChecked:state.roleChecked || {},
+      roleCheckedAt:guriTrackCheckedAt(state.roleChecked || {}), // V45_62
       departChecked:state.departChecked || [],
       roleSummary:sum.roleSummary,
       done:sum.done,
@@ -6167,7 +6211,57 @@ function restoreChecklist(){
     return rows;
   }
 
+  /* V45_62: 활동내역 — Firebase 저장값으로 직접 생성 (임무별 체크시각 포함)
+     같은 임무를 여러 명이 체크하면 사람마다 한 줄씩 모두 표시 */
+  function guriItemTitlesForRole(role){
+    var map = {};
+    try{
+      var R = (typeof ROLES !== 'undefined' && ROLES[role]) ? ROLES[role] : null;
+      if(!R || !R.phases) return map;
+      var ic = 0;
+      R.phases.forEach(function(ph){
+        (ph.items || []).forEach(function(it){
+          map['chk-' + ic] = { title: it.main, phase: ph.phase || '' }; ic++;
+          if(it.subGroups && it.subGroups.length){
+            it.subGroups.forEach(function(g){ (g.items || []).forEach(function(x){ map['chk-' + ic] = { title: it.main + ' > ' + x, phase: ph.phase || '' }; ic++; }); });
+          }else{
+            (it.subs || []).forEach(function(x){ map['chk-' + ic] = { title: it.main + ' > ' + x, phase: ph.phase || '' }; ic++; });
+          }
+        });
+      });
+    }catch(e){}
+    return map;
+  }
+  function guriHHMM(iso){
+    var t = Date.parse(iso || '');
+    if(isNaN(t)) return '';
+    var d = new Date(t);
+    return (d.getHours() < 10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
+  }
+  function buildTimedActivityRowsForExcel(members){
+    var src = (typeof activeMembers === 'function') ? activeMembers(members || {}) : (members || {});
+    var rows = [], titleCache = {};
+    Object.keys(src || {}).forEach(function(k){
+      var m = src[k] || {}, info = m.member || {}, rc = m.roleChecked || {}, at = m.roleCheckedAt || {};
+      Object.keys(rc).forEach(function(role){
+        if(!titleCache[role]) titleCache[role] = guriItemTitlesForRole(role);
+        (rc[role] || []).forEach(function(id){
+          var t = titleCache[role][String(id)] || { title: String(id), phase: '' };
+          var iso = (at[role] && at[role][String(id)]) || '';
+          rows.push({ '소속': info.unit || '', '계급': info.rank || '', '성명': info.name || '',
+            '역할': roleName(role), '단계': t.phase, '항목명': t.title,
+            '체크시각': guriHHMM(iso) || '시각 미기록', __sort: iso || '9999' });
+        });
+      });
+    });
+    rows.sort(function(a, b){ return a.__sort < b.__sort ? -1 : (a.__sort > b.__sort ? 1 : 0); });
+    rows.forEach(function(r){ delete r.__sort; });
+    return rows;
+  }
+
   function flattenRealtimeRowsForExcel(members){
+    // V45_62: 체크시각이 포함된 Firebase 기반 활동내역을 우선 사용, 실패 시 기존 화면 추출 방식
+    try{ var timed = buildTimedActivityRowsForExcel(members); if(timed && timed.length) return timed; }catch(eT){}
     var rows = extractRealtimeDashboardRowsForExcel();
     if(rows && rows.length) return rows;
 
@@ -7077,7 +7171,7 @@ if('serviceWorker' in navigator){
 (function(){
   if(window.GuriOrbit) return;
 
-  var VERSION = 'V45_61';
+  var VERSION = 'V45_62';
   var C = 300, R_NODE = 206, R_LABEL = 228, R_SECT = 126, R_CORE = 60, R_DIAL = 286;
   var STALE_MIN = 20;
   var NS = 'http://www.w3.org/2000/svg';
@@ -7149,7 +7243,7 @@ if('serviceWorker' in navigator){
       list.push({ key:key, unit:m.unit || '', rank:m.rank || '', name:String(m.name).replace(/^\s+|\s+$/g, ''),
         role:role, roleName:ROLE_NAMES[role] || '역할 선택 전', group:groupOf(role), done:done, total:total, pct:pct, st:st,
         mobEss:mt.essential || '', mobGen:mt.general || '', endTime:r.activityEndTime || r.earlyEndTime || '',
-        updatedAt:r.updatedAt || '', summary:r.roleSummary || {}, checked:r.roleChecked || {} });
+        updatedAt:r.updatedAt || '', summary:r.roleSummary || {}, checked:r.roleChecked || {}, checkedAt:r.roleCheckedAt || {} });
     });
     list.sort(function(a, b){
       var ga = GROUPS.indexOf(a.group), gb = GROUPS.indexOf(b.group);
@@ -7229,7 +7323,66 @@ if('serviceWorker' in navigator){
     return itemsBlock(role, note, done, total, h);
   }
 
-  /* ===== 변화 기록 (화면을 연 뒤부터, 이 기기에서만) ===== */
+  /* ===== V45_62: 활동 기록 (Firebase 저장값 기반, 출동 이후 전체) =====
+     - 비상소집 응소, 임무 완료(체크 시각), 활동 종료를 시간순으로
+     - 같은 임무를 여러 명이 체크하면 1건으로 묶고 처음 체크한 시각 기준 ("김○○ 외 2명")
+     - 대원이 상위 항목을 체크했으면 그 세부 항목은 따로 적지 않음 */
+  var TITLE_CACHE = {};
+  function itemMeta(role){
+    if(TITLE_CACHE[role]) return TITLE_CACHE[role];
+    var meta = {}, ph = roleItems(role);
+    if(ph){
+      var parent = null;
+      ph.forEach(function(p){ p.items.forEach(function(it){
+        if(it.label) return;
+        if(!it.sub){ parent = it; meta[it.id] = { t:it.t, parent:null }; }
+        else meta[it.id] = { t:(parent ? parent.t + ' > ' : '') + it.t, parent: parent ? parent.id : null };
+      }); });
+    }
+    TITLE_CACHE[role] = meta;
+    return meta;
+  }
+  function localKey(d){ return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()); }
+  function hhmmKey(hhmm, refIso){
+    var t = Date.parse(refIso || ''), d = isNaN(t) ? new Date() : new Date(t);
+    var m = /^(\d{1,2}):(\d{2})/.exec(String(hhmm || ''));
+    if(!m) return null;
+    return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + ' ' + pad(m[1]) + ':' + m[2] + ':00';
+  }
+  function buildActivity(list){
+    var ev = [], items = {}, unknown = 0;
+    list.forEach(function(m){
+      var who = esc(m.rank + ' ' + m.name);
+      [['mobEss','비상소집 응소 (필수요원)'], ['mobGen','비상소집 응소 (일반요원)']].forEach(function(x){
+        var k = hhmmKey(m[x[0]], m.updatedAt); if(k) ev.push({ k:k, t:String(m[x[0]]).slice(0, 5), text:'<b>' + who + '</b> ' + x[1] });
+      });
+      if(m.endTime){ var ke = hhmmKey(m.endTime, m.updatedAt); if(ke) ev.push({ k:ke, t:String(m.endTime).slice(0, 5), text:'<b>' + who + '</b> 활동 종료' }); }
+      Object.keys(m.checked || {}).forEach(function(role){
+        var meta = itemMeta(role), ids = m.checked[role] || [], has = {}, at = (m.checkedAt || {})[role] || {};
+        ids.forEach(function(id){ has[String(id)] = true; });
+        ids.forEach(function(id){
+          id = String(id);
+          var mt = meta[id];
+          if(mt && mt.parent && has[mt.parent]) return; // 상위 항목이 체크됐으면 세부는 생략
+          var iso = at[id], t = Date.parse(iso || '');
+          if(isNaN(t)){ unknown++; return; }
+          var key = role + '|' + id;
+          if(!items[key]) items[key] = { role:role, title: mt ? mt.t : id, who:[] };
+          items[key].who.push({ t:t, name:m.name });
+        });
+      });
+    });
+    Object.keys(items).forEach(function(k){
+      var it = items[k];
+      it.who.sort(function(a, b){ return a.t - b.t; });
+      var d = new Date(it.who[0].t), names = it.who[0].name + (it.who.length > 1 ? ' 외 ' + (it.who.length - 1) + '명' : '');
+      ev.push({ k:localKey(d), t:hm(d), text:'<b>' + esc(ROLE_NAMES[it.role] || it.role) + '</b> · ' + esc(it.title) + ' 완료 — ' + esc(names) });
+    });
+    ev.sort(function(a, b){ return a.k < b.k ? -1 : (a.k > b.k ? 1 : 0); });
+    return { events:ev, unknown:unknown };
+  }
+
+  /* ===== 변화 감지 (움직이는 점 표시용) ===== */
   function diff(prev, next){
     var out = [], pm = {}, nm = {};
     prev.forEach(function(p){ pm[p.key] = p; });
@@ -7264,7 +7417,7 @@ if('serviceWorker' in navigator){
         '</div><div class="go-colB">' +
           '<div class="go-panel"><div class="go-ph"><h3>현장 지표</h3><span>재난현황 기준</span></div><div class="go-kpis" id="go-kpis"></div></div>' +
           '<div class="go-panel"><div class="go-ph"><h3>역할별 현황</h3><span id="go-rcnt"></span></div><div id="go-roles"></div><div class="go-hint">역할을 누르면 대원이 펼쳐지고, 대원을 누르면 임무 완료 현황이 열립니다.</div></div>' +
-          '<div class="go-panel"><div class="go-ph"><h3>변화 기록</h3><span>이 화면을 연 뒤부터</span></div><div id="go-log"></div></div>' +
+          '<div class="go-panel"><div class="go-ph"><h3>활동 기록</h3><span>출동 이후 전체 · 같은 임무는 1건</span></div><div id="go-log"></div></div>' +
         '</div></div>' +
         '<div class="go-foot">이 화면은 보기 전용입니다. 재난현황 입력·수정은 기존 실시간 현황에서 합니다.<br>' + VERSION + ' 실시간 임무 맵</div>' +
       '</div>';
@@ -7527,11 +7680,12 @@ if('serviceWorker' in navigator){
     $('go-roles').innerHTML = g || '<div class="go-empty">비상소집 정보를 저장한 대원이 없습니다.</div>';
     $('go-rcnt').textContent = list.length + '명 · ' + order.length + '개 역할';
 
-    /* V45_58: 변화 기록 — 최근 3건만, 나머지는 펼쳐서 */
-    var lh = '', n = S.log.length, showN = S.open.log ? Math.min(n, 60) : Math.min(n, 3);
-    for(var i = n - 1; i >= n - showN; i--){ lh += '<div class="go-lg"><em>' + S.log[i].t + '</em>' + S.log[i].text + '</div>'; }
-    if(n > 3) lh += '<button type="button" class="go-more" data-go="tg-log">' + (S.open.log ? '최근 3건만 보기 ▴' : '이전 기록 ' + (Math.min(n, 60) - 3) + '건 더 보기 ▾') + '</button>';
-    $('go-log').innerHTML = lh || '<div class="go-empty">아직 변화가 없습니다. 대원이 체크하면 여기에 쌓입니다.</div>';
+    /* V45_62: 활동 기록 — Firebase 저장값으로 출동 이후 전체를 만듦. 최근 3건만, 나머지는 펼쳐서 */
+    var act = buildActivity(list), L = act.events, lh = '', n = L.length, showN = S.open.log ? Math.min(n, 200) : Math.min(n, 3);
+    for(var i = n - 1; i >= n - showN; i--){ lh += '<div class="go-lg"><em>' + L[i].t + '</em>' + L[i].text + '</div>'; }
+    if(n > 3) lh += '<button type="button" class="go-more" data-go="tg-log">' + (S.open.log ? '최근 3건만 보기 ▴' : '이전 기록 ' + (Math.min(n, 200) - 3) + '건 더 보기 ▾') + '</button>';
+    if(act.unknown) lh += '<div class="go-hint">시각이 기록되기 전에 체크한 항목 ' + act.unknown + '건은 활동 기록에서 제외했습니다.</div>';
+    $('go-log').innerHTML = lh || '<div class="go-empty">아직 활동 기록이 없습니다. 대원이 비상소집을 저장하거나 임무를 체크하면 여기에 쌓입니다.</div>';
   }
 
   function isLate(m){ return !m.vacant && m.st !== 'end' && (minutesAgo(m.updatedAt) || 0) >= STALE_MIN; }
@@ -7674,10 +7828,6 @@ if('serviceWorker' in navigator){
     var changes = first ? [] : diff(S.list, next);
     S.list = next;
     S.vac = vacancies(next);
-    var now = hm(new Date());
-    if(first) S.log.push({ t:now, text:'현황 수신 · 활동 인원 ' + next.length + '명' });
-    changes.forEach(function(c){ S.log.push({ t:now, text:c.text }); });
-    if(S.log.length > 200) S.log.splice(0, S.log.length - 200);
     render();
     changes.forEach(function(c){ if(c.key) fly(c.key, c.kind); });
     if(S.sel){ var still = false; next.concat(S.vac).forEach(function(m){ if(m.key === S.sel || 'role:' + (m.role || '_') === S.sel) still = true; }); if(still && document.getElementById('go-layer')) openSheet(S.sel); else if(!still) closeSheet(); }
