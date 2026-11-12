@@ -53,12 +53,16 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
 #screen-orbit .go-spin{width:34px;height:34px;border-radius:50%;border:3px solid #24314F;border-top-color:#D4A017;margin:0 auto 10px auto;-webkit-animation:goSpin .8s linear infinite;animation:goSpin .8s linear infinite}
 @-webkit-keyframes goSpin{to{-webkit-transform:rotate(360deg)}}
 @keyframes goSpin{to{transform:rotate(360deg)}}
+#screen-orbit .go-bar-top{overflow:hidden;padding:2px 4px 4px 6px;line-height:44px}
+#screen-orbit .go-bar-top span{float:left;font-size:13px;color:#97A3BC}
+#screen-orbit .go-mode{float:right;min-height:44px;padding:0 12px;border-radius:999px;border:1px solid #33415F;background:#16213A;color:#D4A017;font-size:13px;font-weight:700}
 #screen-orbit .go-legend{text-align:center;font-size:12px;color:#97A3BC;padding:6px 0 2px 0;line-height:1.9}
 #screen-orbit .go-legend span{display:inline-block;margin:0 6px;white-space:nowrap}
 #screen-orbit .go-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
 #screen-orbit .go-legend i.bar{width:14px;height:4px;border-radius:2px;vertical-align:2px}
 #screen-orbit .go-kpis{overflow:hidden;margin:0 -4px}
 #screen-orbit .go-kpi{float:left;width:50%;padding:0 4px;margin-bottom:8px}
+#screen-orbit .go-kpi:nth-child(odd){clear:left}
 #screen-orbit .go-kpi > div{background:#16213A;border-radius:8px;padding:9px 10px;min-height:66px}
 #screen-orbit .go-kpi .k{font-size:12px;color:#97A3BC}
 #screen-orbit .go-kpi .v{font-size:22px;font-weight:800;line-height:1.25;font-variant-numeric:tabular-nums}
@@ -80,11 +84,23 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
 #screen-orbit .go-grp .t{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between}
 #screen-orbit .go-grp .t b{font-weight:700}
 #screen-orbit .go-grp .t span{color:#97A3BC;font-size:13px}
-#screen-orbit .go-log{max-height:300px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 #screen-orbit .go-lg{padding:6px 2px;border-bottom:1px solid #24314F;font-size:13px;line-height:1.45;color:#C9D1E0;word-break:keep-all}
 #screen-orbit .go-lg em{font-style:normal;color:#97A3BC;margin-right:6px;font-variant-numeric:tabular-nums}
 #screen-orbit .go-lg b{color:#E8EDF7}
 #screen-orbit .go-empty{font-size:14px;color:#97A3BC;padding:6px 0;line-height:1.5}
+#screen-orbit .go-attn{border-color:#6B4A16}
+#screen-orbit .go-vac{margin-top:2px}
+#screen-orbit .go-chip{display:inline-block;min-height:40px;padding:0 12px;margin:0 6px 6px 0;border-radius:999px;border:1px dashed #F2A33A;background:#1F1A10;color:#F2C46B;font-size:13px;font-weight:700}
+#screen-orbit .go-rrow{display:block;width:100%;min-height:56px;padding:9px 10px 10px 10px;margin-bottom:6px;border-radius:8px;background:#16213A;border:1px solid #16213A;color:#E8EDF7;text-align:left;font-size:14px;overflow:hidden}
+#screen-orbit .go-rrow.open{border-color:#33415F;margin-bottom:0;border-radius:8px 8px 0 0}
+#screen-orbit .go-rrow.vac{border:1px dashed #6B4A16;background:#141A28}
+#screen-orbit .go-rrow .nm{float:left;font-weight:700;font-size:15px;max-width:58%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#screen-orbit .go-rrow .ct{float:right;font-size:13px;color:#97A3BC}
+#screen-orbit .go-rrow .ar{color:#D4A017;margin-left:4px}
+#screen-orbit .go-rrow .go-bar{clear:both;display:block}
+#screen-orbit .go-rbody{border:1px solid #33415F;border-top:0;border-radius:0 0 8px 8px;padding:6px 6px 0 6px;margin-bottom:8px;background:#121B2F}
+#screen-orbit .go-more{display:block;width:100%;min-height:48px;margin-top:6px;border-radius:8px;border:1px solid #33415F;background:#16213A;color:#D4A017;font-size:14px;font-weight:700}
+#screen-orbit .go-hint{font-size:12px;color:#7D89A3;margin-top:4px;line-height:1.5}
 #screen-orbit .go-foot{text-align:center;font-size:12px;color:#7D89A3;padding:6px 12px 0 12px;line-height:1.6}
 /* SVG */
 #screen-orbit svg text{font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif}
@@ -115,6 +131,29 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
 .go-sheet .go-bar{height:7px;border-radius:4px;background:#24314F;overflow:hidden;margin-top:5px}
 .go-sheet .go-bar i{display:block;height:100%;background:#D4A017}
 .go-sheet .go-empty{font-size:14px;color:#97A3BC;padding:6px 0}
+.go-sheet .it-wrap{background:#16213A;border-radius:8px;padding:8px 10px;margin-bottom:8px}
+.go-sheet .it-hd{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;font-size:14px;margin-bottom:4px}
+.go-sheet .it-hd span{font-size:12px;color:#F2C46B;font-weight:700}
+.go-sheet .it-ph{font-size:12px;color:#97A3BC;font-weight:700;margin:8px 0 2px 0;padding-top:6px;border-top:1px solid #24314F}
+.go-sheet .it-lb{font-size:12px;color:#7D89A3;margin:4px 0 0 20px}
+.go-sheet .it{font-size:14px;line-height:1.45;padding:4px 0;color:#E8EDF7;word-break:keep-all}
+.go-sheet .it.sub{padding-left:20px;font-size:13px}
+.go-sheet .it .mk{display:inline-block;width:18px;font-weight:800}
+.go-sheet .it.ok{color:#B7C1D6}
+.go-sheet .it.ok .mk{color:#3FB97A}
+.go-sheet .it.no .mk{color:#F2A33A}
+.go-sheet .it .who{display:block;margin-left:18px;font-size:12px;color:#7D89A3}
+.go-sheet .go-sheet-rows .go-row{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;width:100%;min-height:52px;padding:7px 9px;margin-bottom:6px;border-radius:8px;background:#16213A;border:1px solid #16213A;color:#E8EDF7;text-align:left;font-size:14px}
+.go-sheet .go-row .dot{-webkit-box-flex:0;-webkit-flex:0 0 auto;flex:0 0 auto;width:11px;height:11px;border-radius:50%;margin-right:9px}
+.go-sheet .go-row .mid{-webkit-box-flex:1;-webkit-flex:1 1 auto;flex:1 1 auto;min-width:0}
+.go-sheet .go-row .nm{display:block;font-weight:700;font-size:15px}
+.go-sheet .go-row .sub{display:block;font-size:12px;color:#97A3BC}
+.go-sheet .go-row .rt{-webkit-box-flex:0;-webkit-flex:0 0 auto;flex:0 0 auto;text-align:right;margin-left:8px}
+.go-sheet .go-row .pc{display:block;font-weight:800;font-size:15px}
+.go-sheet .go-row .ag{display:block;font-size:11px;color:#97A3BC}
+.go-sheet .go-row .ag.late{color:#F2A33A;font-weight:700}
+.go-sheet .sec .note{font-weight:500;color:#7D89A3;font-size:12px}
+.go-sheet .it-wrap .go-bar{margin:2px 0 4px 0}
 .go-sheet .ro{font-size:12px;color:#7D89A3;text-align:center;margin-top:12px}
 /* 선택 화면 진입 버튼 */
 .go-open{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;width:auto;margin:12px 16px 0 16px;min-height:60px;padding:10px 14px;border-radius:12px;border:0;background:#0B1220;color:#fff;text-align:left;cursor:pointer;-webkit-box-shadow:0 2px 8px rgba(0,0,0,.18);box-shadow:0 2px 8px rgba(0,0,0,.18)}
@@ -138,7 +177,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
   <p>지원반 앱에 넣기 전, 오비트 화면만 따로 확인하는 페이지입니다. 데이터는 <b>읽기만</b> 하며 Firebase에 아무것도 쓰지 않습니다.</p>
   <button class="main" id="b-real">구리 실제 데이터로 보기<small>gurichecklist · sessions/checklist_live_구리 (읽기 전용)</small></button>
   <button id="b-mock">가상 데이터로 보기<small>Firebase에 연결하지 않고 가상 대원 12명으로 동작 확인</small></button>
-  <div class="note">V45_57 실시간 오비트 · 구리소방서 소방교 김대운</div>
+  <div class="note">V45_58 실시간 오비트 · 구리소방서 소방교 김대운</div>
 </div>
 <div id="screen-orbit"></div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -153,7 +192,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
 (function(){
   if(window.GuriOrbit) return;
 
-  var VERSION = 'V45_57';
+  var VERSION = 'V45_58';
   var C = 300, R_NODE = 206, R_LABEL = 228, R_SECT = 126, R_CORE = 60, R_DIAL = 286;
   var STALE_MIN = 20;
   var NS = 'http://www.w3.org/2000/svg';
@@ -225,7 +264,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
       list.push({ key:key, unit:m.unit || '', rank:m.rank || '', name:String(m.name).replace(/^\s+|\s+$/g, ''),
         role:role, roleName:ROLE_NAMES[role] || '역할 선택 전', group:groupOf(role), done:done, total:total, pct:pct, st:st,
         mobEss:mt.essential || '', mobGen:mt.general || '', endTime:r.activityEndTime || r.earlyEndTime || '',
-        updatedAt:r.updatedAt || '', summary:r.roleSummary || {} });
+        updatedAt:r.updatedAt || '', summary:r.roleSummary || {}, checked:r.roleChecked || {} });
     });
     list.sort(function(a, b){
       var ga = GROUPS.indexOf(a.group), gb = GROUPS.indexOf(b.group);
@@ -234,6 +273,75 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
       return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
     });
     return list;
+  }
+
+  /* ===== V45_58: 미배치 역할 ===== */
+  // 지원반장·긴급지원반 7개 역할은 항상 확인, 통제단 3개 부는 통제단 인원이 1명 이상일 때만 확인
+  function vacancies(list){
+    var has = {}, ctrl = false, out = [];
+    list.forEach(function(m){ if(m.st !== 'end') has[m.role] = true; if(m.group.id === 'control') ctrl = true; });
+    var need = ['chief'].concat(GROUPS[1].roles); if(ctrl) need = need.concat(GROUPS[2].roles);
+    need.forEach(function(r){
+      if(has[r]) return;
+      out.push({ key:'vacant:' + r, vacant:true, role:r, roleName:ROLE_NAMES[r], group:groupOf(r), name:ROLE_SHORT[r] || ROLE_NAMES[r],
+        rank:'', unit:'', done:0, total:0, pct:0, st:'vac', updatedAt:'' });
+    });
+    return out;
+  }
+  function withVacancies(){
+    var all = S.list.concat(S.vac);
+    all.sort(function(a, b){
+      var ga = GROUPS.indexOf(a.group), gb = GROUPS.indexOf(b.group);
+      if(ga !== gb) return ga - gb;
+      var ra = a.group.roles.indexOf(a.role), rb = b.group.roles.indexOf(b.role);
+      if(ra !== rb) return ra - rb;
+      if(!!a.vacant !== !!b.vacant) return a.vacant ? 1 : -1;
+      return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
+    });
+    return all;
+  }
+  /* ===== V45_58: 역할별 체크 항목 (앱의 ROLES 정의 사용, 앱과 같은 chk-번호 규칙) ===== */
+  function roleItems(role){
+    var R = (window.ROLES && window.ROLES[role]) ? window.ROLES[role] : null;
+    if(!R || !R.phases) return null;
+    var ic = 0, out = [];
+    R.phases.forEach(function(ph){
+      var items = [];
+      (ph.items || []).forEach(function(it){
+        items.push({ id:'chk-' + ic, t:it.main, sub:false }); ic++;
+        if(it.subGroups && it.subGroups.length){
+          it.subGroups.forEach(function(g){
+            items.push({ label:g.label });
+            (g.items || []).forEach(function(x){ items.push({ id:'chk-' + ic, t:x, sub:true }); ic++; });
+          });
+        }else{
+          (it.subs || []).forEach(function(x){ items.push({ id:'chk-' + ic, t:x, sub:true }); ic++; });
+        }
+      });
+      out.push({ phase:ph.phase || '단계', items:items });
+    });
+    return out;
+  }
+  function itemsBlock(role, note, done, total, body){
+    var p = total ? Math.round(done / total * 100) : 0;
+    return '<div class="sec">' + esc(ROLE_NAMES[role] || role) + ' 임무 완료 현황' + (note ? ' <span class="note">' + esc(note) + '</span>' : '') + '</div>' +
+      '<div class="it-wrap"><div class="it-hd"><b>완료 ' + done + ' / ' + total + '</b><span>남은 임무 ' + (total - done) + '개</span></div>' +
+      '<div class="go-bar"><i style="width:' + p + '%;background:' + groupOf(role).color + '"></i></div>' + body + '</div>';
+  }
+  function itemsHtml(role, checkedArr, note){
+    var phases = roleItems(role); if(!phases) return '';
+    var set = {}; (checkedArr || []).forEach(function(id){ set[String(id)] = true; });
+    var done = 0, total = 0, h = '';
+    phases.forEach(function(ph){
+      var b = '';
+      ph.items.forEach(function(it){
+        if(it.label){ b += '<div class="it-lb">' + esc(it.label) + '</div>'; return; }
+        total++; var ok = !!set[it.id]; if(ok) done++;
+        b += '<div class="it ' + (ok ? 'ok' : 'no') + (it.sub ? ' sub' : '') + '"><span class="mk">' + (ok ? '✓' : '○') + '</span>' + esc(it.t) + '</div>';
+      });
+      h += '<div class="it-ph">' + esc(ph.phase) + '</div>' + b;
+    });
+    return itemsBlock(role, note, done, total, h);
   }
 
   /* ===== 변화 기록 (화면을 연 뒤부터, 이 기기에서만) ===== */
@@ -264,14 +372,15 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
         '<div class="go-stage" id="go-stage"></div>' +
         '<div class="go-cols"><div class="go-colA">' +
           '<div class="go-panel" style="padding:6px">' +
+            '<div class="go-bar-top"><span id="go-mode-lb">대원별 보기</span><button type="button" class="go-mode" id="go-mode" data-go="tg-mode">역할별로 보기</button></div>' +
             '<div class="go-orbit"><svg id="go-svg" viewBox="0 0 600 600" role="img" aria-label="대원 궤도 현황도"></svg><div class="go-ov" id="go-ov"></div></div>' +
             '<div class="go-legend" id="go-legend"></div>' +
           '</div>' +
         '</div><div class="go-colB">' +
           '<div class="go-panel"><div class="go-ph"><h3>현장 지표</h3><span>재난현황 기준</span></div><div class="go-kpis" id="go-kpis"></div></div>' +
-          '<div class="go-panel"><div class="go-ph"><h3>그룹별 진행</h3><span id="go-gcnt"></span></div><div id="go-groups"></div></div>' +
-          '<div class="go-panel"><div class="go-ph"><h3>대원 목록</h3><span id="go-mcnt"></span></div><div id="go-members"></div></div>' +
-          '<div class="go-panel"><div class="go-ph"><h3>변화 기록</h3><span>이 화면을 연 뒤부터</span></div><div class="go-log" id="go-log"></div></div>' +
+          '<div class="go-panel go-attn" id="go-attn-panel" style="display:none"><div class="go-ph"><h3>주의 필요</h3><span id="go-acnt"></span></div><div id="go-attn"></div></div>' +
+          '<div class="go-panel"><div class="go-ph"><h3>역할별 현황</h3><span id="go-rcnt"></span></div><div id="go-roles"></div><div class="go-hint">역할을 누르면 대원이 펼쳐지고, 대원을 누르면 임무 완료 현황이 열립니다.</div></div>' +
+          '<div class="go-panel"><div class="go-ph"><h3>변화 기록</h3><span>이 화면을 연 뒤부터</span></div><div id="go-log"></div></div>' +
         '</div></div>' +
         '<div class="go-foot">이 화면은 보기 전용입니다. 재난현황 입력·수정은 기존 실시간 현황에서 합니다.<br>' + VERSION + ' 실시간 오비트</div>' +
       '</div>';
@@ -285,6 +394,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
     ['work','full','idle','end'].forEach(function(k){
       h += '<span><i style="background:' + ST[k].fill + ';border:1px solid ' + ST[k].stroke + '"></i>' + ST[k].name + '</span>';
     });
+    h += '<span><i style="background:#0B1220;border:1px dashed #F2A33A"></i>미배치 역할</span>';
     h += '<span><i class="bar" style="background:#D4A017"></i>바깥 금색 호 = 전체 진행률</span>';
     $('go-legend').innerHTML = h;
   }
@@ -302,7 +412,8 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
   function layout(list){
     var counts = {}, weights = [], totalW = 0, GAP = 8;
     GROUPS.forEach(function(g){ counts[g.id] = 0; });
-    list.forEach(function(m){ counts[m.group.id]++; });
+    var real = {}; GROUPS.forEach(function(g){ real[g.id] = 0; });
+    list.forEach(function(m){ counts[m.group.id]++; if(!m.vacant) real[m.group.id] += (m.roleNode ? m.n : 1); });
     GROUPS.forEach(function(g, i){
       var w = Math.max(counts[g.id], g.id === 'etc' ? 0.8 : 1.4);
       weights[i] = w; totalW += w;
@@ -310,7 +421,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
     var avail = 360 - GAP * GROUPS.length, a = GAP / 2, sect = [];
     GROUPS.forEach(function(g, i){
       var span = avail * weights[i] / totalW;
-      sect.push({ g:g, start:a, end:a + span, count:counts[g.id] });
+      sect.push({ g:g, start:a, end:a + span, count:real[g.id] });
       var mem = list.filter(function(m){ return m.group === g; });
       var step = span / Math.max(mem.length, 1);
       mem.forEach(function(m, j){ m.angle = a + step * (j + 0.5); });
@@ -338,8 +449,10 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
   }
 
   function drawOrbit(){
-    var list = S.list, sect = layout(list), h = '', sp = '', nd = '';
-    var small = list.length > 36;
+    var mode = viewMode(), list = mode === 'role' ? roleNodes() : withVacancies(), sect = layout(list), h = '', sp = '', nd = '';
+    var small = list.length > 24;
+    var brackets = mode === 'person' ? roleBrackets(list) : {};
+    if(mode === 'role') list.forEach(function(r){ if(r.mem) r.mem.forEach(function(m){ m.angle = r.angle; }); });
     sect.forEach(function(s){
       h += '<path d="' + arc(R_SECT, s.start, s.end) + '" fill="none" stroke="' + s.g.color + '" stroke-width="6" opacity="' + (s.count ? 1 : .35) + '"/>';
       var mid = (s.start + s.end) / 2, lp = pos(R_SECT + 20, mid), rot = mid;
@@ -349,32 +462,102 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
       h += '<text x="' + f1(lp[0]) + '" y="' + f1(lp[1]) + '" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="700" fill="' + s.g.color + '" transform="rotate(' + f1(rot) + ' ' + f1(lp[0]) + ' ' + f1(lp[1]) + ')">' + esc(label) + '</text>';
     });
     list.forEach(function(m){
+      if(m.vacant){ nd += vacantNode(m); return; }
+      if(m.roleNode){ nd += roleNodeSvg(m); return; }
       var st = ST[m.st], p = pos(R_NODE, m.angle), lp = pos(R_LABEL, m.angle);
       var s0 = pos(R_SECT + 36, m.angle), s1 = pos(R_NODE - 13, m.angle);
       var late = m.st !== 'end' && (minutesAgo(m.updatedAt) || 0) >= STALE_MIN;
-      sp += '<line x1="' + f1(s0[0]) + '" y1="' + f1(s0[1]) + '" x2="' + f1(s1[0]) + '" y2="' + f1(s1[1]) + '" stroke="#33415F" stroke-width="1.2"' + (m.st === 'idle' || m.st === 'end' ? ' stroke-dasharray="3 4"' : '') + '/>';
+      if(!brackets[m.role]) sp += '<line x1="' + f1(s0[0]) + '" y1="' + f1(s0[1]) + '" x2="' + f1(s1[0]) + '" y2="' + f1(s1[1]) + '" stroke="#33415F" stroke-width="1.2"' + (m.st === 'idle' || m.st === 'end' ? ' stroke-dasharray="3 4"' : '') + '/>';
       var right = m.angle <= 180, rot = right ? m.angle - 90 : m.angle + 90;
       var nmTxt = m.name.length > 4 ? m.name.slice(0, 4) : m.name;
       var sel = S.sel === m.key;
       nd += '<g class="gn" data-key="' + esc(m.key) + '" role="button" tabindex="0" aria-label="' + esc(m.rank + ' ' + m.name + ', ' + m.roleName + ', ' + m.pct + '%') + '">';
       nd += '<text x="' + f1(lp[0]) + '" y="' + f1(lp[1]) + '" dominant-baseline="middle" text-anchor="' + (right ? 'start' : 'end') + '" font-size="' + (small ? 14 : 17) + '" font-weight="700" fill="' + (late ? '#F2A33A' : st.label) + '" transform="rotate(' + f1(rot) + ' ' + f1(lp[0]) + ' ' + f1(lp[1]) + ')">' + esc(nmTxt) + '</text>';
       nd += '<circle class="gn-hit" cx="' + f1(p[0]) + '" cy="' + f1(p[1]) + '" r="24"/>';
-      if(m.st === 'work'){
+      if(m.st === 'work' && !small){
         var ap = pos(R_NODE, m.angle);
         nd += '<circle cx="' + f1(ap[0]) + '" cy="' + f1(ap[1]) + '" r="15" fill="none" stroke="#24314F" stroke-width="3"/>';
         if(m.pct > 0){ nd += '<path d="' + ringArc(ap, 15, m.pct) + '" fill="none" stroke="#3FB97A" stroke-width="3" stroke-linecap="round"/>'; }
       }
-      nd += '<circle cx="' + f1(p[0]) + '" cy="' + f1(p[1]) + '" r="' + (sel ? 12 : 10) + '" fill="' + st.fill + '" stroke="' + (sel ? '#D4A017' : st.stroke) + '" stroke-width="' + (sel ? 3 : 2) + '"/>';
-      if(late) nd += '<circle cx="' + f1(p[0] + 9) + '" cy="' + f1(p[1] - 9) + '" r="4.5" fill="#F2A33A" stroke="#0B1220" stroke-width="1.5"/>';
+      var dr = small ? 7 : 10;
+      nd += '<circle cx="' + f1(p[0]) + '" cy="' + f1(p[1]) + '" r="' + (sel ? dr + 2 : dr) + '" fill="' + st.fill + '" stroke="' + (sel ? '#D4A017' : st.stroke) + '" stroke-width="' + (sel ? 3 : 2) + '"/>';
+      if(late) nd += '<circle cx="' + f1(p[0] + dr - 1) + '" cy="' + f1(p[1] - dr + 1) + '" r="4.5" fill="#F2A33A" stroke="#0B1220" stroke-width="1.5"/>';
       nd += '</g>';
     });
+    Object.keys(brackets).forEach(function(r){ sp += brackets[r]; });
     $('go-sects').innerHTML = h; $('go-spokes').innerHTML = sp; $('go-nodes').innerHTML = nd;
+    var mb = $('go-mode'); if(mb) mb.textContent = mode === 'role' ? '대원별로 보기' : '역할별로 보기';
+    var ml = $('go-mode-lb'); if(ml) ml.textContent = (mode === 'role' ? '역할별 보기 · 원 안 숫자 = 인원' : '대원별 보기');
     var tot = totals();
     $('go-dial').setAttribute('d', tot.pct > 0 ? arc(R_DIAL, 0, Math.min(tot.pct * 3.6, 359.9)) : '');
     $('go-core1').textContent = S.stationShort;
     var lvl = dash(S.ds.overviewResponseLevel);
     $('go-core2').textContent = lvl ? (lvl.length > 11 ? lvl.slice(0, 11) + '…' : lvl) : '대응단계 미입력';
-    $('go-core3').textContent = '활동 ' + list.length + '명 · ' + tot.pct + '%';
+    $('go-core3').textContent = '활동 ' + S.list.length + '명 · ' + tot.pct + '%';
+  }
+  /* ===== V45_58: 보기 방식 (대원별 / 역할별) ===== */
+  function viewMode(){ return S.mode || 'role'; } // V45_58: 기본은 역할별 보기
+  function aggState(mem){
+    var d = 0, t = 0, ended = 0, late = 0;
+    mem.forEach(function(m){ d += m.done; t += m.total; if(m.st === 'end') ended++; if(isLate(m)) late++; });
+    var st = ended === mem.length ? 'end' : (t > 0 && d >= t ? 'full' : (d > 0 ? 'work' : 'idle'));
+    return { d:d, t:t, pct: t ? Math.round(d / t * 100) : 0, st:st, late:late };
+  }
+  function roleNodes(){
+    var map = {}, out = [];
+    S.list.forEach(function(m){
+      var k = m.role || '_';
+      if(!map[k]){ map[k] = { key:'role:' + k, roleNode:true, role:m.role, roleName:m.roleName, group:m.group, name:ROLE_SHORT[m.role] || '선택 전', mem:[] }; out.push(map[k]); }
+      map[k].mem.push(m);
+    });
+    out.forEach(function(r){ var a = aggState(r.mem); r.n = r.mem.length; r.done = a.d; r.total = a.t; r.pct = a.pct; r.st = a.st; r.late = a.late; });
+    var all = out.concat(S.vac);
+    all.sort(function(a, b){
+      var ga = GROUPS.indexOf(a.group), gb = GROUPS.indexOf(b.group);
+      if(ga !== gb) return ga - gb;
+      return a.group.roles.indexOf(a.role) - b.group.roles.indexOf(b.role);
+    });
+    return all;
+  }
+  function roleNodeSvg(m){
+    var st = ST[m.st], p = pos(R_NODE, m.angle), lp = pos(R_LABEL + 8, m.angle), right = m.angle <= 180, rot = right ? m.angle - 90 : m.angle + 90;
+    var r = 12 + Math.min(m.n, 20) * 0.6, sel = S.sel === m.key, h = '';
+    h += '<g class="gn" data-key="' + esc(m.key) + '" role="button" tabindex="0" aria-label="' + esc(m.roleName + ' ' + m.n + '명, ' + m.pct + '%') + '">';
+    h += '<text x="' + f1(lp[0]) + '" y="' + f1(lp[1]) + '" dominant-baseline="middle" text-anchor="' + (right ? 'start' : 'end') + '" font-size="16" font-weight="700" fill="' + (m.late ? '#F2A33A' : st.label) + '" transform="rotate(' + f1(rot) + ' ' + f1(lp[0]) + ' ' + f1(lp[1]) + ')">' + esc(m.name) + '</text>';
+    h += '<circle class="gn-hit" cx="' + f1(p[0]) + '" cy="' + f1(p[1]) + '" r="' + (r + 10) + '"/>';
+    h += '<circle cx="' + f1(p[0]) + '" cy="' + f1(p[1]) + '" r="' + (r + 5) + '" fill="none" stroke="#24314F" stroke-width="3"/>';
+    if(m.pct > 0) h += '<path d="' + ringArc(p, r + 5, m.pct) + '" fill="none" stroke="' + m.group.color + '" stroke-width="3" stroke-linecap="round"/>';
+    h += '<circle cx="' + f1(p[0]) + '" cy="' + f1(p[1]) + '" r="' + r + '" fill="' + st.fill + '" stroke="' + (sel ? '#D4A017' : st.stroke) + '" stroke-width="' + (sel ? 3 : 2) + '"/>';
+    h += '<text x="' + f1(p[0]) + '" y="' + f1(p[1] + 1) + '" text-anchor="middle" dominant-baseline="middle" font-size="' + (m.n > 9 ? 13 : 14) + '" font-weight="800" fill="' + (m.st === 'idle' || m.st === 'end' ? '#E8EDF7' : '#0B1220') + '">' + m.n + '</text>';
+    if(m.late) h += '<circle cx="' + f1(p[0] + r - 2) + '" cy="' + f1(p[1] - r + 2) + '" r="5" fill="#F2A33A" stroke="#0B1220" stroke-width="1.5"/>';
+    return h + '</g>';
+  }
+  /* 대원별 보기에서 같은 역할 2명 이상이면 안쪽에 묶음 호 + "현장지휘 15" 표시 */
+  function roleBrackets(list){
+    var by = {}, out = {};
+    list.forEach(function(m){ if(m.vacant || m.roleNode) return; var k = m.role || '_'; (by[k] = by[k] || []).push(m); });
+    Object.keys(by).forEach(function(k){
+      var mem = by[k]; if(mem.length < 2) return;
+      var a0 = mem[0].angle, a1 = mem[mem.length - 1].angle, pad = Math.min(3, (a1 - a0) / (mem.length - 1) / 2), col = mem[0].group.color;
+      var h = '<path d="' + arc(R_NODE - 24, a0 - pad, a1 + pad) + '" fill="none" stroke="' + col + '" stroke-width="2.5" opacity=".7"/>';
+      mem.forEach(function(m){ var q0 = pos(R_NODE - 24, m.angle), q1 = pos(R_NODE - 12, m.angle); h += '<line x1="' + f1(q0[0]) + '" y1="' + f1(q0[1]) + '" x2="' + f1(q1[0]) + '" y2="' + f1(q1[1]) + '" stroke="' + col + '" stroke-width="1" opacity=".45"/>'; });
+      if(mem.length >= 3 && (a1 - a0) >= 18){
+        var mid = (a0 + a1) / 2, lp = pos(R_NODE - 38, mid), rot = (mid > 90 && mid < 270) ? mid + 180 : mid;
+        h += '<text x="' + f1(lp[0]) + '" y="' + f1(lp[1]) + '" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="700" fill="' + col + '" transform="rotate(' + f1(rot) + ' ' + f1(lp[0]) + ' ' + f1(lp[1]) + ')">' + esc((ROLE_SHORT[mem[0].role] || '선택 전') + ' ' + mem.length) + '</text>';
+      }
+      out[k] = h;
+    });
+    return out;
+  }
+  function vacantNode(m){
+    var p = pos(R_NODE, m.angle), lp = pos(R_LABEL, m.angle), right = m.angle <= 180, rot = right ? m.angle - 90 : m.angle + 90;
+    var sel = S.sel === m.key, h = '';
+    h += '<g class="gn" data-key="' + esc(m.key) + '" role="button" tabindex="0" aria-label="' + esc(m.roleName + ' 미배치') + '">';
+    h += '<text x="' + f1(lp[0]) + '" y="' + f1(lp[1]) + '" dominant-baseline="middle" text-anchor="' + (right ? 'start' : 'end') + '" font-size="15" font-weight="700" fill="#F2A33A" transform="rotate(' + f1(rot) + ' ' + f1(lp[0]) + ' ' + f1(lp[1]) + ')">' + esc(m.name) + '</text>';
+    h += '<circle class="gn-hit" cx="' + f1(p[0]) + '" cy="' + f1(p[1]) + '" r="24"/>';
+    h += '<circle cx="' + f1(p[0]) + '" cy="' + f1(p[1]) + '" r="' + (sel ? 12 : 10) + '" fill="#0B1220" stroke="' + (sel ? '#D4A017' : '#F2A33A') + '" stroke-width="2" stroke-dasharray="3 3"/>';
+    h += '<line x1="' + f1(p[0] - 4) + '" y1="' + f1(p[1]) + '" x2="' + f1(p[0] + 4) + '" y2="' + f1(p[1]) + '" stroke="#F2A33A" stroke-width="2"/>';
+    return h + '</g>';
   }
   function ringArc(c, r, pct){
     var a1 = Math.min(pct, 99.9) * 3.6, rad0 = 0, rad1 = a1 * Math.PI / 180;
@@ -424,50 +607,81 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
         (bar != null ? '<div class="go-bar"><i style="width:' + bar + '%"></i></div>' : '') + '</div></div>';
     }
     $('go-kpis').innerHTML =
-      kpi('활동 인원', list.length + '<small>명</small>', '활동 중 ' + active + ' · 종료 ' + (list.length - active)) +
+      kpi('활동 인원', list.length + '<small>명</small>', '활동 중 ' + active + ' · 종료 ' + (list.length - active) + (S.vac.length ? ' · <b style="color:#F2A33A">미배치 ' + S.vac.length + '</b>' : '')) +
       kpi('전체 진행률', tot.pct + '<small>%</small>', tot.done + ' / ' + tot.total + ' 항목', tot.pct) +
       kpi('인명구조', esc(dash(d.rescueDone) || '-'), '대상 ' + esc(dash(d.rescueRequired) || '-') + ' · 이송 ' + esc(dash(d.rescueTransport) || '-')) +
       kpi('동원 자원', esc(dash(d.resourcePersonnel) || '-'), '차량 ' + esc(dash(d.resourceVehicles) || '-'));
 
-    var g = '', roles = {}, order = [];
-    list.forEach(function(m){
+    /* V45_58: 주의 필요 (갱신 지연 대원 · 미배치 역할) — 항상 펼침 */
+    var lateList = list.filter(isLate), ah = '';
+    lateList.forEach(function(m){ ah += memberRow(m); });
+    if(S.vac.length){
+      ah += '<div class="go-vac">';
+      S.vac.forEach(function(v){ ah += '<button type="button" class="go-chip" data-key="' + esc(v.key) + '">' + esc(v.roleName) + ' 미배치</button>'; });
+      ah += '</div>';
+    }
+    $('go-attn').innerHTML = ah;
+    $('go-attn-panel').style.display = ah ? 'block' : 'none';
+    $('go-acnt').textContent = (lateList.length ? '갱신 지연 ' + lateList.length + '명' : '') + (lateList.length && S.vac.length ? ' · ' : '') + (S.vac.length ? '미배치 ' + S.vac.length : '');
+
+    /* V45_58: 역할별 현황 — 역할 줄을 누르면 그 역할 대원이 펼쳐짐 */
+    var roles = {}, order = [];
+    withVacancies().forEach(function(m){
       var k = m.role || '_';
-      if(!roles[k]){ roles[k] = { name:m.roleName, group:m.group, n:0, d:0, t:0 }; order.push(k); }
-      roles[k].n++; roles[k].d += m.done; roles[k].t += m.total;
+      if(!roles[k]){ roles[k] = { key:k, name:m.roleName, group:m.group, mem:[], d:0, t:0, vac:null, late:0 }; order.push(k); }
+      if(m.vacant){ roles[k].vac = m; return; }
+      roles[k].mem.push(m); roles[k].d += m.done; roles[k].t += m.total; if(isLate(m)) roles[k].late++;
     });
+    var g = '';
     order.forEach(function(k){
-      var r = roles[k], p = r.t ? Math.round(r.d / r.t * 100) : 0;
-      g += '<div class="go-grp"><div class="t"><b><span style="color:' + r.group.color + '">●</span> ' + esc(r.name) + '</b><span>' + r.n + '명 · ' + p + '%</span></div>' +
-        '<div class="go-bar"><i style="width:' + p + '%;background:' + r.group.color + '"></i></div></div>';
+      var r = roles[k];
+      if(r.vac && !r.mem.length){
+        g += '<button type="button" class="go-rrow vac" data-key="' + esc(r.vac.key) + '"><span class="nm"><span style="color:#F2A33A">○</span> ' + esc(r.name) + '</span><span class="ct" style="color:#F2A33A">미배치 ›</span></button>';
+        return;
+      }
+      var p = r.t ? Math.round(r.d / r.t * 100) : 0, open = !!S.open.roles[k];
+      g += '<button type="button" class="go-rrow' + (open ? ' open' : '') + '" data-go="tg-role" data-role="' + esc(k) + '" aria-expanded="' + open + '">' +
+        '<span class="nm"><span style="color:' + r.group.color + '">●</span> ' + esc(r.name) + '</span>' +
+        '<span class="ct">' + r.mem.length + '명 · ' + p + '%' + (r.late ? ' · <b style="color:#F2A33A">지연 ' + r.late + '</b>' : '') + ' <span class="ar">' + (open ? '▴' : '▾') + '</span></span>' +
+        '<span class="go-bar"><i style="width:' + p + '%;background:' + r.group.color + '"></i></span></button>';
+      if(open){
+        var ms = r.mem.slice().sort(byNeed), full = !!S.open.all[k], lim = full ? ms.length : Math.min(ms.length, 6);
+        g += '<div class="go-rbody">';
+        for(var mi = 0; mi < lim; mi++) g += memberRow(ms[mi]);
+        if(ms.length > 6) g += '<button type="button" class="go-more" data-go="tg-rall" data-role="' + esc(k) + '" style="margin:0 0 6px 0">' + (full ? '주의 순 6명만 보기 ▴' : '나머지 ' + (ms.length - 6) + '명 더 보기 ▾') + '</button>';
+        g += '</div>';
+      }
     });
-    $('go-groups').innerHTML = g || '<div class="go-empty">역할을 선택한 대원이 없습니다.</div>';
-    $('go-gcnt').textContent = order.length + '개 역할';
+    $('go-roles').innerHTML = g || '<div class="go-empty">비상소집 정보를 저장한 대원이 없습니다.</div>';
+    $('go-rcnt').textContent = list.length + '명 · ' + order.length + '개 역할';
 
-    var stOrder = { work:0, idle:1, full:2, end:3 };
-    var sorted = list.slice().sort(function(a, b){
-      var la = (a.st !== 'end' && (minutesAgo(a.updatedAt) || 0) >= STALE_MIN) ? 0 : 1, lb = (b.st !== 'end' && (minutesAgo(b.updatedAt) || 0) >= STALE_MIN) ? 0 : 1;
-      if(la !== lb) return la - lb;
-      return stOrder[a.st] - stOrder[b.st] || (a.pct - b.pct);
-    });
-    var mh = '';
-    sorted.forEach(function(m){
-      var ag = minutesAgo(m.updatedAt), late = m.st !== 'end' && (ag || 0) >= STALE_MIN;
-      mh += '<button type="button" class="go-row" data-key="' + esc(m.key) + '"><span class="dot" style="background:' + ST[m.st].fill + ';border:2px solid ' + ST[m.st].stroke + '"></span>' +
-        '<span class="mid"><span class="nm">' + esc(m.rank + ' ' + m.name) + '</span><span class="sub">' + esc(m.roleName) + (m.unit ? ' · ' + esc(m.unit) : '') + '</span></span>' +
-        '<span class="rt"><span class="pc">' + (m.st === 'end' ? '종료' : m.pct + '%') + '</span><span class="ag' + (late ? ' late' : '') + '">' + (late ? '갱신 지연 · ' : '') + agoText(ag) + '</span></span></button>';
-    });
-    $('go-members').innerHTML = mh || '<div class="go-empty">비상소집 정보를 저장한 대원이 없습니다.</div>';
-    $('go-mcnt').textContent = list.length + '명';
-
-    var lh = '';
-    for(var i = S.log.length - 1; i >= 0 && i >= S.log.length - 40; i--){ lh += '<div class="go-lg"><em>' + S.log[i].t + '</em>' + S.log[i].text + '</div>'; }
+    /* V45_58: 변화 기록 — 최근 3건만, 나머지는 펼쳐서 */
+    var lh = '', n = S.log.length, showN = S.open.log ? Math.min(n, 60) : Math.min(n, 3);
+    for(var i = n - 1; i >= n - showN; i--){ lh += '<div class="go-lg"><em>' + S.log[i].t + '</em>' + S.log[i].text + '</div>'; }
+    if(n > 3) lh += '<button type="button" class="go-more" data-go="tg-log">' + (S.open.log ? '최근 3건만 보기 ▴' : '이전 기록 ' + (Math.min(n, 60) - 3) + '건 더 보기 ▾') + '</button>';
     $('go-log').innerHTML = lh || '<div class="go-empty">아직 변화가 없습니다. 대원이 체크하면 여기에 쌓입니다.</div>';
+  }
+
+  function isLate(m){ return !m.vacant && m.st !== 'end' && (minutesAgo(m.updatedAt) || 0) >= STALE_MIN; }
+  function byNeed(a, b){
+    var o = { work:0, idle:1, full:2, end:3 };
+    var la = isLate(a) ? 0 : 1, lb = isLate(b) ? 0 : 1;
+    if(la !== lb) return la - lb;
+    return o[a.st] - o[b.st] || (a.pct - b.pct);
+  }
+  function memberRow(m){
+    var ag = minutesAgo(m.updatedAt), late = isLate(m);
+    return '<button type="button" class="go-row" data-key="' + esc(m.key) + '"><span class="dot" style="background:' + ST[m.st].fill + ';border:2px solid ' + ST[m.st].stroke + '"></span>' +
+      '<span class="mid"><span class="nm">' + esc(m.rank + ' ' + m.name) + '</span><span class="sub">' + esc(m.roleName) + (m.unit ? ' · ' + esc(m.unit) : '') + '</span></span>' +
+      '<span class="rt"><span class="pc">' + (m.st === 'end' ? '종료' : m.pct + '%') + '</span><span class="ag' + (late ? ' late' : '') + '">' + (late ? '갱신 지연 · ' : '') + agoText(ag) + '</span></span></button>';
   }
 
   /* ===== 상세 시트 ===== */
   function openSheet(key){
-    var m = null; S.list.forEach(function(x){ if(x.key === key) m = x; });
+    if(String(key).indexOf('role:') === 0){ openRole(key); return; }
+    var m = null; S.list.concat(S.vac).forEach(function(x){ if(x.key === key) m = x; });
     if(!m) return;
+    if(m.vacant){ openVacant(m); return; }
     S.sel = key; drawOrbit();
     closeSheet(true);
     var ag = minutesAgo(m.updatedAt), late = m.st !== 'end' && (ag || 0) >= STALE_MIN;
@@ -483,11 +697,64 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
       '<button type="button" class="x" data-go="close">닫기</button></div>' +
       (late ? '<div class="warn">' + ag + '분 동안 갱신이 없습니다. 무전이나 전화로 상태를 확인하세요.</div>' : '') +
       '<div class="facts"><div><span>진행률<b>' + m.pct + '%</b></span></div><div><span>필수 소집<b>' + esc(m.mobEss || '-') + '</b></span></div><div><span>' + (m.endTime ? '활동 종료' : '마지막 갱신') + '<b>' + esc(m.endTime || agoText(ag)) + '</b></span></div></div>' +
-      '<div class="sec">역할별 체크 현황</div>' + (rl || '<div class="go-empty">체크한 항목이 없습니다.</div>') +
+      (memberItems(m) || ('<div class="sec">임무 완료 현황</div>' + (rl || '<div class="go-empty">체크한 항목이 없습니다.</div>'))) +
       '<div class="ro">보기 전용 화면입니다 · 일반 소집 ' + esc(m.mobGen || '-') + '</div></div>';
+    showLayer(html);
+  }
+  function memberItems(m){
+    var roles = [], seen = {};
+    if(m.role && m.role !== 'none'){ roles.push(m.role); seen[m.role] = true; }
+    Object.keys(m.checked || {}).forEach(function(r){ if(!seen[r] && (m.checked[r] || []).length){ roles.push(r); seen[r] = true; } });
+    var h = '';
+    roles.forEach(function(r){ h += itemsHtml(r, (m.checked || {})[r]); });
+    return h;
+  }
+  function showLayer(html){
     var layer = document.createElement('div'); layer.id = 'go-layer'; layer.innerHTML = html;
     document.body.appendChild(layer);
     bindTap(layer, onTap);
+  }
+  /* 역할 상세: 대원 목록 + 항목별로 누가 체크했는지 (기존 하단 현황과 같은 정보) */
+  function openRole(key){
+    var r = null; roleNodes().forEach(function(x){ if(x.key === key) r = x; });
+    if(!r) return;
+    S.sel = key; drawOrbit(); closeSheet(true);
+    var rows = ''; r.mem.slice().sort(byNeed).forEach(function(m){ rows += memberRow(m); });
+    showLayer('<div class="go-scrim" data-go="close"></div><div class="go-sheet" role="dialog" aria-label="' + esc(r.roleName) + ' 상세">' +
+      '<div class="hd"><div class="mid"><div class="grp" style="color:' + r.group.color + '">' + esc(r.group.name) + '</div>' +
+      '<h4>' + esc(r.roleName) + ' ' + r.n + '명</h4><p>진행 ' + r.pct + '% · ' + r.done + ' / ' + r.total + ' 항목' + (r.late ? ' · 갱신 지연 ' + r.late + '명' : '') + '</p></div>' +
+      '<button type="button" class="x" data-go="close">닫기</button></div>' +
+      '<div class="sec">대원</div><div class="go-sheet-rows">' + rows + '</div>' +
+      coverageHtml(r.role, r.mem) +
+      '<div class="ro">보기 전용 화면입니다</div></div>');
+  }
+  function coverageHtml(role, mem){
+    var phases = roleItems(role); if(!phases) return '';
+    var done = 0, total = 0, h = '';
+    phases.forEach(function(ph){
+      var b = '';
+      ph.items.forEach(function(it){
+        if(it.label){ b += '<div class="it-lb">' + esc(it.label) + '</div>'; return; }
+        total++;
+        var who = []; mem.forEach(function(m){ var arr = (m.checked || {})[role] || []; for(var i = 0; i < arr.length; i++){ if(String(arr[i]) === it.id){ who.push(m.name); break; } } });
+        if(who.length) done++;
+        var names = who.length ? (who.length > 3 ? who.slice(0, 3).join(', ') + ' 외 ' + (who.length - 3) + '명' : who.join(', ')) : '';
+        b += '<div class="it ' + (who.length ? 'ok' : 'no') + (it.sub ? ' sub' : '') + '"><span class="mk">' + (who.length ? '✓' : '○') + '</span>' + esc(it.t) + (names ? '<span class="who">' + esc(names) + '</span>' : '') + '</div>';
+      });
+      h += '<div class="it-ph">' + esc(ph.phase) + '</div>' + b;
+    });
+    return itemsBlock(role, '한 명이라도 체크하면 ✓', done, total, h);
+  }
+  function openVacant(v){
+    S.sel = v.key; drawOrbit(); closeSheet(true);
+    var items = itemsHtml(v.role, [], '배치된 대원 없음');
+    showLayer('<div class="go-scrim" data-go="close"></div><div class="go-sheet" role="dialog" aria-label="' + esc(v.roleName) + ' 미배치">' +
+      '<div class="hd"><div class="mid"><div class="grp" style="color:' + v.group.color + '">' + esc(v.group.name) + '</div>' +
+      '<h4>' + esc(v.roleName) + '</h4><span class="chip" style="color:#F2A33A">미배치</span></div>' +
+      '<button type="button" class="x" data-go="close">닫기</button></div>' +
+      '<div class="warn">이 역할을 선택한 대원이 없습니다. 담당자를 지정하거나 다른 대원이 겸임하는지 확인하세요.</div>' +
+      items +
+      '<div class="ro">보기 전용 화면입니다</div></div>');
   }
   function closeSheet(keepSel){
     var l = document.getElementById('go-layer'); if(l && l.parentNode) l.parentNode.removeChild(l);
@@ -519,6 +786,10 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
     var go = t.getAttribute('data-go');
     if(go === 'back'){ closeSheet(true); if(S && S.opts.onBack) S.opts.onBack(); return; }
     if(go === 'close'){ closeSheet(); return; }
+    if(go === 'tg-role'){ var rk = t.getAttribute('data-role'); S.open.roles[rk] = !S.open.roles[rk]; drawPanels(); return; }
+    if(go === 'tg-mode'){ S.mode = viewMode() === 'role' ? 'person' : 'role'; S.sel = null; drawOrbit(); return; }
+    if(go === 'tg-rall'){ var ra = t.getAttribute('data-role'); S.open.all[ra] = !S.open.all[ra]; drawPanels(); return; }
+    if(go === 'tg-log'){ S.open.log = !S.open.log; drawPanels(); return; }
     if(go === 'retry'){ if(S){ var o = S.opts; unmount(); mount(o); } return; }
     var key = t.getAttribute('data-key'); if(key) openSheet(key);
   }
@@ -530,13 +801,14 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
     S.gotMembers = true;
     var changes = first ? [] : diff(S.list, next);
     S.list = next;
+    S.vac = vacancies(next);
     var now = hm(new Date());
     if(first) S.log.push({ t:now, text:'현황 수신 · 활동 인원 ' + next.length + '명' });
     changes.forEach(function(c){ S.log.push({ t:now, text:c.text }); });
     if(S.log.length > 200) S.log.splice(0, S.log.length - 200);
     render();
     changes.forEach(function(c){ if(c.key) fly(c.key, c.kind); });
-    if(S.sel){ var still = false; next.forEach(function(m){ if(m.key === S.sel) still = true; }); if(still && document.getElementById('go-layer')) openSheet(S.sel); else if(!still) closeSheet(); }
+    if(S.sel){ var still = false; next.concat(S.vac).forEach(function(m){ if(m.key === S.sel || 'role:' + (m.role || '_') === S.sel) still = true; }); if(still && document.getElementById('go-layer')) openSheet(S.sel); else if(!still) closeSheet(); }
   }
   function onDisaster(d){
     if(!S) return;
@@ -560,7 +832,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
     unmount();
     var root = opts.root;
     root.innerHTML = shell();
-    S = { opts:opts, list:[], ds:{}, log:[], sel:null, gotMembers:false, unsub:[], stationShort:opts.stationShort || '관서' };
+    S = { opts:opts, list:[], vac:[], ds:{}, log:[], open:{ roles:{}, all:{}, log:false }, sel:null, gotMembers:false, unsub:[], stationShort:opts.stationShort || '관서' };
     $('go-ttl').textContent = (opts.stationName || '관서') + ' 오비트';
     drawBase(); legend(); drawStage(); overlay('loading');
     if(!root.__goBound){ bindTap(root, onTap); root.__goBound = true; }
@@ -601,6 +873,361 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
 
   window.GuriOrbit = { mount:mount, unmount:unmount, firebaseSource:firebaseSource, isMounted:function(){ return !!S; }, version:VERSION };
 })();
+</script>
+<script>
+var ROLES = {
+
+  /* ─── 현장지휘요원 ─── */
+  cmd:{
+    name:'현장지휘요원',
+    subtitle:'현장 총괄 지휘 및 명령사항 관리',
+    barColor:'#C0392B',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue',  main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악','기타'] },
+        { kw:'자원확인', kc:'kw-green', main:'자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 파악','대응단계 확인','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'주요임무',   kc:'kw-green',  main:'현장지휘대장 보좌',
+          subs:['명령사항 기록','명령사항 전달 완료'] },
+        { kw:'현장지휘소', kc:'kw-orange', main:'현장지휘소 설치',
+          subs:['상황판 설치','현장지휘소 설치'] },
+        { kw:'상황보고',   kc:'kw-purple', main:'상황 보고 실시',
+          subs:['일반현황 보고','시간대별 조치사항 보고','작전도 작성','사진·영상 기록 확보'] },
+        { kw:'대응활동',   kc:'kw-red',    main:'대응활동 계획 수립 및 실행',
+          subs:['대응활동 계획수립','부책 작성','P119 활용','상황판단 회의 준비','통제단 인계 준비','보고자료 작성','언론브리핑 준비'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 자원지원요원 ─── */
+  res:{
+    name:'자원지원요원',
+    subtitle:'자원 관리 및 소방력 운영 지원',
+    barColor:'#E67E22',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue',  main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악'] },
+        { kw:'자원확인', kc:'kw-green', main:'자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 파악','대응단계 확인','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'자원대기소', kc:'kw-green', main:'자원대기소 운영',
+          subs:['자원대기소 운영 완료','교대조 편성','휴식조 편성'] },
+        { kw:'소방력', kc:'kw-orange', main:'소방력 파악 및 배치',
+          subs:['출동 소방력 파악(출동차량·인원)'] },
+        { kw:'소방력', kc:'kw-orange', main:'방면별 소방력 배치현황 확인',
+          subs:['1방면','2방면','3방면','4방면'] },
+        { kw:'소방용수', kc:'kw-blue', main:'소방용수 확보',
+          subs:['인근 소방용수 파악','부족 용수 확보','급수체계 형성(중계급수·순환급수)','탱크차 부서(중계/순환급수)'] },
+        { kw:'필요장비', kc:'kw-purple', main:'필요 장비 지원',
+          subs:['공기용기','기타물품(소방호스 등)','식품·식수 확인','유류·폼 확인'] },
+        { kw:'자원집결지', kc:'kw-red', main:'자원집결지 운영',
+          subs:['추가소방력 자원집결지 배치','자원집결지 연락관 소통','자원집결지 도착 자원 파악'] },
+        { kw:'회복지원', kc:'kw-gray', main:'회복 지원',
+          subs:['회복차량 배치','식사·간식 제공'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 통신지원요원 ─── */
+  com:{
+    name:'통신지원요원',
+    subtitle:'통신체계 확보 및 비상동원 지원',
+    barColor:'#7D3C98',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue',  main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악'] },
+        { kw:'자원확인', kc:'kw-green', main:'자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 파악','대응단계 확인','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'통신체계', kc:'kw-purple', main:'통신체계 확보',
+          subs:['예비채널 확보','무전망 분리(지휘/작전/지원)','작전망 확인(통신망 단일화)','무전채널 공지(지원기관)'] },
+        { kw:'비상동원', kc:'kw-red', main:'비상동원',
+          subs:['비상연락망 확보','비상소집 발령'] },
+        { kw:'유관기관', kc:'kw-orange', main:'유관기관 연락',
+          subs:['시청(오염통제·중장비)','경찰','보건소','군','한국전력공사','도시가스','헬기'] },
+        { kw:'상황전파', kc:'kw-green', main:'상황 전파',
+          subs:['P119 활용 상황전파','상황실 연락체계 구축'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 안전관리요원 ─── */
+  safe:{
+    name:'안전관리요원',
+    subtitle:'현장 안전관리 및 통제',
+    barColor:'#E67E22',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue', main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악','기타 정보 수집'] },
+        { kw:'자원확인', kc:'kw-blue', main:'소방력 및 자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 확인','대응단계 파악','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'현장안전', kc:'kw-orange', main:'현장 안전 관리',
+          subs:['위험구역 진출입 관리','탈출로 확보','안전관련 정보수집'] },
+        { kw:'현장통제', kc:'kw-orange', main:'현장 통제',
+          subs:['Fire/Police Line 설치','진입차량 통제','1차 통제선 설정','2차 통제선 설정'] },
+        { kw:'차량배치', kc:'kw-orange', main:'차량 배치 관리',
+          subs:['1선 진입','2선 대기','꼬리물기 금지','필요시 차량 대기 장소 지정'] },
+        { kw:'방면안전관리', kc:'kw-orange', main:'방면 안전관리',
+          subs:['방면지휘관 보좌','안전·인력관리','교대조 운영'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 상황조사요원 ─── */
+  invest:{
+    name:'상황조사요원',
+    subtitle:'현장 상황 조사 및 분석',
+    barColor:'#1A5276',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue', main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악','기타 정보 수집'] },
+        { kw:'자원확인', kc:'kw-blue', main:'소방력 및 자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 확인','대응단계 파악','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'현장확인', kc:'kw-blue', main:'현장 확인',
+          subs:['전체 현장 확인','수신반 확인','관계인 정보 수집'] },
+        { kw:'상황분석', kc:'kw-blue', main:'상황 분석',
+          subs:['피해규모 파악','인명피해 확인','위험요인 식별','구조필요 지역 식별','환경모니터링','사진·영상 기록'] },
+        { kw:'재평가', kc:'kw-blue', main:'재평가',
+          subs:['상황변화에 따라 전략·대응계획 유지·조정'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 오염통제요원 ─── */
+  decon:{
+    name:'오염통제요원',
+    subtitle:'오염 확인 및 확산 방지',
+    barColor:'#1E8449',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'정보수집', kc:'kw-blue', main:'현장 정보 수집',
+          subs:['상황실·선착대 무전 교신','P119 활용 상황 파악','기타 정보 수집'] },
+        { kw:'자원확인', kc:'kw-blue', main:'소방력 및 자원 확인',
+          subs:['출동력(선착) 확인','추가 소방력 확인','대응단계 파악','유관기관 확인'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'오염확인', kc:'kw-green', main:'오염 상황 확인',
+          subs:['유해화학물질 확인','폐기물 확인','오염물질 확인'] },
+        { kw:'현장통제', kc:'kw-green', main:'현장 통제',
+          subs:['Fire/Police Line 설치','출입통제'] },
+        { kw:'확산방지', kc:'kw-green', main:'오염 확산 방지',
+          subs:['흡착포 활용','제독제 사용','소방용수 활용'] },
+        { kw:'유관기관', kc:'kw-green', main:'유관기관 통보(필요시)',
+          subs:['시청(오염통제·중장비)','보건소','한국전력공사','도시가스','경찰','헬기','군'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 구급지휘요원 ─── */
+  ems:{
+    name:'구급지휘요원',
+    subtitle:'구급 지휘 및 임시의료소 운영',
+    barColor:'#7D3C98',
+    phases:[
+      { phase:'현장도착단계', ph:'ph-blue', items:[
+        { kw:'대응계획', kc:'kw-purple', main:'대응 계획 수립',
+          subs:['우선순위 결정'] },
+        { kw:'통신체계', kc:'kw-purple', main:'통신체계 확보',
+          subs:['MCS 운영'] },
+        { kw:'상황평가', kc:'kw-purple', main:'상황 평가',
+          subs:['정확한 사고 위치 파악','구체적인 사고유형 확인','사상자 규모(현재 → 앞으로 예측되는 수)','장애요인 확인','날씨 확인','위험요소 파악'] },
+        { kw:'핵심목표', kc:'kw-purple', main:'핵심 목표 파악',
+          subs:['해결해야 할 문제 파악(우선순위)','자력대피자 확인','환자분류','응급처치','이송','임시의료소 설치·운영','통제'] },
+        { kw:'자원요청', kc:'kw-purple', main:'자원 요청',
+          subs:['구급대','신속대응반','진압대','구조대','DMAT','경찰','진단버스','수요예측물품'] }
+      ]},
+      { phase:'임무수행단계', ph:'ph-orange', items:[
+        { kw:'운영지원', kc:'kw-purple', main:'운영 지원',
+          subs:['임시의료소 지원'] },
+        { kw:'위치선정', kc:'kw-purple', main:'위치 선정 및 전파',
+          subs:['통제선 확인','환자 및 구급차 동선 확인','날씨 확인','위험요소 구분','임시영안소 위치 선정 및 전파','임시의료소 위치 전파','환자집결지 위치 전파','구급차 집결지 위치 전파'] },
+        { kw:'임무지정', kc:'kw-purple', main:'임무 지정',
+          subs:['분류반','처치반','이송반','이동반'] },
+        { kw:'재평가', kc:'kw-purple', main:'재평가',
+          subs:['[분류] m-MASS','[분류] START','[초기대응] 분류','[초기대응] 처치 중심(긴급환자)','[후기대응] 이송 중심(긴급→비응급)'],
+          subGroups:[
+            {label:'분류', items:['m-MASS','START']},
+            {label:'초기대응', items:['분류','처치 중심(긴급환자)']},
+            {label:'후기대응', items:['이송 중심(긴급→비응급)']}
+          ] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'지원반 철수 완료',
+          subs:[] }
+      ]}
+    ]
+  },
+
+  /* ─── 긴급구조통제단: 대응계획부 ─── */
+  controlPlan:{
+    name:'대응계획부',
+    subtitle:'상황분석 · 작전계획 · 공보·대중정보',
+    barColor:'#2472A3',
+    phases:[
+      { phase:'상황 분석·보고', ph:'ph-blue', items:[
+        { kw:'상황관리', kc:'kw-blue', main:'재난상황 분석 및 보고',
+          subs:['재난 상황 정보 수집·분석','상황보고서 작성 및 전파','피해 현황 최신화','상황판 운영 및 정보 표시','최초보고·최종보고 작성','지원기관 상황 공유'] }
+      ]},
+      { phase:'작전계획 수립', ph:'ph-orange', items:[
+        { kw:'작전계획', kc:'kw-orange', main:'대응목표 설정 및 임무 배정',
+          subs:['대응 목표 설정','우선순위 결정','자원 및 임무 배정','대응계획 수정·재조정','상황판단회의 운영'] }
+      ]},
+      { phase:'공보·대중정보 전파', ph:'ph-purple', items:[
+        { kw:'공보', kc:'kw-purple', main:'비상경고 및 대중정보 제공',
+          subs:['비상경고 메시지 작성','재난문자·방송 요청','언론 브리핑 및 보도자료 배포','대중정보센터 운영','주민 행동요령 전파','언론 대응 및 정보 통제'] }
+      ]},
+      { phase:'기관 연락·상급보고', ph:'ph-gray', items:[
+        { kw:'연락지원', kc:'kw-gray', main:'지원기관 연락 및 상급보고',
+          subs:['지원기관 연락관 운영','관계기관 소집·파견','상급기관 보고'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'통제단 대응계획부 임무 종료',
+          subs:['상황보고 및 기록 정리','인계·공유 사항 확인','대응계획부 철수 완료'] }
+      ]}
+    ]
+  },
+
+  /* ─── 긴급구조통제단: 현장지휘부 ─── */
+  controlField:{
+    name:'현장지휘부',
+    subtitle:'구조·진압 · 현장통제 · 안전관리',
+    barColor:'#E67E22',
+    phases:[
+      { phase:'구조·진압 활동', ph:'ph-orange', items:[
+        { kw:'구조진압', kc:'kw-orange', main:'위험진압 및 인명구조 활동',
+          subs:['위험진압 수행','수색·탐색 실시','인명구조 활동','주민 긴급대피 결정','교통·출입 통제 요청'] }
+      ]},
+      { phase:'현장지휘·상황보고', ph:'ph-blue', items:[
+        { kw:'현장지휘', kc:'kw-blue', main:'현장상황 취합 및 지휘 조정',
+          subs:['현장 상황 취합·보고','대응 목표 조정','자원 재배치','긴급대피 명령','현장 통신체계 유지'] }
+      ]},
+      { phase:'현장 안전관리', ph:'ph-green', items:[
+        { kw:'안전관리', kc:'kw-green', main:'현장 대응자 안전관리',
+          subs:['붕괴·유해물질 위험 점검','안전구역 설정','현장 대응자 안전관리','자원대기소 운영','대응 인력 교대·휴식 관리'] }
+      ]},
+      { phase:'특수대응·응급의료 연계', ph:'ph-purple', items:[
+        { kw:'특수대응', kc:'kw-purple', main:'특수위험 초동조치 및 지원',
+          subs:['긴급 오염방제 지원','방사능 탐지','가스 차단 초동조치','비상조명·전력 지원 협조'] },
+        { kw:'응급의료', kc:'kw-purple', main:'응급의료 활동 연계',
+          subs:['임시의료소 운영','현장응급의료소 협조','사상자 현황 공유','이송 지원'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'통제단 현장지휘부 임무 종료',
+          subs:['현장 안전상태 최종 확인','현장대응 자원 철수 확인','현장지휘부 철수 완료'] }
+      ]}
+    ]
+  },
+
+  /* ─── 긴급구조통제단: 자원지원부 ─── */
+  controlResource:{
+    name:'자원지원부',
+    subtitle:'물품·급식지원 · 긴급복구 · 오염방제',
+    barColor:'#7D3C98',
+    phases:[
+      { phase:'물품·급식 지원', ph:'ph-orange', items:[
+        { kw:'물품급식', kc:'kw-orange', main:'현장 물품·급식 지원',
+          subs:['현장 급식 지원','식수·용수 확보','필요 물품 공급','위생·세척 지원'] }
+      ]},
+      { phase:'자원집결·장비관리', ph:'ph-purple', items:[
+        { kw:'자원운영', kc:'kw-purple', main:'자원집결지 및 장비 관리',
+          subs:['자원집결지 운영','장비 관리','자원 동원·배정','자원 현황 관리','지원기관 협조 조정'] }
+      ]},
+      { phase:'긴급복구 지원', ph:'ph-blue', items:[
+        { kw:'긴급복구', kc:'kw-blue', main:'긴급구조활동 장애요소 제거',
+          subs:['중장비 지원','출동로 확보','장애물 제거','비상전력 공급 협조','가스·전기 안전 지원','긴급 안전진단 지원'] }
+      ]},
+      { phase:'오염방제·회복지원', ph:'ph-green', items:[
+        { kw:'오염방제', kc:'kw-green', main:'오염방제 및 환경 대응 지원',
+          subs:['오염원 확인','오염 확산 차단','방역·정화 지원','유해화학물질 처리 지원','환경오염 대응 지원','감염병 통제 지원'] },
+        { kw:'회복지원', kc:'kw-green', main:'이재민 및 대응인력 회복 지원',
+          subs:['이재민 지원 협조','대응인력 회복 지원','장기 대응 지원체계 운영'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'상황종료', kc:'kw-gray', main:'통제단 자원지원부 임무 종료',
+          subs:['자원·장비 회수 확인','지원기관 협조사항 정리','자원지원부 철수 완료'] }
+      ]}
+    ]
+  },
+
+  /* ─── 지원반장 확인 목록 ─── */
+  chief:{
+    name:'지원반장 확인 목록',
+    subtitle:'출동 전 지원반장 최종 확인 사항',
+    barColor:'#2472A3',
+    phases:[
+      { phase:'비상소집', ph:'ph-blue', items:[
+        { kw:'인원파악', kc:'kw-blue', main:'긴급지원반 인원 파악',
+          subs:['필수요원 (1시간 이내 응소)','필수요원 외 '] }
+      ]},
+      { phase:'지원준비', ph:'ph-blue', items:[
+        { kw:'물품적재', kc:'kw-blue', main:'긴급지원반 필요물품 적재',
+          subs:['천막 2개','테이블 2개','의자 8개','긴급지원반 소모품 박스','긴급지원반 조끼 및 헬멧 보관함','상황판 및 상황판 거치대','긴급지원반 백팩','PS-LTE 가방(17개)(사무실 보관·통제단 담당자 자리)','식수 및 이온음료(긴급구조통제단 창고 보관)'] }
+      ]},
+      { phase:'임무수행', ph:'ph-orange', items:[
+        { kw:'지휘소', kc:'kw-orange', main:'현장지휘소 운영 (필수인원 2명·팀원)',
+          subs:['현장지휘소 설치','천막','테이블','의자','상황판','노트북','상황판 작성','일반현황','시간대별조치상황','작전도','시스템 운용','노트북 운용(P119 현장출동지원시스템)','연락망 구축','필요 지원기관 연락망 구축(지원기관 연락관)'],
+          subGroups:[
+            {label:'현장지휘소 설치', items:['천막','테이블','의자','상황판','노트북']},
+            {label:'상황판 작성', items:['일반현황','시간대별조치상황','작전도']},
+            {label:'시스템 운용', items:['노트북 운용(P119 현장출동지원시스템)']},
+            {label:'연락망 구축', items:['필요 지원기관 연락망 구축(지원기관 연락관)']}
+          ] },
+        { kw:'민간인통제', kc:'kw-orange', main:'민간인 통제 (필수인원 1명, 차량통제와 병행)',
+          subs:['1, 2통제선 설치','민간인 통제선 내 접근 통제'] },
+        { kw:'차량통제', kc:'kw-orange', main:'차량 통제',
+          subs:['차량 통제 인원 배치'] },
+        { kw:'자원집결지', kc:'kw-orange', main:'자원집결지 운영 (필수인원 1명·팀장)',
+          subs:['타·시도 소방력 현장 배치(필요시 중계급수체계 형성 지원)'] },
+        { kw:'자원대기소', kc:'kw-orange', main:'자원대기소 운영 (필수인원 1명)',
+          subs:['지원기관 연락관 운영(지원기관 도착·무전기 교육·배부)','소방력 교대조 편성 운영(휴식 및 물품 지원)'] },
+        { kw:'오염통제', kc:'kw-orange', main:'오염통제',
+          subs:['재난현장 위험물질 누출이나 누출 위험 여부 확인','지원기관에 긴급오염통제 활동 지원 요청'] }
+      ]},
+      { phase:'임무 종료', ph:'ph-gray', items:[
+        { kw:'확인완료', kc:'kw-gray', main:'지원반장 확인 완료',
+          subs:[] }
+      ]}
+    ]
+  }
+};
+window.ROLES = ROLES;
 </script>
 <script>
 /* 테스트 페이지 전용: 가상 데이터 소스 (Firebase에 연결하지 않음) */
