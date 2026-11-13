@@ -32,9 +32,10 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
 #screen-orbit .go-offline{display:none;background:#F2A33A;color:#111;font-weight:700;font-size:14px;text-align:center;padding:8px 12px}
 #screen-orbit .go-offline.show{display:block}
 #screen-orbit .go-wrap{padding:12px 12px 0 12px}
-#screen-orbit .go-stage{background:#111A2D;border:1px solid #24314F;border-radius:10px;padding:10px 12px;margin-bottom:10px}
+#screen-orbit .go-stage{background:#111A2D;border:1.5px solid #24314F;border-radius:10px;padding:10px 12px;margin-bottom:10px}
 #screen-orbit .go-stage .k{font-size:12px;color:#97A3BC}
 #screen-orbit .go-stage .v{font-size:19px;font-weight:800;color:#D4A017;line-height:1.35;word-break:keep-all}
+#screen-orbit .go-stage .v .cmd{font-size:13px;font-weight:700;color:#C9D1E0;margin-left:6px}
 #screen-orbit .go-stage .loc{font-size:13px;color:#C9D1E0;margin-top:2px;word-break:keep-all}
 #screen-orbit .go-cols{display:block}
 #screen-orbit .go-panel{background:#111A2D;border:1px solid #24314F;border-radius:10px;padding:10px;margin-bottom:10px}
@@ -98,6 +99,11 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
 #screen-orbit .go-rbody{border:1px solid #33415F;border-top:0;border-radius:0 0 8px 8px;padding:6px 6px 0 6px;margin-bottom:8px;background:#121B2F}
 #screen-orbit .go-more{display:block;width:100%;min-height:48px;margin-top:6px;border-radius:8px;border:1px solid #33415F;background:#16213A;color:#D4A017;font-size:14px;font-weight:700}
 #screen-orbit .go-hint{font-size:12px;color:#7D89A3;margin-top:4px;line-height:1.5}
+#screen-orbit .go-sub{clear:both;font-size:12px;font-weight:700;color:#97A3BC;margin:6px 0 4px 0}
+#screen-orbit .go-ag{display:inline-block;margin:2px 4px 2px 0;padding:3px 9px;border-radius:999px;border:1.5px solid #33415F;font-size:12px;font-weight:700;color:#C9D1E0;line-height:1.5}
+#screen-orbit .go-ag.none{color:#56617A;border-style:dashed}
+#screen-orbit .go-note{font-size:13px;color:#C9D1E0;margin-top:4px}
+#screen-orbit .go-notebox{background:#16213A;border-radius:8px;padding:9px 10px;font-size:14px;line-height:1.5;color:#E8EDF7;word-break:keep-all}
 #screen-orbit .go-foot{text-align:center;font-size:12px;color:#7D89A3;padding:6px 12px 0 12px;line-height:1.6}
 /* SVG */
 #screen-orbit svg text{font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif}
@@ -176,7 +182,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
   <p>지원반 앱에 넣기 전, 실시간 임무 맵 화면만 따로 확인하는 페이지입니다. 데이터는 <b>읽기만</b> 하며 Firebase에 아무것도 쓰지 않습니다.</p>
   <button class="main" id="b-real">구리 실제 데이터로 보기<small>gurichecklist · sessions/checklist_live_구리 (읽기 전용)</small></button>
   <button id="b-mock">가상 데이터로 보기<small>Firebase에 연결하지 않고 가상 대원 12명으로 동작 확인</small></button>
-  <div class="note">V45_62 실시간 임무 맵 · 구리소방서 소방교 김대운</div>
+  <div class="note">V45_63 실시간 임무 맵 · 구리소방서 소방교 김대운</div>
 </div>
 <div id="screen-orbit"></div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -191,7 +197,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
 (function(){
   if(window.GuriOrbit) return;
 
-  var VERSION = 'V45_62';
+  var VERSION = 'V45_63';
   var C = 300, R_NODE = 206, R_LABEL = 228, R_SECT = 126, R_CORE = 60, R_DIAL = 286;
   var STALE_MIN = 20;
   var NS = 'http://www.w3.org/2000/svg';
@@ -213,6 +219,22 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
     full: { name:'항목 완료', fill:'#4FA3E0', stroke:'#0B1220', label:'#E8EDF7' },
     end:  { name:'활동 종료', fill:'#3A4560', stroke:'#7D89A3', label:'#7D89A3' }
   };
+
+  /* V45_63: 지휘 단계 — 현장활동·지원반 가동은 현장지휘관, 대응1단계부터 통제단장이 인계 */
+  var STAGES = {
+    field:   { label:'현장활동',   cmd:'현장지휘관', color:'#5FA8E0' },
+    support: { label:'지원반 가동', cmd:'현장지휘관', color:'#F0A04B' },
+    r1:      { label:'대응1단계',  cmd:'통제단장',   color:'#E5534B' },
+    r2:      { label:'대응2단계',  cmd:'통제단장',   color:'#E5534B' },
+    r3:      { label:'대응3단계',  cmd:'통제단장',   color:'#E5534B' }
+  };
+  var AGENCIES = ['시청(오염통제·중장비)','경찰','보건소','군','한국전력공사','도시가스','헬기'];
+  var AG_ST = { contact:{ label:'연락 완료', color:'#F0A04B' }, arrived:{ label:'현장 도착', color:'#3FB97A' } };
+  var VEHICLES = ['지휘차','펌프차','물탱크차','화학차','굴절차','고가사다리차','구조공작차','구급차','배연차','조명차','무인방수탑차','회복지원차','기타'];
+  function hmIso(iso){ var t = Date.parse(iso || ''); return isNaN(t) ? '' : hm(new Date(t)); }
+  function vehText(d){ var o = d.vehicles, out = []; if(!o) return ''; VEHICLES.forEach(function(v){ if(o[v]) out.push((v === '기타' && d.vehicleEtcName ? d.vehicleEtcName : v) + ' ' + o[v]); }); return out.join(' · '); }
+  function stageKey(){ return (S && S.ds && STAGES[S.ds.stage]) ? S.ds.stage : ''; }
+  function numText(v, u){ v = dash(v); if(!v) return '-'; return /^\d+$/.test(v) ? v + u : v; }
 
   var S = null; // 화면 상태
 
@@ -277,9 +299,11 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
   /* ===== V45_58: 미배치 역할 ===== */
   // 지원반장·긴급지원반 7개 역할은 항상 확인, 통제단 3개 부는 통제단 인원이 1명 이상일 때만 확인
   function vacancies(list){
-    var has = {}, ctrl = false, out = [];
-    list.forEach(function(m){ if(m.st !== 'end') has[m.role] = true; if(m.group.id === 'control') ctrl = true; });
-    var need = ['chief'].concat(GROUPS[1].roles); if(ctrl) need = need.concat(GROUPS[2].roles);
+    var has = {}, ctrl = false, sup = false, out = [], sk = stageKey();
+    list.forEach(function(m){ if(m.st !== 'end') has[m.role] = true; if(m.group.id === 'control') ctrl = true; if(m.group.id === 'support' || m.group.id === 'chief') sup = true; });
+    // 단계 미지정(이전 데이터)은 지원반 항상 확인 / 현장활동은 지원반 대원이 있을 때만 / 지원반 가동·대응단계는 항상
+    var supOn = !sk || sk !== 'field' || sup, ctrlOn = ctrl || /^r\d$/.test(sk);
+    var need = supOn ? ['chief'].concat(GROUPS[1].roles) : []; if(ctrlOn) need = need.concat(GROUPS[2].roles);
     need.forEach(function(r){
       if(has[r]) return;
       out.push({ key:'vacant:' + r, vacant:true, role:r, roleName:ROLE_NAMES[r], group:groupOf(r), name:ROLE_SHORT[r] || ROLE_NAMES[r],
@@ -398,6 +422,18 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
       var d = new Date(it.who[0].t), names = it.who[0].name + (it.who.length > 1 ? ' 외 ' + (it.who.length - 1) + '명' : '');
       ev.push({ k:localKey(d), t:hm(d), text:'<b>' + esc(ROLE_NAMES[it.role] || it.role) + '</b> · ' + esc(it.title) + ' 완료 — ' + esc(names) });
     });
+    // V45_63: 지휘 단계 이력
+    var sl = S.stageLog || {};
+    Object.keys(sl).forEach(function(k){
+      var e = sl[k] || {}, st = STAGES[e.stage], t = Date.parse(e.at || '');
+      if(!st || isNaN(t)) return;
+      var from = STAGES[e.from], d = new Date(t), txt;
+      if(st.cmd === '통제단장' && !(from && from.cmd === '통제단장')) txt = '<b style="color:' + st.color + '">' + st.label + ' 발령</b> — 통제단 가동, 통제단장 지휘 인계';
+      else if(from && from.cmd === '통제단장' && st.cmd !== '통제단장') txt = '<b style="color:' + st.color + '">대응단계 해제 → ' + st.label + '</b> — 지휘 현장지휘관';
+      else if(e.stage === 'support') txt = '<b style="color:' + st.color + '">지원반 가동</b> — 지휘는 현장지휘관 유지';
+      else txt = '<b style="color:' + st.color + '">' + st.label + '</b> — 지휘 ' + st.cmd;
+      ev.push({ k:localKey(d), t:hm(d), text: txt + (e.by ? ' · ' + esc(e.by) : '') });
+    });
     ev.sort(function(a, b){ return a.k < b.k ? -1 : (a.k > b.k ? 1 : 0); });
     return { events:ev, unknown:unknown };
   }
@@ -435,7 +471,8 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
             '<div class="go-legend" id="go-legend"></div>' +
           '</div>' +
         '</div><div class="go-colB">' +
-          '<div class="go-panel"><div class="go-ph"><h3>현장 지표</h3><span>재난현황 기준</span></div><div class="go-kpis" id="go-kpis"></div></div>' +
+          '<div class="go-panel"><div class="go-ph"><h3>현장 지표</h3><span>재난현황 기준</span></div><div class="go-kpis" id="go-kpis"></div>' +
+            '<div class="go-sub">유관기관</div><div id="go-agencies"></div><div class="go-sub">피해·특이사항</div><div class="go-notebox" id="go-note"></div></div>' +
           '<div class="go-panel"><div class="go-ph"><h3>역할별 현황</h3><span id="go-rcnt"></span></div><div id="go-roles"></div><div class="go-hint">역할을 누르면 대원이 펼쳐지고, 대원을 누르면 임무 완료 현황이 열립니다.</div></div>' +
           '<div class="go-panel"><div class="go-ph"><h3>활동 기록</h3><span>출동 이후 전체 · 같은 임무는 1건</span></div><div id="go-log"></div></div>' +
         '</div></div>' +
@@ -547,9 +584,11 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
     var ml = $('go-mode-lb'); if(ml) ml.textContent = (mode === 'role' ? '역할별 보기 · 원 안 숫자 = 인원' : '대원별 보기');
     var tot = totals();
     $('go-dial').setAttribute('d', tot.pct > 0 ? arc(R_DIAL, 0, Math.min(tot.pct * 3.6, 359.9)) : '');
-    $('go-core1').textContent = S.stationShort;
+    var skc = stageKey();
+    $('go-core1').textContent = skc ? STAGES[skc].cmd : S.stationShort;
     var lvl = dash(S.ds.overviewResponseLevel);
-    $('go-core2').textContent = lvl ? (lvl.length > 11 ? lvl.slice(0, 11) + '…' : lvl) : '대응단계 미입력';
+    $('go-core2').textContent = skc ? STAGES[skc].label : (lvl ? (lvl.length > 11 ? lvl.slice(0, 11) + '…' : lvl) : '지휘 단계 미지정');
+    $('go-core2').setAttribute('fill', skc ? STAGES[skc].color : '#D4A017');
     $('go-core3').textContent = '활동 ' + S.list.length + '명 · ' + tot.pct + '%';
   }
   /* ===== V45_58: 보기 방식 (대원별 / 역할별) ===== */
@@ -652,8 +691,11 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
 
   /* ===== 패널 ===== */
   function drawStage(){
-    var d = S.ds, lvl = dash(d.overviewResponseLevel), loc = dash(d.overviewLocation), dt = dash(d.overviewDateTime);
-    $('go-stage').innerHTML = '<div class="k">대응단계</div><div class="v">' + (lvl ? esc(lvl) : '미입력') + '</div>' +
+    var d = S.ds, lvl = dash(d.overviewResponseLevel), loc = dash(d.overviewLocation), dt = dash(d.overviewDateTime), sk = stageKey(), st = STAGES[sk];
+    var at = '', tt = Date.parse(d.stageAt || ''); if(!isNaN(tt)) at = hm(new Date(tt));
+    $('go-stage').style.borderColor = st ? st.color : '#24314F';
+    $('go-stage').innerHTML = '<div class="k">지휘 단계</div><div class="v" style="color:' + (st ? st.color : '#D4A017') + '">' + (st ? esc(st.label) : (lvl ? esc(lvl) : '미지정')) +
+      ' <span class="cmd">지휘 ' + esc(st ? st.cmd : '현장지휘관') + (at ? ' · ' + at : '') + '</span></div>' +
       '<div class="loc">' + (loc ? esc(loc) : '발생장소 미입력') + (dt ? ' · ' + esc(dt) : '') + '</div>';
   }
   function drawPanels(){
@@ -666,8 +708,17 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
     $('go-kpis').innerHTML =
       kpi('활동 인원', list.length + '<small>명</small>', '활동 중 ' + active + ' · 종료 ' + (list.length - active) + (S.vac.length ? ' · <b style="color:#F2A33A">미배치 ' + S.vac.length + '</b>' : '')) +
       kpi('전체 진행률', tot.pct + '<small>%</small>', tot.done + ' / ' + tot.total + ' 항목', tot.pct) +
-      kpi('인명구조', esc(dash(d.rescueDone) || '-'), '대상 ' + esc(dash(d.rescueRequired) || '-') + ' · 이송 ' + esc(dash(d.rescueTransport) || '-')) +
-      kpi('동원 자원', esc(dash(d.resourcePersonnel) || '-'), '차량 ' + esc(dash(d.resourceVehicles) || '-'));
+      kpi('구조완료', esc(numText(d.rescueDone, '')) + '<small>명</small>', '<b style="color:#F2C46B">남은 구조대상 ' + esc(numText(d.rescueRequired, '명')) + '</b> · 이송 ' + esc(numText(d.rescueTransport, '명')) + ' · 사망 ' + esc(numText(d.damageDead, '명')) + ' · 부상 ' + esc(numText(d.damageInjured, '명'))) +
+      kpi('소방 동원', esc(numText(d.resourcePersonnel, '')) + '<small>명 · </small>' + esc(numText(d.resourceVehicles, '')) + '<small>대</small>', esc(vehText(d)) || '차량 종류 미입력');
+    /* V45_63: 유관기관 상태 · 피해·특이사항 */
+    var ag = d.agencies, ah = '';
+    if(ag){
+      AGENCIES.forEach(function(a){ var x = ag[a], st = x && AG_ST[x.st];
+        ah += '<span class="go-ag' + (st ? '' : ' none') + '" style="' + (st ? 'border-color:' + st.color + ';color:' + st.color : '') + '">' + esc(a) + (st ? ' · ' + st.label + (x.at ? ' ' + hmIso(x.at) : '') : '') + '</span>'; });
+      if(dash(d.agencyEtc)) ah += '<div class="go-note">기타: ' + esc(d.agencyEtc) + '</div>';
+    }else if(dash(d.resourceAgencies)) ah = '<div class="go-note">' + esc(d.resourceAgencies) + '</div>';
+    $('go-agencies').innerHTML = ah || '<div class="go-empty">유관기관 연락·도착 기록이 없습니다.</div>';
+    $('go-note').innerHTML = dash(d.damageNote) ? esc(d.damageNote) : '<span class="go-empty">입력된 피해·특이사항이 없습니다. (굴삭기 등 소방 외 장비도 여기에 적습니다)</span>';
 
     /* V45_58: 역할별 현황 — 역할 줄을 누르면 그 역할 대원이 펼쳐짐 */
     var roles = {}, order = [];
@@ -855,6 +906,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
   function onDisaster(d){
     if(!S) return;
     S.ds = d || {};
+    S.vac = vacancies(S.list); // V45_63: 지휘 단계에 따라 미배치 역할이 달라짐
     if(S.gotMembers) render(); else drawStage();
   }
   function onError(err){
@@ -886,6 +938,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
     try{
       S.unsub.push(src.members(onMembers, onError));
       S.unsub.push(src.disaster(onDisaster, function(){}));
+      if(src.stageLog) S.unsub.push(src.stageLog(function(v){ if(!S) return; S.stageLog = v || {}; if(S.gotMembers) drawPanels(); }, function(){}));
       if(src.connected) S.unsub.push(src.connected(function(on){ setConn(on ? 'on' : 'off', on ? '실시간 연결' : '연결 끊김'); }));
       else setConn('on', '실시간 연결');
     }catch(e){ onError(e); }
@@ -909,6 +962,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
     return {
       members: function(cb, err){ return listen('sessions/' + sessionId + '/members', function(v){ cb(v || {}); }, err); },
       disaster: function(cb, err){ return listen('sessions/' + sessionId + '/disasterStatus', function(v){ cb(v || {}); }, err); },
+      stageLog: function(cb, err){ return listen('sessions/' + sessionId + '/stageLog', function(v){ cb(v || {}); }, err); },
       connected: function(cb){ return listen('.info/connected', function(v){ cb(v === true); }, function(){}); }
     };
   }
