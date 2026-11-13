@@ -1993,6 +1993,8 @@ function captureScreen(){
 .ds-stg{float:left;width:31.333%;margin:3px 1%;min-height:44px;border-radius:10px;border:1.5px solid #DDE4EA;background:#F7F9FB;color:#333;font-size:14px;font-weight:700;font-family:inherit}
 .ds-stg.on{color:#fff}
 .ds-stg:disabled{opacity:.45}
+.ds-dt input[type="date"]{-webkit-box-flex:1;-webkit-flex:1 1 0;flex:1 1 0;min-width:0;min-height:46px;padding:10px 6px}
+.ds-dt input[type="time"]{-webkit-box-flex:1;-webkit-flex:1 1 0;flex:1 1 0;min-width:0;min-height:46px;margin-left:6px;padding:10px 6px}
 .ds-vadd{display:block;width:100%;min-height:46px;border-radius:10px;border:1.5px dashed #C0392B;background:#fff;color:#C0392B;font-size:15px;font-weight:700;font-family:inherit}
 .ds-vcust .ds-vname input{font-size:16px}
 .ds-arrive-wrap{clear:both;padding-top:6px}
@@ -2010,7 +2012,6 @@ function captureScreen(){
 .ds-row input,.ds-row textarea{width:100%;-webkit-box-sizing:border-box;box-sizing:border-box;border:1px solid #DDE4EA;border-radius:8px;padding:10px;font-size:16px;font-family:inherit;background:#fff}
 .ds-inline{display:-webkit-box;display:-webkit-flex;display:flex}
 .ds-inline input{-webkit-box-flex:1;-webkit-flex:1 1 auto;flex:1 1 auto;min-width:0}
-.ds-now{-webkit-box-flex:0;-webkit-flex:0 0 auto;flex:0 0 auto;margin-left:6px;min-width:60px;min-height:44px;border-radius:8px;border:1.5px solid #C0392B;background:#fff;color:#C0392B;font-weight:700;font-size:14px;font-family:inherit}
 .ds-nums{overflow:hidden;margin:0 -4px}
 .ds-num{float:left;width:50%;padding:0 4px;margin-bottom:8px;-webkit-box-sizing:border-box;box-sizing:border-box}
 .ds-num label{display:block;font-size:12px;font-weight:700;color:#555;margin-bottom:3px}
@@ -6036,7 +6037,8 @@ function restoreChecklist(){
     var d = window.lastDisasterStatus || defaultDisasterStatus();
     dsFormBase = {};
     function set(id, v){ var el = document.getElementById(id); if(el) el.value = v; }
-    set('input-overviewDateTime', dsEmpty(d.overviewDateTime) ? '' : d.overviewDateTime);
+    var pd = dsParseDT(d.overviewDateTime);
+    set('input-dtDate', pd ? pd.date : ''); set('input-dtTime', pd ? pd.time : '');
     set('input-overviewLocation', dsEmpty(d.overviewLocation) ? '' : d.overviewLocation);
     DS_NUM_KEYS.forEach(function(k){ var v = dsNum(d[k]); set('input-' + k, v); dsFormBase[k] = v; });
     set('input-damageNote', dsEmpty(d.damageNote) ? '' : d.damageNote);
@@ -6080,6 +6082,26 @@ function restoreChecklist(){
     if(lg) lg.textContent = legacy.length ? '이전 방식으로 입력된 내용 (그대로 보관됨) · ' + legacy.join(' · ') : '';
   }
   function dsHM(iso){ return dsHHMM(iso); }
+  // V45_64: 발생일시 — 날짜·시각 선택 (저장 형식은 기존과 같은 "2026. 11. 13. 09:20")
+  function dsP2(n){ n = String(n); return n.length < 2 ? '0' + n : n; }
+  function dsParseDT(v){
+    if(dsEmpty(v)) return null;
+    var m = /(\d{4})\D+(\d{1,2})\D+(\d{1,2})\D*?(?:(\d{1,2}):(\d{2}))?\s*$/.exec(String(v));
+    if(!m) return null;
+    return { date: m[1] + '-' + dsP2(m[2]) + '-' + dsP2(m[3]), time: m[4] ? dsP2(m[4]) + ':' + m[5] : '' };
+  }
+  function dsFmtDT(date, time){
+    if(!date) return '';
+    var p = date.split('-'); if(p.length !== 3) return '';
+    return parseInt(p[0], 10) + '. ' + parseInt(p[1], 10) + '. ' + parseInt(p[2], 10) + '.' + (time ? ' ' + time : '');
+  }
+  function dsPickedDT(orig){
+    var date = (document.getElementById('input-dtDate') || {}).value || '', time = (document.getElementById('input-dtTime') || {}).value || '';
+    var pd = dsParseDT(orig);
+    if(pd && pd.date === date && pd.time === time) return orig || '';   // 손대지 않았으면 원래 값 유지
+    if(!pd && !date && !time) return orig || '';                         // 이전 형식 글자도 유지
+    return dsFmtDT(date, time);
+  }
   function dsAgSummary(ag, etc){
     var out = [];
     DS_AGENCIES.concat(Object.keys(ag || {}).filter(function(k){ return DS_AGENCIES.indexOf(k) < 0; })).forEach(function(a){
@@ -6185,7 +6207,7 @@ function restoreChecklist(){
     if(!FB.ready || !FB.db){ alert('Firebase 연결을 확인해 주세요.'); return; }
     function val(id){ var el = document.getElementById(id); return el ? String(el.value || '').replace(/^\s+|\s+$/g, '') : ''; }
     var next = {
-      overviewDateTime: val('input-overviewDateTime'), overviewLocation: val('input-overviewLocation'),
+      overviewDateTime: dsPickedDT(dsFormBase.overviewDateTime), overviewLocation: val('input-overviewLocation'),
       damageNote: val('input-damageNote'), agencyEtc: val('input-agencyEtc')
     };
     DS_NUM_KEYS.forEach(function(k){ next[k] = dsNum(val('input-' + k)); });
@@ -6245,7 +6267,7 @@ function restoreChecklist(){
   // 버튼 처리 (구형 기기 호환: 문서 전체에서 위임 처리)
   document.addEventListener('click', function(e){
     var t = e.target;
-    while(t && t !== document && !(t.className && typeof t.className === 'string' && /(^|\s)(ds-st|ds-ag|ds-now|ds-stg|ds-vhd|ds-vadd|ds-arrive)(\s|$)/.test(t.className)) && !(t.getAttribute && t.getAttribute('data-agp'))) t = t.parentNode;
+    while(t && t !== document && !(t.className && typeof t.className === 'string' && /(^|\s)(ds-st|ds-ag|ds-stg|ds-vhd|ds-vadd|ds-arrive)(\s|$)/.test(t.className)) && !(t.getAttribute && t.getAttribute('data-agp'))) t = t.parentNode;
     if(t && t !== document && t.getAttribute && t.getAttribute('data-agp')){ var ap = t.getAttribute('data-agp'); if(ap === 'close') dsAgClose(); else dsAgApply(ap); return; }
     if(!t || t === document) return;
     var c = t.className;
@@ -6265,9 +6287,6 @@ function restoreChecklist(){
       var bd = document.getElementById('ds-vbody-' + t.getAttribute('data-vg')), open = bd && bd.style.display !== 'none';
       if(bd) bd.style.display = open ? 'none' : 'block';
       var ic = t.getElementsByTagName('i')[0]; if(ic) ic.textContent = open ? '▾' : '▴';
-    }else if(/(^|\s)ds-now(\s|$)/.test(c)){
-      var n = new Date(), el = document.getElementById('input-overviewDateTime');
-      if(el) el.value = n.getFullYear() + '. ' + (n.getMonth() + 1) + '. ' + n.getDate() + '. ' + (n.getHours() < 10 ? '0' : '') + n.getHours() + ':' + (n.getMinutes() < 10 ? '0' : '') + n.getMinutes();
     }else if(/(^|\s)ds-stg(\s|$)/.test(c)){
       if(!t.disabled) setCommandStage(t.getAttribute('data-stg'));
     }
@@ -7194,7 +7213,7 @@ renderGroupBlocks(members);
               '<div class="fb-edit-title">재난현황 입력 · 수정 <span style="font-weight:500;color:#888">(바뀐 칸만 저장됩니다)</span></div>'+ 
               '<div class="ds-form">'+
                 '<div class="ds-sec">재난개요</div>'+
-                '<div class="ds-row"><label>발생일시</label><div class="ds-inline"><input id="input-overviewDateTime" placeholder="예: 2026. 11. 13. 09:30"><button type="button" class="ds-now">지금</button></div></div>'+
+                '<div class="ds-row"><label>발생일시 <span class="ds-sub">눌러서 날짜·시각 선택</span></label><div class="ds-inline ds-dt"><input id="input-dtDate" type="date"><input id="input-dtTime" type="time"></div></div>'+
                 '<div class="ds-row"><label>발생장소</label><input id="input-overviewLocation" placeholder="예: 구리시 ○○동 ○○아파트"></div>'+
                 '<div class="ds-sec">인명현황 <span>− + 로 조정</span></div>'+
                 '<div class="ds-nums">'+
@@ -7601,7 +7620,7 @@ if('serviceWorker' in navigator){
 (function(){
   if(window.GuriOrbit) return;
 
-  var VERSION = 'V45_64';
+  var VERSION = 'V45_65';
   var C = 300, R_NODE = 206, R_LABEL = 228, R_SECT = 126, R_CORE = 60, R_DIAL = 286;
   var STALE_MIN = 20;
   var NS = 'http://www.w3.org/2000/svg';
