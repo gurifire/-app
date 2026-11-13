@@ -36,6 +36,8 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
 #screen-orbit .go-stage .k{font-size:12px;color:#97A3BC}
 #screen-orbit .go-stage .v{font-size:19px;font-weight:800;color:#D4A017;line-height:1.35;word-break:keep-all}
 #screen-orbit .go-stage .v .cmd{font-size:13px;font-weight:700;color:#C9D1E0;margin-left:6px}
+#screen-orbit .go-stage .arr{font-size:13px;font-weight:700;color:#F2C46B;margin-top:2px}
+#screen-orbit .go-stage .arr.ok{color:#E5534B}
 #screen-orbit .go-stage .loc{font-size:13px;color:#C9D1E0;margin-top:2px;word-break:keep-all}
 #screen-orbit .go-cols{display:block}
 #screen-orbit .go-panel{background:#111A2D;border:1px solid #24314F;border-radius:10px;padding:10px;margin-bottom:10px}
@@ -182,7 +184,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
   <p>지원반 앱에 넣기 전, 실시간 임무 맵 화면만 따로 확인하는 페이지입니다. 데이터는 <b>읽기만</b> 하며 Firebase에 아무것도 쓰지 않습니다.</p>
   <button class="main" id="b-real">구리 실제 데이터로 보기<small>gurichecklist · sessions/checklist_live_구리 (읽기 전용)</small></button>
   <button id="b-mock">가상 데이터로 보기<small>Firebase에 연결하지 않고 가상 대원 12명으로 동작 확인</small></button>
-  <div class="note">V45_63 실시간 임무 맵 · 구리소방서 소방교 김대운</div>
+  <div class="note">V45_64 실시간 임무 맵 · 구리소방서 소방교 김대운</div>
 </div>
 <div id="screen-orbit"></div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -197,7 +199,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
 (function(){
   if(window.GuriOrbit) return;
 
-  var VERSION = 'V45_63';
+  var VERSION = 'V45_64';
   var C = 300, R_NODE = 206, R_LABEL = 228, R_SECT = 126, R_CORE = 60, R_DIAL = 286;
   var STALE_MIN = 20;
   var NS = 'http://www.w3.org/2000/svg';
@@ -230,9 +232,12 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
   };
   var AGENCIES = ['시청(오염통제·중장비)','경찰','보건소','군','한국전력공사','도시가스','헬기'];
   var AG_ST = { contact:{ label:'연락 완료', color:'#F0A04B' }, arrived:{ label:'현장 도착', color:'#3FB97A' } };
-  var VEHICLES = ['지휘차','펌프차','물탱크차','화학차','굴절차','고가사다리차','구조공작차','구급차','배연차','조명차','무인방수탑차','회복지원차','기타'];
+  var VEHICLES = ['지휘차','펌프차','물탱크차','화학차','굴절차','고가사다리차','구조공작차','구급차','배연차','조명차','무인방수탑차','회복지원차','장비운반차'];
   function hmIso(iso){ var t = Date.parse(iso || ''); return isNaN(t) ? '' : hm(new Date(t)); }
-  function vehText(d){ var o = d.vehicles, out = []; if(!o) return ''; VEHICLES.forEach(function(v){ if(o[v]) out.push((v === '기타' && d.vehicleEtcName ? d.vehicleEtcName : v) + ' ' + o[v]); }); return out.join(' · '); }
+  function vehText(d){ var o = d.vehicles, out = []; if(!o) return ''; VEHICLES.forEach(function(v){ if(o[v]) out.push(v + ' ' + o[v]); });
+    Object.keys(o).forEach(function(v){ if(VEHICLES.indexOf(v) < 0 && o[v]) out.push((v === '기타' && dash(d.vehicleEtcName) ? d.vehicleEtcName : v) + ' ' + o[v]); }); return out.join(' · '); }
+  // V45_64: 대응단계여도 통제단장 도착을 눌러야 지휘가 통제단장으로 바뀜
+  function cmdNow(){ var sk = stageKey(); return (/^r\d$/.test(sk) && S.ds.cmdArrived) ? '통제단장' : '현장지휘관'; }
   function stageKey(){ return (S && S.ds && STAGES[S.ds.stage]) ? S.ds.stage : ''; }
   function numText(v, u){ v = dash(v); if(!v) return '-'; return /^\d+$/.test(v) ? v + u : v; }
 
@@ -426,9 +431,10 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
     var sl = S.stageLog || {};
     Object.keys(sl).forEach(function(k){
       var e = sl[k] || {}, st = STAGES[e.stage], t = Date.parse(e.at || '');
+      if(e.stage === 'arrive' && !isNaN(t)){ var da = new Date(t); ev.push({ k:localKey(da), t:hm(da), text:'<b style="color:#E5534B">통제단장 도착</b> — 현장지휘관에서 통제단장으로 지휘 인계' + (e.by ? ' · ' + esc(e.by) : '') }); return; }
       if(!st || isNaN(t)) return;
       var from = STAGES[e.from], d = new Date(t), txt;
-      if(st.cmd === '통제단장' && !(from && from.cmd === '통제단장')) txt = '<b style="color:' + st.color + '">' + st.label + ' 발령</b> — 통제단 가동, 통제단장 지휘 인계';
+      if(st.cmd === '통제단장' && !(from && from.cmd === '통제단장')) txt = '<b style="color:' + st.color + '">' + st.label + ' 발령</b> — 통제단 가동 (통제단장 도착 전, 지휘 현장지휘관)';
       else if(from && from.cmd === '통제단장' && st.cmd !== '통제단장') txt = '<b style="color:' + st.color + '">대응단계 해제 → ' + st.label + '</b> — 지휘 현장지휘관';
       else if(e.stage === 'support') txt = '<b style="color:' + st.color + '">지원반 가동</b> — 지휘는 현장지휘관 유지';
       else txt = '<b style="color:' + st.color + '">' + st.label + '</b> — 지휘 ' + st.cmd;
@@ -585,7 +591,7 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
     var tot = totals();
     $('go-dial').setAttribute('d', tot.pct > 0 ? arc(R_DIAL, 0, Math.min(tot.pct * 3.6, 359.9)) : '');
     var skc = stageKey();
-    $('go-core1').textContent = skc ? STAGES[skc].cmd : S.stationShort;
+    $('go-core1').textContent = skc ? cmdNow() : S.stationShort;
     var lvl = dash(S.ds.overviewResponseLevel);
     $('go-core2').textContent = skc ? STAGES[skc].label : (lvl ? (lvl.length > 11 ? lvl.slice(0, 11) + '…' : lvl) : '지휘 단계 미지정');
     $('go-core2').setAttribute('fill', skc ? STAGES[skc].color : '#D4A017');
@@ -695,7 +701,8 @@ html,body{background:#0B1220;color:#E8EDF7;font-family:'Noto Sans KR','Apple SD 
     var at = '', tt = Date.parse(d.stageAt || ''); if(!isNaN(tt)) at = hm(new Date(tt));
     $('go-stage').style.borderColor = st ? st.color : '#24314F';
     $('go-stage').innerHTML = '<div class="k">지휘 단계</div><div class="v" style="color:' + (st ? st.color : '#D4A017') + '">' + (st ? esc(st.label) : (lvl ? esc(lvl) : '미지정')) +
-      ' <span class="cmd">지휘 ' + esc(st ? st.cmd : '현장지휘관') + (at ? ' · ' + at : '') + '</span></div>' +
+      ' <span class="cmd">지휘 ' + esc(cmdNow()) + (at ? ' · ' + at : '') + '</span></div>' +
+      (/^r\d$/.test(sk) ? (d.cmdArrived ? '<div class="arr ok">✓ 통제단장 도착 ' + esc(hmIso(d.cmdArrivedAt)) + ' — 지휘 인계</div>' : '<div class="arr">통제단 가동 · 통제단장 도착 전 (현장지휘관 지휘 중)</div>') : '') +
       '<div class="loc">' + (loc ? esc(loc) : '발생장소 미입력') + (dt ? ' · ' + esc(dt) : '') + '</div>';
   }
   function drawPanels(){

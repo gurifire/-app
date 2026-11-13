@@ -1993,6 +1993,13 @@ function captureScreen(){
 .ds-stg{float:left;width:31.333%;margin:3px 1%;min-height:44px;border-radius:10px;border:1.5px solid #DDE4EA;background:#F7F9FB;color:#333;font-size:14px;font-weight:700;font-family:inherit}
 .ds-stg.on{color:#fff}
 .ds-stg:disabled{opacity:.45}
+.ds-vadd{display:block;width:100%;min-height:46px;border-radius:10px;border:1.5px dashed #C0392B;background:#fff;color:#C0392B;font-size:15px;font-weight:700;font-family:inherit}
+.ds-vcust .ds-vname input{font-size:16px}
+.ds-arrive-wrap{clear:both;padding-top:6px}
+.ds-arrive{display:block;width:100%;min-height:52px;border-radius:12px;border:0;background:#7B241C;color:#fff;font-size:16px;font-weight:800;font-family:inherit}
+.ds-arrive:disabled{opacity:.45}
+.ds-arrive-note{font-size:12px;color:#7B241C;margin-top:4px}
+.ds-arrived{background:#FBEDEC;border:1.5px solid #C0392B;border-radius:10px;padding:8px 10px;font-size:14px;font-weight:700;color:#7B241C}
 .ds-stage-hint{font-size:11px;color:#888;margin-top:4px;clear:both}
 .ds-form{padding:2px 0}
 .ds-sec{font-size:13px;font-weight:800;color:#C0392B;margin:12px 0 6px 0}
@@ -2061,6 +2068,8 @@ function captureScreen(){
 #screen-orbit .go-stage .k{font-size:12px;color:#97A3BC}
 #screen-orbit .go-stage .v{font-size:19px;font-weight:800;color:#D4A017;line-height:1.35;word-break:keep-all}
 #screen-orbit .go-stage .v .cmd{font-size:13px;font-weight:700;color:#C9D1E0;margin-left:6px}
+#screen-orbit .go-stage .arr{font-size:13px;font-weight:700;color:#F2C46B;margin-top:2px}
+#screen-orbit .go-stage .arr.ok{color:#E5534B}
 #screen-orbit .go-stage .loc{font-size:13px;color:#C9D1E0;margin-top:2px;word-break:keep-all}
 #screen-orbit .go-cols{display:block}
 #screen-orbit .go-panel{background:#111A2D;border:1px solid #24314F;border-radius:10px;padding:10px;margin-bottom:10px}
@@ -5931,6 +5940,9 @@ function restoreChecklist(){
       stage:'',
       stageAt:'',
       stageBy:'',
+      cmdArrived:false,
+      cmdArrivedAt:'',
+      cmdArrivedBy:'',
       updatedBy:'미입력',
       updatedAtText:'미저장'
     };
@@ -5950,7 +5962,7 @@ function restoreChecklist(){
   // 유관기관: 체크리스트 "유관기관 연락/통보" 세부 항목과 같은 목록
   var DS_AGENCIES = ['시청(오염통제·중장비)','경찰','보건소','군','한국전력공사','도시가스','헬기'];
   var DS_AG_ST = { contact:{ label:'연락 완료', color:'#E67F22' }, arrived:{ label:'현장 도착', color:'#2E7D32' } };
-  var DS_VEHICLES = ['지휘차','펌프차','물탱크차','화학차','굴절차','고가사다리차','구조공작차','구급차','배연차','조명차','무인방수탑차','회복지원차'];
+  var DS_VEHICLES = ['지휘차','펌프차','물탱크차','화학차','굴절차','고가사다리차','구조공작차','구급차','배연차','조명차','무인방수탑차','회복지원차','장비운반차'];
   var DS_NUM_KEYS = ['rescueRequired','rescueDone','rescueTransport','damageDead','damageInjured','resourcePersonnel'];
   var dsAgState = {}, dsVehState = {};
   var DS_UNITS = { rescueRequired:'명', rescueDone:'명', rescueTransport:'명', damageDead:'명', damageInjured:'명', resourcePersonnel:'명', resourceVehicles:'대' };
@@ -5961,6 +5973,9 @@ function restoreChecklist(){
   function dsShowNum(v, unit){ if(dsEmpty(v)) return '-'; return /^\d+$/.test(String(v)) ? (v + unit) : String(v); }
   function dsHHMM(iso){ var t = Date.parse(iso || ''); if(isNaN(t)) return ''; var d = new Date(t); return (d.getHours() < 10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes(); }
   function dsStageOf(d){ return (d && GURI_STAGES[d.stage]) ? d.stage : ''; }
+  // 실제 지휘: 대응단계 + 통제단장 도착 시에만 통제단장, 그 전에는 현장지휘관
+  function dsCmdOf(d){ var sk = dsStageOf(d); return (/^r\d$/.test(sk) && d.cmdArrived) ? '통제단장' : '현장지휘관'; }
+  window.guriCmdOf = dsCmdOf;
   function dsWho(){ try{ var m = getMemberInfo(); return [m.unit, m.rank, m.name].filter(Boolean).join(' ') || '미입력'; }catch(e){ return '미입력'; } }
   function dsAuthOn(){ var a = document.getElementById('fb-disaster-edit-auth'); return !!(a && a.checked); }
 
@@ -5973,7 +5988,7 @@ function restoreChecklist(){
     var sk = dsStageOf(d), st = GURI_STAGES[sk];
     put('ds-overview-dateTime', d.overviewDateTime);
     put('ds-overview-location', d.overviewLocation);
-    put('ds-overview-command', st ? st.cmd : (dsEmpty(d.overviewResponseLevel) ? '-' : d.overviewResponseLevel));
+    put('ds-overview-command', st ? dsCmdOf(d) + (/^r\d$/.test(sk) && !d.cmdArrived ? ' (통제단장 도착 전)' : '') : (dsEmpty(d.overviewResponseLevel) ? '-' : d.overviewResponseLevel));
     put('ds-rescue-required', dsShowNum(d.rescueRequired, '명')); put('ds-rescue-done', dsShowNum(d.rescueDone, '명')); put('ds-rescue-transport', dsShowNum(d.rescueTransport, '명'));
     put('ds-damage-dead', dsShowNum(d.damageDead, '명')); put('ds-damage-injured', dsShowNum(d.damageInjured, '명'));
     put('ds-resource-personnel', dsShowNum(d.resourcePersonnel, '명')); put('ds-resource-vehicles', dsShowNum(d.resourceVehicles, '대'));
@@ -5990,7 +6005,14 @@ function restoreChecklist(){
     // 지휘 단계 표시
     var lb = document.getElementById('ds-stage-label'), cm = document.getElementById('ds-stage-cmd'), at = document.getElementById('ds-stage-at'), box = document.getElementById('ds-stagebox');
     if(lb) lb.textContent = st ? st.label : (dsEmpty(d.overviewResponseLevel) ? '미지정' : d.overviewResponseLevel);
-    if(cm) cm.textContent = '지휘 ' + (st ? st.cmd : '현장지휘관');
+    if(cm) cm.textContent = '지휘 ' + dsCmdOf(d);
+    var ar = document.getElementById('ds-arrive-wrap'), isR = /^r\d$/.test(sk);
+    if(ar){
+      ar.style.display = isR ? 'block' : 'none';
+      ar.innerHTML = d.cmdArrived
+        ? '<div class="ds-arrived">✓ 통제단장 도착 ' + dsHHMM(d.cmdArrivedAt) + (d.cmdArrivedBy ? ' · ' + String(d.cmdArrivedBy).replace(/[<>&]/g, '') : '') + ' — 지휘 인계 완료</div>'
+        : '<button type="button" class="ds-arrive">통제단장 도착 (지휘 인계)</button><div class="ds-arrive-note">통제단 가동 중 · 통제단장 도착 전까지 현장지휘관이 지휘합니다</div>';
+    }
     if(at) at.textContent = (st && d.stageAt) ? dsHHMM(d.stageAt) + (d.stageBy ? ' · ' + d.stageBy : '') : '';
     if(box) box.style.borderColor = st ? st.color : '#DDE4EA';
     if(lb) lb.style.color = st ? st.color : '#555';
@@ -6006,7 +6028,7 @@ function restoreChecklist(){
     if(meta) meta.textContent = '최종 수정: ' + ((d.updatedBy || '미입력') + ' · ' + (d.updatedAtText || '미저장'));
   }
   function dsSyncStageButtons(){
-    var on = dsAuthOn(), btns = document.querySelectorAll('#ds-stage-btns .ds-stg');
+    var on = dsAuthOn(), btns = document.querySelectorAll('#ds-stage-btns .ds-stg, #ds-arrive-wrap .ds-arrive');
     for(var i = 0; i < btns.length; i++) btns[i].disabled = !on;
     var h = document.getElementById('ds-stage-hint'); if(h) h.style.display = on ? 'none' : 'block';
   }
@@ -6030,21 +6052,23 @@ function restoreChecklist(){
     // 소방 차량
     dsVehState = JSON.parse(JSON.stringify(d.vehicles || {}));
     dsFormBase.vehicles = JSON.stringify(dsVehState);
-    dsFormBase.vehicleEtcName = dsEmpty(d.vehicleEtcName) ? '' : d.vehicleEtcName;
+    // 이전 버전의 '기타'+차량명 1칸은 차량명을 키로 옮겨서 보여줌
+    if(dsVehState['기타']){ var on = dsEmpty(d.vehicleEtcName) ? '기타' : d.vehicleEtcName; var c0 = dsVehState['기타']; delete dsVehState['기타']; dsVehState[on] = (dsVehState[on] || 0) + c0; }
     // 차량은 두 개의 접이식: 입력된 차량 / 미입력 차량 (폼을 열 때 기준으로 나눔)
     var vb = document.getElementById('ds-veh'), rowsA = '', rowsB = '', nA = 0, nB = 0;
-    DS_VEHICLES.concat(['기타']).forEach(function(v, i){
+    DS_VEHICLES.forEach(function(v, i){
       var vh = '';
-      vh += '<div class="ds-vrow"><span class="ds-vname">' + (v === '기타' ? '<input id="input-vehEtcName" placeholder="기타 차량명">' : v) + '</span>' +
+      vh += '<div class="ds-vrow"><span class="ds-vname">' + v + '</span>' +
         '<span class="ds-step ds-vstep"><button type="button" class="ds-st" data-k="veh-' + i + '" data-d="-1" aria-label="' + v + ' 1 감소">−</button>' +
         '<input id="input-veh-' + i + '" type="number" inputmode="numeric" min="0" placeholder="0" value="' + (dsVehState[v] ? dsVehState[v] : '') + '">' +
         '<button type="button" class="ds-st" data-k="veh-' + i + '" data-d="1" aria-label="' + v + ' 1 증가">+</button></span></div>';
       if(dsVehState[v]){ rowsA += vh; nA++; } else { rowsB += vh; nB++; }
     });
+    Object.keys(dsVehState).forEach(function(v){ if(DS_VEHICLES.indexOf(v) < 0 && dsVehState[v]){ rowsA += dsCustRow(v, dsVehState[v]); nA++; } });
     if(vb) vb.innerHTML =
       '<div class="ds-vgrp"><button type="button" class="ds-vhd" data-vg="a"' + (nA ? '' : ' disabled') + '><span id="ds-vsum-a">입력된 차량</span><i>' + (nA ? '▾' : '') + '</i></button><div class="ds-vbody" id="ds-vbody-a" style="display:none">' + rowsA + '</div></div>' +
-      '<div class="ds-vgrp"><button type="button" class="ds-vhd" data-vg="b"><span id="ds-vsum-b">미입력 차량</span><i>▾</i></button><div class="ds-vbody" id="ds-vbody-b" style="display:none">' + rowsB + '</div></div>';
-    set('input-vehEtcName', dsFormBase.vehicleEtcName);
+      '<div class="ds-vgrp"><button type="button" class="ds-vhd" data-vg="b"><span id="ds-vsum-b">미입력 차량</span><i>▾</i></button><div class="ds-vbody" id="ds-vbody-b" style="display:none">' + rowsB + '</div></div>' +
+      '<div id="ds-vcust-new"></div><button type="button" class="ds-vadd">+ 기타 차량 추가</button>';
     dsVehTotal();
     var lg = document.getElementById('ds-legacy'), legacy = [];
     if(!dsEmpty(d.damagePeople)) legacy.push('인명피해: ' + d.damagePeople);
@@ -6106,12 +6130,26 @@ function restoreChecklist(){
     else if(act === 'arrived') dsAgState[name] = { st:'arrived', at:now, contactAt: prev.contactAt || '' };
     dsAgClose(); dsDrawAgencies();
   }
+  var dsCustSeq = 0;
+  function dsCustRow(name, cnt){
+    var k = 'c' + (++dsCustSeq);
+    return '<div class="ds-vrow ds-vcust"><span class="ds-vname"><input class="ds-vcname" placeholder="차량명 (예: 드론지원차)" value="' + String(name || '').replace(/"/g, '&quot;') + '"></span>' +
+      '<span class="ds-step ds-vstep"><button type="button" class="ds-st" data-k="veh-' + k + '" data-d="-1" aria-label="기타 차량 1 감소">−</button>' +
+      '<input id="input-veh-' + k + '" class="ds-vccnt" type="number" inputmode="numeric" min="0" placeholder="0" value="' + (cnt || '') + '">' +
+      '<button type="button" class="ds-st" data-k="veh-' + k + '" data-d="1" aria-label="기타 차량 1 증가">+</button></span></div>';
+  }
+  function dsVehKey(name){ return String(name || '').replace(/[.#$\[\]\/]/g, ' ').replace(/^\s+|\s+$/g, ''); }
   function dsVehRead(){
     var out = {};
-    DS_VEHICLES.concat(['기타']).forEach(function(v, i){
+    DS_VEHICLES.forEach(function(v, i){
       var el = document.getElementById('input-veh-' + i), n = el ? parseInt(el.value || '0', 10) : 0;
       if(!isNaN(n) && n > 0) out[v] = n;
     });
+    var rows = document.querySelectorAll('#ds-veh .ds-vcust');
+    for(var r = 0; r < rows.length; r++){
+      var nm = dsVehKey((rows[r].querySelector('.ds-vcname') || {}).value), c = parseInt((rows[r].querySelector('.ds-vccnt') || {}).value || '0', 10);
+      if(nm && !isNaN(c) && c > 0) out[nm] = (out[nm] || 0) + c;
+    }
     return out;
   }
   function dsVehTotal(){
@@ -6132,7 +6170,8 @@ function restoreChecklist(){
   function dsVehText(o, etcName){
     if(!o) return '';
     var out = [];
-    DS_VEHICLES.concat(['기타']).forEach(function(v){ if(o[v]) out.push((v === '기타' && etcName ? etcName : v) + ' ' + o[v]); });
+    DS_VEHICLES.forEach(function(v){ if(o[v]) out.push(v + ' ' + o[v]); });
+    Object.keys(o).forEach(function(v){ if(DS_VEHICLES.indexOf(v) < 0 && o[v]) out.push((v === '기타' && etcName ? etcName : v) + ' ' + o[v]); });
     return out.join(' · ');
   }
   function toggleDisasterEdit(){
@@ -6147,7 +6186,7 @@ function restoreChecklist(){
     function val(id){ var el = document.getElementById(id); return el ? String(el.value || '').replace(/^\s+|\s+$/g, '') : ''; }
     var next = {
       overviewDateTime: val('input-overviewDateTime'), overviewLocation: val('input-overviewLocation'),
-      damageNote: val('input-damageNote'), agencyEtc: val('input-agencyEtc'), vehicleEtcName: val('input-vehEtcName')
+      damageNote: val('input-damageNote'), agencyEtc: val('input-agencyEtc')
     };
     DS_NUM_KEYS.forEach(function(k){ next[k] = dsNum(val('input-' + k)); });
     var upd = {}, n = 0;
@@ -6158,7 +6197,7 @@ function restoreChecklist(){
     var veh = dsVehRead();
     if(JSON.stringify(veh) !== dsFormBase.vehicles){
       var tot = 0; Object.keys(veh).forEach(function(k){ tot += veh[k]; });
-      upd.vehicles = veh; upd.resourceVehicles = tot ? String(tot) : '-'; n++;
+      upd.vehicles = veh; upd.resourceVehicles = tot ? String(tot) : '-'; upd.vehicleEtcName = '-'; n++;
     }
     if(JSON.stringify(dsAgState) !== dsFormBase.agencies || next.agencyEtc !== dsFormBase.agencyEtc){
       upd.agencies = dsAgState; upd.resourceAgencies = dsAgSummary(dsAgState, next.agencyEtc) || '-'; n++;
@@ -6177,21 +6216,36 @@ function restoreChecklist(){
     if(!FB.ready || !FB.db){ alert('Firebase 연결을 확인해 주세요.'); return; }
     var cur = dsStageOf(window.lastDisasterStatus || {});
     if(cur === key) return;
-    var msg = st.label + '(으)로 변경합니다.\n' + st.desc + (st.cmd === '통제단장' && !(GURI_STAGES[cur] && GURI_STAGES[cur].cmd === '통제단장') ? '\n\n통제단장이 현장지휘관으로부터 지휘를 인계받습니다.' : '');
+    var toR = /^r\d$/.test(key), fromR = /^r\d$/.test(cur);
+    var msg = st.label + '(으)로 변경합니다.\n' + (toR ? '긴급구조통제단이 가동됩니다.' + (fromR ? '' : '\n통제단장이 도착하면 [통제단장 도착]을 눌러 지휘를 인계하세요.') : st.desc);
     if(!confirm(msg)) return;
     var now = new Date(), iso = now.toISOString(), who = dsWho(), hh = dsHHMM(iso);
     var upd = { stage:key, stageAt:iso, stageBy:who, overviewResponseLevel: st.label + '(' + hh + ')',
       updatedBy:who, updatedAt:iso, updatedAtText:now.toLocaleString('ko-KR') };
+    if(!toR){ upd.cmdArrived = false; upd.cmdArrivedAt = ''; upd.cmdArrivedBy = ''; } // 대응단계 해제 시 지휘는 현장지휘관으로
     FB.db.ref('sessions/' + FB.sessionId + '/disasterStatus').update(upd).then(function(){
       try{ FB.db.ref('sessions/' + FB.sessionId + '/stageLog').push({ stage:key, from:cur || '', at:iso, by:who }); }catch(e2){}
-      setStatus(st.label + ' · 지휘 ' + st.cmd + ' ' + hh);
+      setStatus(st.label + ' ' + hh);
     }).catch(function(e){ console.log(e); alert('단계 변경 저장 실패'); });
   }
   window.setCommandStage = setCommandStage;
+  function setCommanderArrived(){
+    var d = window.lastDisasterStatus || {};
+    if(!dsAuthOn()){ alert('상단 재난현황 수정 체크박스를 체크한 후 누를 수 있습니다.'); return; }
+    if(!FB.ready || !FB.db){ alert('Firebase 연결을 확인해 주세요.'); return; }
+    if(!/^r\d$/.test(dsStageOf(d)) || d.cmdArrived) return;
+    if(!confirm('통제단장이 현장에 도착했습니까?\n지휘가 현장지휘관에서 통제단장으로 인계됩니다.')) return;
+    var now = new Date(), iso = now.toISOString(), who = dsWho();
+    FB.db.ref('sessions/' + FB.sessionId + '/disasterStatus').update({ cmdArrived:true, cmdArrivedAt:iso, cmdArrivedBy:who, updatedBy:who, updatedAt:iso, updatedAtText:now.toLocaleString('ko-KR') }).then(function(){
+      try{ FB.db.ref('sessions/' + FB.sessionId + '/stageLog').push({ stage:'arrive', from:dsStageOf(d), at:iso, by:who }); }catch(e2){}
+      setStatus('통제단장 도착 · 지휘 인계 ' + dsHHMM(iso));
+    }).catch(function(e){ console.log(e); alert('저장 실패'); });
+  }
+  window.setCommanderArrived = setCommanderArrived;
   // 버튼 처리 (구형 기기 호환: 문서 전체에서 위임 처리)
   document.addEventListener('click', function(e){
     var t = e.target;
-    while(t && t !== document && !(t.className && typeof t.className === 'string' && /(^|\s)(ds-st|ds-ag|ds-now|ds-stg|ds-vhd)(\s|$)/.test(t.className)) && !(t.getAttribute && t.getAttribute('data-agp'))) t = t.parentNode;
+    while(t && t !== document && !(t.className && typeof t.className === 'string' && /(^|\s)(ds-st|ds-ag|ds-now|ds-stg|ds-vhd|ds-vadd|ds-arrive)(\s|$)/.test(t.className)) && !(t.getAttribute && t.getAttribute('data-agp'))) t = t.parentNode;
     if(t && t !== document && t.getAttribute && t.getAttribute('data-agp')){ var ap = t.getAttribute('data-agp'); if(ap === 'close') dsAgClose(); else dsAgApply(ap); return; }
     if(!t || t === document) return;
     var c = t.className;
@@ -6201,6 +6255,11 @@ function restoreChecklist(){
       if(/^veh-/.test(t.getAttribute('data-k'))) dsVehTotal();
     }else if(/(^|\s)ds-ag(\s|$)/.test(c)){
       dsAgPick(t.getAttribute('data-v'));
+    }else if(/(^|\s)ds-vadd(\s|$)/.test(c)){
+      var box = document.getElementById('ds-vcust-new');
+      if(box){ var tmp = document.createElement('div'); tmp.innerHTML = dsCustRow('', ''); var row = tmp.firstChild; box.appendChild(row); try{ row.querySelector('.ds-vcname').focus(); }catch(eF){} }
+    }else if(/(^|\s)ds-arrive(\s|$)/.test(c)){
+      if(!t.disabled) setCommanderArrived();
     }else if(/(^|\s)ds-vhd(\s|$)/.test(c)){
       if(t.disabled) return;
       var bd = document.getElementById('ds-vbody-' + t.getAttribute('data-vg')), open = bd && bd.style.display !== 'none';
@@ -6213,7 +6272,19 @@ function restoreChecklist(){
       if(!t.disabled) setCommandStage(t.getAttribute('data-stg'));
     }
   });
-  document.addEventListener('change', function(e){ if(e.target && e.target.id === 'fb-disaster-edit-auth') dsSyncStageButtons(); });
+  // V45_64: 재난현황 수정 권한을 켤 때 경고 (취소하면 다시 꺼짐)
+  document.addEventListener('change', function(e){
+    if(!e.target || e.target.id !== 'fb-disaster-edit-auth') return;
+    if(e.target.checked){
+      var ok = confirm('⚠️ 재난현황 수정 권한을 켭니다.\n\n' +
+        '· 지휘 단계 변경, 통제단장 도착, 재난현황 입력, 재난종료는\n  이 관서 모든 사용자 화면에 즉시 반영됩니다.\n' +
+        '· 재난종료를 누르면 모든 사용자의 기록이 초기화됩니다.\n' +
+        '· 누가 바꿨는지는 이름으로 기록됩니다.\n\n' +
+        '지휘관 또는 지정된 담당자만 켜 주세요. 계속할까요?');
+      if(!ok){ e.target.checked = false; try{ if(typeof window.updateDisasterEndButtonAuth === 'function') window.updateDisasterEndButtonAuth(); }catch(e1){} }
+    }
+    dsSyncStageButtons();
+  });
   document.addEventListener('input', function(e){ if(e.target && /^input-veh-/.test(e.target.id || '')) dsVehTotal(); });
 
   window.toggleDisasterEdit=toggleDisasterEdit;
@@ -6660,7 +6731,7 @@ function restoreChecklist(){
       {'구분':'재난개요','항목':'발생일시','내용':v(d.overviewDateTime)},
       {'구분':'재난개요','항목':'발생장소','내용':v(d.overviewLocation)},
       {'구분':'재난개요','항목':'지휘 단계(시간)','내용':v(d.overviewResponseLevel)},
-      {'구분':'재난개요','항목':'지휘','내용': st ? st.cmd : '-'},
+      {'구분':'재난개요','항목':'지휘','내용': st ? dsCmdOf(d) + (d.cmdArrived ? ' (도착 ' + (function(x){ var t = Date.parse(x || ''); if(isNaN(t)) return ''; var y = new Date(t); return (y.getHours() < 10 ? '0' : '') + y.getHours() + ':' + (y.getMinutes() < 10 ? '0' : '') + y.getMinutes(); })(d.cmdArrivedAt) + ')' : '') : '-'},
       {'구분':'인명현황','항목':'남은 구조대상','내용':n(d.rescueRequired,'명')},
       {'구분':'인명현황','항목':'구조완료','내용':n(d.rescueDone,'명')},
       {'구분':'인명현황','항목':'이송','내용':n(d.rescueTransport,'명')},
@@ -6669,8 +6740,9 @@ function restoreChecklist(){
       {'구분':'소방 동원','항목':'인원','내용':n(d.resourcePersonnel,'명')},
       {'구분':'소방 동원','항목':'차량 합계','내용':n(d.resourceVehicles,'대')}
     ];
-    var VEH = ['지휘차','펌프차','물탱크차','화학차','굴절차','고가사다리차','구조공작차','구급차','배연차','조명차','무인방수탑차','회복지원차','기타'];
-    VEH.forEach(function(k){ if(d.vehicles && d.vehicles[k]) rows.push({'구분':'소방 동원','항목': k === '기타' && d.vehicleEtcName ? '기타(' + d.vehicleEtcName + ')' : k,'내용': d.vehicles[k] + '대'}); });
+    var VEH = ['지휘차','펌프차','물탱크차','화학차','굴절차','고가사다리차','구조공작차','구급차','배연차','조명차','무인방수탑차','회복지원차','장비운반차'];
+    VEH.forEach(function(k){ if(d.vehicles && d.vehicles[k]) rows.push({'구분':'소방 동원','항목':k,'내용': d.vehicles[k] + '대'}); });
+    Object.keys(d.vehicles || {}).forEach(function(k){ if(VEH.indexOf(k) < 0 && d.vehicles[k]) rows.push({'구분':'소방 동원','항목':'기타 · ' + (k === '기타' && d.vehicleEtcName && d.vehicleEtcName !== '-' ? d.vehicleEtcName : k),'내용': d.vehicles[k] + '대'}); });
     var AG = ['시청(오염통제·중장비)','경찰','보건소','군','한국전력공사','도시가스','헬기'], AGS = { contact:'연락 완료', arrived:'현장 도착' };
     function hm(iso){ var t = Date.parse(iso || ''); if(isNaN(t)) return ''; var x = new Date(t); return (x.getHours() < 10 ? '0' : '') + x.getHours() + ':' + (x.getMinutes() < 10 ? '0' : '') + x.getMinutes(); }
     if(d.agencies){
@@ -6689,7 +6761,8 @@ function restoreChecklist(){
     Object.keys(log).forEach(function(k){ if(log[k] && log[k].at) list.push(log[k]); });
     list.sort(function(a, b){ return a.at < b.at ? -1 : 1; });
     list.forEach(function(e){
-      var s = (window.GURI_STAGES || {})[e.stage] || { label:e.stage, cmd:'' };
+      var s = e.stage === 'arrive' ? { label:'통제단장 도착', cmd:'통제단장 (인계)' } : ((window.GURI_STAGES || {})[e.stage] || { label:e.stage, cmd:'' });
+      if(e.stage !== 'arrive' && /^r\d$/.test(e.stage)) s = { label:s.label, cmd:'현장지휘관 (통제단 가동, 통제단장 도착 전)' };
       var t = Date.parse(e.at), d2 = new Date(t), hh = isNaN(t) ? '' : (d2.getHours() < 10 ? '0' : '') + d2.getHours() + ':' + (d2.getMinutes() < 10 ? '0' : '') + d2.getMinutes();
       rows.push({'구분':'지휘 단계 이력','항목':hh,'내용': s.label + ' · 지휘 ' + s.cmd + ' · ' + (e.by || '')});
     });
@@ -7107,6 +7180,7 @@ renderGroupBlocks(members);
             '<div class="fb-disaster-grid">'+
               '<div class="ds-stagebox" id="ds-stagebox"><div class="ds-stage-now"><span class="ds-stage-k">지휘 단계</span><b id="ds-stage-label">미지정</b><span id="ds-stage-cmd">지휘 현장지휘관</span><span id="ds-stage-at"></span></div>'+
                 '<div class="ds-stage-btns" id="ds-stage-btns"><button type="button" class="ds-stg" data-stg="field">현장활동</button><button type="button" class="ds-stg" data-stg="support">지원반 가동</button><button type="button" class="ds-stg" data-stg="r1">대응1단계</button><button type="button" class="ds-stg" data-stg="r2">대응2단계</button><button type="button" class="ds-stg" data-stg="r3">대응3단계</button></div>'+
+                '<div class="ds-arrive-wrap" id="ds-arrive-wrap" style="display:none"></div>'+
                 '<div class="ds-stage-hint" id="ds-stage-hint">단계 변경은 상단 재난현황 수정을 체크한 뒤 할 수 있습니다</div></div>'+
               '<div class="fb-disaster-section"><div class="fb-disaster-title">📌 재난개요</div><div class="fb-disaster-kv"><div>발생일시<strong id="ds-overview-dateTime">-</strong></div><div>지휘<strong id="ds-overview-command">-</strong></div><div class="fb-kv-wide">발생장소<strong id="ds-overview-location">-</strong></div></div></div>'+
               '<div class="fb-disaster-section"><div class="fb-disaster-title">👤 인명현황</div><div class="fb-disaster-kv"><div>남은 구조대상<strong id="ds-rescue-required">-</strong></div><div>구조완료<strong id="ds-rescue-done">-</strong></div><div>이송<strong id="ds-rescue-transport">-</strong></div><div>사망<strong id="ds-damage-dead">-</strong></div><div>부상<strong id="ds-damage-injured">-</strong></div></div></div>'+
@@ -7527,7 +7601,7 @@ if('serviceWorker' in navigator){
 (function(){
   if(window.GuriOrbit) return;
 
-  var VERSION = 'V45_63';
+  var VERSION = 'V45_64';
   var C = 300, R_NODE = 206, R_LABEL = 228, R_SECT = 126, R_CORE = 60, R_DIAL = 286;
   var STALE_MIN = 20;
   var NS = 'http://www.w3.org/2000/svg';
@@ -7560,9 +7634,12 @@ if('serviceWorker' in navigator){
   };
   var AGENCIES = ['시청(오염통제·중장비)','경찰','보건소','군','한국전력공사','도시가스','헬기'];
   var AG_ST = { contact:{ label:'연락 완료', color:'#F0A04B' }, arrived:{ label:'현장 도착', color:'#3FB97A' } };
-  var VEHICLES = ['지휘차','펌프차','물탱크차','화학차','굴절차','고가사다리차','구조공작차','구급차','배연차','조명차','무인방수탑차','회복지원차','기타'];
+  var VEHICLES = ['지휘차','펌프차','물탱크차','화학차','굴절차','고가사다리차','구조공작차','구급차','배연차','조명차','무인방수탑차','회복지원차','장비운반차'];
   function hmIso(iso){ var t = Date.parse(iso || ''); return isNaN(t) ? '' : hm(new Date(t)); }
-  function vehText(d){ var o = d.vehicles, out = []; if(!o) return ''; VEHICLES.forEach(function(v){ if(o[v]) out.push((v === '기타' && d.vehicleEtcName ? d.vehicleEtcName : v) + ' ' + o[v]); }); return out.join(' · '); }
+  function vehText(d){ var o = d.vehicles, out = []; if(!o) return ''; VEHICLES.forEach(function(v){ if(o[v]) out.push(v + ' ' + o[v]); });
+    Object.keys(o).forEach(function(v){ if(VEHICLES.indexOf(v) < 0 && o[v]) out.push((v === '기타' && dash(d.vehicleEtcName) ? d.vehicleEtcName : v) + ' ' + o[v]); }); return out.join(' · '); }
+  // V45_64: 대응단계여도 통제단장 도착을 눌러야 지휘가 통제단장으로 바뀜
+  function cmdNow(){ var sk = stageKey(); return (/^r\d$/.test(sk) && S.ds.cmdArrived) ? '통제단장' : '현장지휘관'; }
   function stageKey(){ return (S && S.ds && STAGES[S.ds.stage]) ? S.ds.stage : ''; }
   function numText(v, u){ v = dash(v); if(!v) return '-'; return /^\d+$/.test(v) ? v + u : v; }
 
@@ -7756,9 +7833,10 @@ if('serviceWorker' in navigator){
     var sl = S.stageLog || {};
     Object.keys(sl).forEach(function(k){
       var e = sl[k] || {}, st = STAGES[e.stage], t = Date.parse(e.at || '');
+      if(e.stage === 'arrive' && !isNaN(t)){ var da = new Date(t); ev.push({ k:localKey(da), t:hm(da), text:'<b style="color:#E5534B">통제단장 도착</b> — 현장지휘관에서 통제단장으로 지휘 인계' + (e.by ? ' · ' + esc(e.by) : '') }); return; }
       if(!st || isNaN(t)) return;
       var from = STAGES[e.from], d = new Date(t), txt;
-      if(st.cmd === '통제단장' && !(from && from.cmd === '통제단장')) txt = '<b style="color:' + st.color + '">' + st.label + ' 발령</b> — 통제단 가동, 통제단장 지휘 인계';
+      if(st.cmd === '통제단장' && !(from && from.cmd === '통제단장')) txt = '<b style="color:' + st.color + '">' + st.label + ' 발령</b> — 통제단 가동 (통제단장 도착 전, 지휘 현장지휘관)';
       else if(from && from.cmd === '통제단장' && st.cmd !== '통제단장') txt = '<b style="color:' + st.color + '">대응단계 해제 → ' + st.label + '</b> — 지휘 현장지휘관';
       else if(e.stage === 'support') txt = '<b style="color:' + st.color + '">지원반 가동</b> — 지휘는 현장지휘관 유지';
       else txt = '<b style="color:' + st.color + '">' + st.label + '</b> — 지휘 ' + st.cmd;
@@ -7915,7 +7993,7 @@ if('serviceWorker' in navigator){
     var tot = totals();
     $('go-dial').setAttribute('d', tot.pct > 0 ? arc(R_DIAL, 0, Math.min(tot.pct * 3.6, 359.9)) : '');
     var skc = stageKey();
-    $('go-core1').textContent = skc ? STAGES[skc].cmd : S.stationShort;
+    $('go-core1').textContent = skc ? cmdNow() : S.stationShort;
     var lvl = dash(S.ds.overviewResponseLevel);
     $('go-core2').textContent = skc ? STAGES[skc].label : (lvl ? (lvl.length > 11 ? lvl.slice(0, 11) + '…' : lvl) : '지휘 단계 미지정');
     $('go-core2').setAttribute('fill', skc ? STAGES[skc].color : '#D4A017');
@@ -8025,7 +8103,8 @@ if('serviceWorker' in navigator){
     var at = '', tt = Date.parse(d.stageAt || ''); if(!isNaN(tt)) at = hm(new Date(tt));
     $('go-stage').style.borderColor = st ? st.color : '#24314F';
     $('go-stage').innerHTML = '<div class="k">지휘 단계</div><div class="v" style="color:' + (st ? st.color : '#D4A017') + '">' + (st ? esc(st.label) : (lvl ? esc(lvl) : '미지정')) +
-      ' <span class="cmd">지휘 ' + esc(st ? st.cmd : '현장지휘관') + (at ? ' · ' + at : '') + '</span></div>' +
+      ' <span class="cmd">지휘 ' + esc(cmdNow()) + (at ? ' · ' + at : '') + '</span></div>' +
+      (/^r\d$/.test(sk) ? (d.cmdArrived ? '<div class="arr ok">✓ 통제단장 도착 ' + esc(hmIso(d.cmdArrivedAt)) + ' — 지휘 인계</div>' : '<div class="arr">통제단 가동 · 통제단장 도착 전 (현장지휘관 지휘 중)</div>') : '') +
       '<div class="loc">' + (loc ? esc(loc) : '발생장소 미입력') + (dt ? ' · ' + esc(dt) : '') + '</div>';
   }
   function drawPanels(){
