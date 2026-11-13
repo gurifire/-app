@@ -1995,6 +1995,20 @@ function captureScreen(){
 .ds-stg:disabled{opacity:.45}
 .ds-dt input[type="date"]{-webkit-box-flex:1;-webkit-flex:1 1 0;flex:1 1 0;min-width:0;min-height:46px;padding:10px 6px}
 .ds-dt input[type="time"]{-webkit-box-flex:1;-webkit-flex:1 1 0;flex:1 1 0;min-width:0;min-height:46px;margin-left:6px;padding:10px 6px}
+.ds-locbtn{-webkit-box-flex:0;-webkit-flex:0 0 auto;flex:0 0 auto;margin-left:6px;min-width:84px;min-height:46px;border-radius:8px;border:0;background:#C0392B;color:#fff;font-weight:700;font-size:15px;font-family:inherit}
+#input-locBase[readonly]{background:#F7F9FB}
+.ds-locdetail{margin-top:6px}
+.ds-loc-q{font-size:12px;color:#777;margin:6px 0 2px 0}
+.ds-locopt{display:block;width:100%;text-align:left;margin-top:4px;padding:8px 10px;border-radius:10px;border:1.5px solid #DDE4EA;background:#fff;color:#333;font-size:14px;font-weight:700;font-family:inherit;line-height:1.4}
+.ds-locopt small{display:block;font-size:11px;color:#888;font-weight:700}
+.ds-locopt.on{border-color:#C0392B;background:#FDF3F2;color:#7B241C}
+.ds-loc-msg{font-size:12px;color:#C0392B;margin-top:4px}
+#ds-loclayer{position:fixed;left:0;top:0;right:0;bottom:0;z-index:9600;background:#fff;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column}
+.ds-loc-top{-webkit-box-flex:0;-webkit-flex:0 0 auto;flex:0 0 auto;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top));border-bottom:1px solid #DDE4EA;background:#fff}
+.ds-loc-top b{font-size:17px;margin-right:8px}
+.ds-loc-top span{font-size:12px;color:#888}
+.ds-locclose{float:right;min-height:40px;min-width:60px;border-radius:8px;border:1.5px solid #DDE4EA;background:#fff;font-weight:700;font-size:14px;font-family:inherit}
+.ds-loc-box{-webkit-box-flex:1;-webkit-flex:1 1 auto;flex:1 1 auto;position:relative;min-height:300px}
 .ds-vadd{display:block;width:100%;min-height:46px;border-radius:10px;border:1.5px dashed #C0392B;background:#fff;color:#C0392B;font-size:15px;font-weight:700;font-family:inherit}
 .ds-vcust .ds-vname input{font-size:16px}
 .ds-arrive-wrap{clear:both;padding-top:6px}
@@ -6039,11 +6053,18 @@ function restoreChecklist(){
     function set(id, v){ var el = document.getElementById(id); if(el) el.value = v; }
     var pd = dsParseDT(d.overviewDateTime);
     set('input-dtDate', pd ? pd.date : ''); set('input-dtTime', pd ? pd.time : '');
-    set('input-overviewLocation', dsEmpty(d.overviewLocation) ? '' : d.overviewLocation);
+    // 발생장소: 선택한 주소(locBase) + 세부주소(locDetail). 이전 글자 입력값은 주소 칸에 그대로 둠
+    var lb = !dsEmpty(d.locBase) ? d.locBase : (dsEmpty(d.overviewLocation) ? '' : d.overviewLocation);
+    var ld = !dsEmpty(d.locBase) && !dsEmpty(d.locDetail) ? d.locDetail : '';
+    set('input-locBase', lb); set('input-locDetail', ld);
+    var lbEl = document.getElementById('input-locBase'); if(lbEl) lbEl.readOnly = true;
+    var pk = document.getElementById('ds-loc-pick'); if(pk) pk.innerHTML = '';
+    var lm = document.getElementById('ds-loc-msg'); if(lm) lm.textContent = '';
     DS_NUM_KEYS.forEach(function(k){ var v = dsNum(d[k]); set('input-' + k, v); dsFormBase[k] = v; });
     set('input-damageNote', dsEmpty(d.damageNote) ? '' : d.damageNote);
     dsFormBase.overviewDateTime = dsEmpty(d.overviewDateTime) ? '' : d.overviewDateTime;
     dsFormBase.overviewLocation = dsEmpty(d.overviewLocation) ? '' : d.overviewLocation;
+    dsFormBase.locBase = lb; dsFormBase.locDetail = ld;
     dsFormBase.damageNote = dsEmpty(d.damageNote) ? '' : d.damageNote;
     // 유관기관 (연락 완료 / 현장 도착)
     dsAgState = JSON.parse(JSON.stringify(d.agencies || {}));
@@ -6082,6 +6103,72 @@ function restoreChecklist(){
     if(lg) lg.textContent = legacy.length ? '이전 방식으로 입력된 내용 (그대로 보관됨) · ' + legacy.join(' · ') : '';
   }
   function dsHM(iso){ return dsHHMM(iso); }
+  /* V45_66: 발생장소 — 카카오(다음) 우편번호 검색으로 도로명·지번·법정동 선택 + 세부주소
+     검색 서비스를 불러오지 못하면(오프라인 등) 주소 칸을 직접 입력할 수 있게 전환 */
+  var DS_POSTCODE_SRC = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+  function dsLocValue(){
+    var b = ((document.getElementById('input-locBase') || {}).value || '').replace(/^\s+|\s+$/g, '');
+    var t = ((document.getElementById('input-locDetail') || {}).value || '').replace(/^\s+|\s+$/g, '');
+    return b + (b && t ? ' ' : '') + t;
+  }
+  function dsLocMsg(t){ var m = document.getElementById('ds-loc-msg'); if(m) m.textContent = t || ''; }
+  function dsLocManual(reason){
+    var el = document.getElementById('input-locBase');
+    if(el){ el.readOnly = false; el.placeholder = '예: 경기 구리시 인창동'; try{ el.focus(); }catch(e){} }
+    dsLocMsg(reason + ' 주소를 직접 입력하세요.');
+  }
+  function dsLoadPostcode(cb){
+    if(window.daum && window.daum.Postcode){ cb(true); return; }
+    var done = false, sc = document.createElement('script');
+    sc.src = DS_POSTCODE_SRC; sc.async = true;
+    sc.onload = function(){ if(done) return; done = true; cb(!!(window.daum && window.daum.Postcode)); };
+    sc.onerror = function(){ if(done) return; done = true; cb(false); };
+    setTimeout(function(){ if(done) return; done = true; cb(!!(window.daum && window.daum.Postcode)); }, 8000);
+    document.getElementsByTagName('head')[0].appendChild(sc);
+  }
+  function dsLocClose(){ var w = document.getElementById('ds-loclayer'); if(w && w.parentNode) w.parentNode.removeChild(w); }
+  function dsLocSearch(){
+    dsLocMsg('주소 검색을 불러오는 중…');
+    dsLoadPostcode(function(ok){
+      if(!ok){ dsLocManual('주소 검색을 불러오지 못했습니다(인터넷 연결 확인).'); return; }
+      dsLocMsg('');
+      dsLocClose();
+      var w = document.createElement('div'); w.id = 'ds-loclayer';
+      w.innerHTML = '<div class="ds-loc-top"><b>주소 검색</b><span>동 이름·도로명·건물명으로 검색</span><button type="button" class="ds-locclose" data-agp="locclose">닫기</button></div><div class="ds-loc-box" id="ds-loc-box"></div>';
+      document.body.appendChild(w);
+      var q = '';
+      try{ q = String(selectedStationName || '').replace(/소방서$/, ''); if(q === '북부본부') q = ''; if(q === '일산') q = '고양시 일산'; }catch(eq){}
+      try{
+        new window.daum.Postcode({
+          width:'100%', height:'100%',
+          oncomplete: function(data){ dsLocClose(); dsLocChoices(data); }
+        }).embed(document.getElementById('ds-loc-box'), { q:q, autoClose:true });
+      }catch(e){ dsLocClose(); dsLocManual('주소 검색을 열지 못했습니다.'); }
+    });
+  }
+  function dsLocChoices(data){
+    var ref = data.bname || '';
+    if(data.buildingName && data.apartment === 'Y') ref += (ref ? ', ' : '') + data.buildingName;
+    var road = data.roadAddress ? data.roadAddress + (ref ? ' (' + ref + ')' : '') : '';
+    var jibun = data.jibunAddress || data.autoJibunAddress || '';
+    var dong = [data.sido, data.sigungu, data.bname1, data.bname].filter(function(x){ return !!x; }).join(' ');
+    var opts = [];
+    if(road) opts.push(['도로명', road]);
+    if(jibun) opts.push(['지번', jibun]);
+    if(dong) opts.push(['법정동만', dong]);
+    var h = '<div class="ds-loc-q">어떤 주소로 기록할까요?</div>';
+    opts.forEach(function(o, i){ h += '<button type="button" class="ds-locopt" data-v="' + String(o[1]).replace(/"/g, '&quot;') + '"><small>' + o[0] + '</small>' + o[1] + '</button>'; });
+    var pk = document.getElementById('ds-loc-pick'); if(pk) pk.innerHTML = h;
+    var def = data.userSelectedType === 'J' ? jibun : (road || jibun || dong);
+    dsLocPick(def);
+  }
+  function dsLocPick(v){
+    var el = document.getElementById('input-locBase'); if(el){ el.value = v; el.readOnly = true; }
+    var b = document.querySelectorAll('#ds-loc-pick .ds-locopt');
+    for(var i = 0; i < b.length; i++) b[i].className = 'ds-locopt' + (b[i].getAttribute('data-v') === v ? ' on' : '');
+    dsLocMsg('');
+    var d = document.getElementById('input-locDetail'); if(d){ try{ d.focus(); }catch(e){} }
+  }
   // V45_64: 발생일시 — 날짜·시각 선택 (저장 형식은 기존과 같은 "2026. 11. 13. 09:20")
   function dsP2(n){ n = String(n); return n.length < 2 ? '0' + n : n; }
   function dsParseDT(v){
@@ -6207,10 +6294,11 @@ function restoreChecklist(){
     if(!FB.ready || !FB.db){ alert('Firebase 연결을 확인해 주세요.'); return; }
     function val(id){ var el = document.getElementById(id); return el ? String(el.value || '').replace(/^\s+|\s+$/g, '') : ''; }
     var next = {
-      overviewDateTime: dsPickedDT(dsFormBase.overviewDateTime), overviewLocation: val('input-overviewLocation'),
+      overviewDateTime: dsPickedDT(dsFormBase.overviewDateTime), overviewLocation: dsLocValue(),
       damageNote: val('input-damageNote'), agencyEtc: val('input-agencyEtc')
     };
     DS_NUM_KEYS.forEach(function(k){ next[k] = dsNum(val('input-' + k)); });
+    next.locBase = val('input-locBase'); next.locDetail = val('input-locDetail');
     var upd = {}, n = 0;
     Object.keys(next).forEach(function(k){
       if(next[k] !== (dsFormBase[k] == null ? '' : dsFormBase[k])){ upd[k] = next[k] === '' ? '-' : next[k]; n++; }
@@ -6267,8 +6355,8 @@ function restoreChecklist(){
   // 버튼 처리 (구형 기기 호환: 문서 전체에서 위임 처리)
   document.addEventListener('click', function(e){
     var t = e.target;
-    while(t && t !== document && !(t.className && typeof t.className === 'string' && /(^|\s)(ds-st|ds-ag|ds-stg|ds-vhd|ds-vadd|ds-arrive)(\s|$)/.test(t.className)) && !(t.getAttribute && t.getAttribute('data-agp'))) t = t.parentNode;
-    if(t && t !== document && t.getAttribute && t.getAttribute('data-agp')){ var ap = t.getAttribute('data-agp'); if(ap === 'close') dsAgClose(); else dsAgApply(ap); return; }
+    while(t && t !== document && !(t.className && typeof t.className === 'string' && /(^|\s)(ds-st|ds-ag|ds-stg|ds-vhd|ds-vadd|ds-arrive|ds-locbtn|ds-locopt)(\s|$)/.test(t.className)) && !(t.getAttribute && t.getAttribute('data-agp'))) t = t.parentNode;
+    if(t && t !== document && t.getAttribute && t.getAttribute('data-agp')){ var ap = t.getAttribute('data-agp'); if(ap === 'locclose'){ dsLocClose(); return; } if(ap === 'close') dsAgClose(); else dsAgApply(ap); return; }
     if(!t || t === document) return;
     var c = t.className;
     if(/(^|\s)ds-st(\s|$)/.test(c)){
@@ -6277,6 +6365,10 @@ function restoreChecklist(){
       if(/^veh-/.test(t.getAttribute('data-k'))) dsVehTotal();
     }else if(/(^|\s)ds-ag(\s|$)/.test(c)){
       dsAgPick(t.getAttribute('data-v'));
+    }else if(/(^|\s)ds-locbtn(\s|$)/.test(c)){
+      dsLocSearch();
+    }else if(/(^|\s)ds-locopt(\s|$)/.test(c)){
+      dsLocPick(t.getAttribute('data-v'));
     }else if(/(^|\s)ds-vadd(\s|$)/.test(c)){
       var box = document.getElementById('ds-vcust-new');
       if(box){ var tmp = document.createElement('div'); tmp.innerHTML = dsCustRow('', ''); var row = tmp.firstChild; box.appendChild(row); try{ row.querySelector('.ds-vcname').focus(); }catch(eF){} }
@@ -7214,7 +7306,11 @@ renderGroupBlocks(members);
               '<div class="ds-form">'+
                 '<div class="ds-sec">재난개요</div>'+
                 '<div class="ds-row"><label>발생일시 <span class="ds-sub">눌러서 날짜·시각 선택</span></label><div class="ds-inline ds-dt"><input id="input-dtDate" type="date"><input id="input-dtTime" type="time"></div></div>'+
-                '<div class="ds-row"><label>발생장소</label><input id="input-overviewLocation" placeholder="예: 구리시 ○○동 ○○아파트"></div>'+
+                '<div class="ds-row"><label>발생장소 <span class="ds-sub">주소 검색 → 도로명·지번·법정동 선택 → 세부주소 입력</span></label>'+
+                  '<div class="ds-inline"><input id="input-locBase" readonly placeholder="[주소 검색]을 눌러 선택"><button type="button" class="ds-locbtn">주소 검색</button></div>'+
+                  '<div class="ds-loc-pick" id="ds-loc-pick"></div>'+
+                  '<input id="input-locDetail" class="ds-locdetail" placeholder="번지·건물명·층 등 세부주소 (예: 123-4, ○○물류 2층)">'+
+                  '<div class="ds-loc-msg" id="ds-loc-msg"></div></div>'+
                 '<div class="ds-sec">인명현황 <span>− + 로 조정</span></div>'+
                 '<div class="ds-nums">'+
                 '<div class="ds-num"><label>남은 구조대상</label><div class="ds-step"><button type="button" class="ds-st" data-k="rescueRequired" data-d="-1" aria-label="남은 구조대상 1 감소">−</button><input id="input-rescueRequired" type="number" inputmode="numeric" min="0" placeholder="-"><span class="ds-unit">명</span><button type="button" class="ds-st" data-k="rescueRequired" data-d="1" aria-label="남은 구조대상 1 증가">+</button></div></div>'+
@@ -7620,7 +7716,7 @@ if('serviceWorker' in navigator){
 (function(){
   if(window.GuriOrbit) return;
 
-  var VERSION = 'V45_65';
+  var VERSION = 'V45_66';
   var C = 300, R_NODE = 206, R_LABEL = 228, R_SECT = 126, R_CORE = 60, R_DIAL = 286;
   var STALE_MIN = 20;
   var NS = 'http://www.w3.org/2000/svg';
