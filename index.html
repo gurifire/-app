@@ -5108,6 +5108,8 @@ function restoreChecklist(){
 // - 사용자별 체크결과 저장 + 지원반장 현황판 + Excel 다운로드 + 재난종료 초기화
 // ─────────────────────────────────────
 (function(){
+  // V45_69: 바깥 스크립트(selectRole)에서 호출할 수 있도록 전역으로 노출
+  window.enforcePersonalChecklistView = function(){ return enforcePersonalChecklistView.apply(this, arguments); };
   var firebaseConfigs = {
     "의정부": {
       apiKey: "AIzaSyD990-lwIdd-I6WA4Xa-723DcznPkl0I1c",
